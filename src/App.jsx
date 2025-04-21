@@ -1,0 +1,16 @@
+// src/App.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import StudyRoom from "./pages/StudyRoom";
+import Questions from "./pages/Questions";
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/study-room" element={<StudyRoom />} />
+      <Route path="/questions" element={<Questions />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
