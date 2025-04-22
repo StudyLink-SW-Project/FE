@@ -9,11 +9,12 @@ export default function Header() {
   return (
     <header
           className="
-            bg-gray-900 text-white
+            bg-[#1D1F2C] text-white
             flex justify-between items-center
             px-8           /* 좌우 패딩을 8로 늘려서 여백 확보 */
             py-4           /* 상하 패딩을 4로 늘려서 높이 확보 */
            h-20           /* 고정 높이 5rem(80px) 지정 */
+           border-b border-[#616680]
           ">      
     <div className="flex items-center gap-15">
         <Link to="/">
@@ -25,9 +26,9 @@ export default function Header() {
         <Link to="/questions"   className="hover:text-gray-300 px-10 py-1">질문 게시판</Link>
         </nav>
       </div>
-      <div className="relative">
+      <div className="relative mr-4">
         <button onClick={() => setMenuOpen(!menuOpen)}>
-          <img src="/user_icon.png" alt="User" className="w-15 h-15 rounded-full" />
+          <img src="/user_icon.png" alt="User" className="w-13 h-13 rounded-full" />
         </button>
         {menuOpen && <UserMenu />}
       </div>

@@ -1,1 +1,16 @@
+@font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/Pretendard/Pretendard-Regular.woff2') format('woff2'),
+         url('/fonts/Pretendard/Pretendard-Regular.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 500;
+    src: url('/fonts/Pretendard/Pretendard-Medium.woff2') format('woff2'),
+         url('/fonts/Pretendard/Pretendard-Medium.woff') format('woff');
+  }
+  /* 필요하다면 300,700 등 추가로 정의 */
 @import "tailwindcss";

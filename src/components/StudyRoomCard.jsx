@@ -1,4 +1,4 @@
-import { Users } from "lucide-react";
+import { Users, Lock } from "lucide-react";
 
 export default function StudyRoomCard({
   participants,
@@ -6,24 +6,33 @@ export default function StudyRoomCard({
   imageSrc,
   title,
   subtitle,
+  isLocked = false,
 }) {
   return (
-    <div className="relative bg-gray-700 rounded-lg overflow-hidden">
-      {/* 방 이미지 */}
-      <img
-        src={imageSrc}
-        alt={title}
-        className="w-full h-40 object-cover"
-      />
-      {/* 참여 인원 표시 */}
-      <div className="absolute top-2 left-2 flex items-center bg-black bg-opacity-50 text-white text-xs rounded-md px-2 py-1">
-        <Users className="w-4 h-4 mr-1" />
-        {participants}/{maxParticipants}
+    <div>
+      <div className="relative bg-[#1D1F2C] overflow-hidden w-56 max-w-full border-1 border-[#616680]">
+        {/* 방 이미지 */}
+        <img
+          src={imageSrc}
+          alt={title}
+          className="w-full h-35 object-cover bg-[#1D1F2C]"
+        />
+        {/* 참여 인원 표시 */}
+        <div className="absolute top-1 left-1 flex items-center bg-black bg-opacity-50 text-white text-xs rounded-md px-2 py-1">
+          <Users className="w-4 h-4 mr-1" />
+          {participants}/{maxParticipants}
+        </div>
+        {/* 비밀번호 잠금 아이콘 */}
+        {isLocked && (
+          <div className="absolute top-1 right-1 flex items-center bg-black bg-opacity-10 text-white text-xs rounded-md p-1">
+            <Lock className="w-4 h-4" />
+          </div>
+        )}
       </div>
-      {/* 카드 텍스트 */}
-      <div className="p-3">
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
-        <p className="text-sm text-gray-300">{subtitle}</p>
+        {/* 카드 텍스트 */}
+      <div className="p-1">
+        <h3 className="font-semibold text-white">{title}</h3>
+        <p className="text-xs text-gray-300">{subtitle}</p>
       </div>
     </div>
   );
