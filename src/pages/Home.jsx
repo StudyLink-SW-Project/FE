@@ -37,10 +37,13 @@ export default function Home() {
             onClick={() => navigate("/study-room")}
             className="
               px-8 py-4
-              bg-gradient-to-t from-[#0918CC] to-[#3744DA]
+              // bg-gradient-to-t from-[#0918CC] to-[#3744DA]
+              bg-gradient-to-t from-purple-600 to-purple-500
               rounded-full
-              text-white font-medium
-              hover:from-[#00021B] hover:to-[#323DC2]
+              text-white font-bold
+              // hover:from-[#00021B] hover:to-[#323DC2]
+              hover:from-purple-900 hover:to-purple-700
+
               transition
               "
           >
