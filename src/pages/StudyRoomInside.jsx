@@ -66,11 +66,10 @@ export default function StudyRoomInside() {
             </ul>
           </div>
 
-          {/* 메시지 카드 (메시지 리스트를 h-80으로 고정) */}
+          {/* 메시지 카드 */}
           <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
             <h3 className="text-center font-medium mb-2">메시지</h3>
             <hr className="border-gray-300 mb-3" />
-            {/* 이 부분이 길어집니다 */}
             <div className="h-80 overflow-auto mb-3 space-y-2">
               {roomInfo.messages.length === 0 ? (
                 <p className="text-gray-500 italic">아직 대화가 없습니다.</p>
@@ -106,7 +105,7 @@ export default function StudyRoomInside() {
             </form>
           </div>
 
-          {/* 컨트롤 버튼 (채팅창 밑으로 이동) */}
+          {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
             <button className="bg-green-500 p-3 rounded-full">🎤</button>
             <button className="bg-purple-500 p-3 rounded-full">📹</button>

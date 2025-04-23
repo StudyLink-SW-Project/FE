@@ -169,7 +169,7 @@ export default function StudyRoom() {
       title: `공부합시다! ${i + 1}`,
       subtitle: "화이팅!",
       imageSrc: "/book1.jpg",
-      isLocked: false, // 초기 방은 잠금 없음
+      isLocked: false,
     }))
   );
 

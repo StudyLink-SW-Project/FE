@@ -34,13 +34,13 @@ export default function SignupPage() {
             />
           </div>
 
-          {/* 닉네임 */}
-          <label className="text-sm text-gray-600 mb-1">닉네임</label>
+          {/* 이름 */}
+          <label className="text-sm text-gray-600 mb-1">이름</label>
           <div className="flex items-center border-b border-gray-400 mb-7">
             <User className="w-4 h-4 text-gray-400 mr-2" />
             <input
               type="text"
-              placeholder="닉네임을 입력하세요"
+              placeholder="이름을 입력하세요"
               className="w-full py-2 outline-none"
             />
           </div>
