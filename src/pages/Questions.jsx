@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "../components/Header";
-import QuestionCard from "../components/QuestionCard";
-import CreateQuestionModal from "../components/CreateQuestionModal";
+import QuestionCard from "../components/cards/QuestionCard";
+import CreateQuestionModal from "../components/modals/CreateQuestionModal";
 import Pagination from "../components/Pagination"; // 공통 컴포넌트 import
 import { Search, PlusCircle } from "lucide-react";
 
@@ -10,17 +10,6 @@ export default function Questions() {
   const [showModal, setShowModal] = useState(false);
 
   const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      accepted: false,
-      title: "자바 스크립트 튜토리얼 추천",
-      excerpt:
-        "자바 스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
-      author: "이호준",
-      date: "2025-04-10",
-      answers: 6,
-      views: 157,
-    },
     {
       id: 1,
       accepted: false,
@@ -84,7 +73,7 @@ export default function Questions() {
                 setSearch(e.target.value);
                 setCurrentPage(1); // 검색 시 페이지 초기화
               }}
-              className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
             <Search className="w-5 h-5 text-gray-300 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>

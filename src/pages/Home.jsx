@@ -8,7 +8,8 @@ export default function Home() {
     <div
       className="
         min-h-screen
-        bg-[linear-gradient(to_bottom,#1D1F2C,#353F84,#7A8AF4)]
+        //bg-[linear-gradient(to_bottom,#1D1F2C,#353F84,#7A8AF4)]
+        bg-[linear-gradient(to_bottom,#1D1F2C,#000E76_30%,#7A8AF4)]
         text-white
         flex flex-col
       "

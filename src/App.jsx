@@ -5,6 +5,7 @@ import StudyRoom from "./pages/StudyRoom";
 import Questions from "./pages/Questions";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import StudyRoomInside from "./pages/StudyRoomInside";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/questions" element={<Questions />} />
       <Route path="/login" element={<LoginPage  />} />
       <Route path="/signup" element={<SignupPage  />} />
+      <Route path="/study-room/:id" element={<StudyRoomInside />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
