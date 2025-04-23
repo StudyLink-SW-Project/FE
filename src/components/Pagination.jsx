@@ -1,9 +1,15 @@
 // src/components/Pagination.jsx
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-    if (totalPages <= 1) return null;
+    // if (totalPages <= 1) return null;
   
     return (
-      <div className="flex justify-center mt-8 space-x-2 text-white">
+          <div
+            className="
+              fixed bottom-0 left-0 w-full      /* 하단 고정, 풀 너비 */
+              bg-[#282A36]                       /* 뒤 배경색 (페이지 배경과 맞추거나 반투명으로) */
+              flex justify-center               /* 가운데 정렬 */
+              py-4 space-x-2 text-white z-50     /* 위아래 패딩·간격·전면 배치 */
+          ">        
         {/* 이전 버튼 */}
         <button
           onClick={() => onPageChange(Math.max(currentPage - 1, 1))}

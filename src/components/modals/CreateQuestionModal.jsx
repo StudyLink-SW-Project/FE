@@ -24,7 +24,7 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl w-full max-w-md p-6 text-black relative">
+      <div className="bg-white rounded-xl w-1/2 max-w-2x1 max-h-[200vh] h-200 p-10 text-black relative overflow-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -52,16 +52,24 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               placeholder="질문의 요약 또는 내용을 입력하세요"
-              className="w-full border border-gray-300 rounded px-3 py-2 outline-none"
-              rows={4}
+              className="w-full border border-gray-300 rounded px-3 py-3 outline-none"
+              rows={20}
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition"
-          >
+            className="
+              block
+              w-1/4        /* 너비를 절반으로 */
+              mx-auto      /* 가운데 정렬 */
+              bg-purple-600 text-white
+              py-2         /* 세로 패딩 반으로 */
+              rounded
+              hover:bg-purple-700
+              transition
+          ">
             질문 등록
           </button>
         </form>
