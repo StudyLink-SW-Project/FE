@@ -1,123 +1,134 @@
 // src/pages/StudyRoomInside.jsx
-import { useParams, Link } from "react-router-dom";
-import { Users } from "lucide-react";
-import useLivekitRoom from '../hooks/useLivekitRoom';
+import { useParams, useLocation, Link } from 'react-router-dom';
+import { Users } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Room,
+  RoomEvent,
+  Track,
+  LocalVideoTrack,
+  RemoteTrackPublication,
+} from 'livekit-client';
 import VideoComponent from '../components/VideoComponent';
 import AudioComponent from '../components/AudioComponent';
 
+/* LiveKit 서버 & 토큰 서버 URL (필요시 .env.local 로 분리) */
+const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL || 'ws://localhost:7880/';
+const APP_SERVER   = import.meta.env.VITE_APP_SERVER  || 'http://localhost:6080/';
+
 export default function StudyRoomInside() {
-  const { id } = useParams();
+  const { id } = useParams();              // 방 ID
+  const { state } = useLocation();               // ← 모달이 넘긴 값
+  const token = state?.token;
+  const participantName = state?.name || 'Guest';
+  const [room, setRoom] = useState();      // livekit Room 인스턴스
+  const [localTrack, setLocalTrack] = useState();              // LocalVideoTrack
+  const [remoteTracks, setRemoteTracks] = useState([]);        // [{ pub, id }]
+  const [chatLog, setChatLog] = useState([]);
 
-  // TODO: 실제 API나 Context에서 받아온 데이터로 교체하세요.
-  const roomInfo = {
-    title: `공부합시다! (${id})`,
-    participants: 4,
-    maxParticipants: 4,
-    createdAt: "2025-04-11 15:01",
-    users: ["user01", "user02", "user03", "user04"],
-    messages: [
-      { id: 1, author: "user01", text: "안녕하세요!" },
-      { id: 2, author: "user02", text: "시작해볼까요?" },
-      // … 더 많은 메시지
-    ],
-  };
+  /* ───────── 실시간 연결 ───────── */
+  useEffect(() => {
+    (async () => {
+      // 1) 토큰 발급
+      const res = await fetch(`${APP_SERVER}token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomName: id, participantName: 'Guest' }),
+      });
+      const { token } = await res.json();
 
-  const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;   // wss://…7443
-  const { token } = useLoaderData();                      // 리액트 라우터 loader 등으로 백엔드에서 토큰 받아오기
-  
-  const {
-    localTrack, remoteTracks, chatLog,
-    toggleMic, toggleCam, sendChat,
-  } = useLivekitRoom(LIVEKIT_URL, token);
-  
+      // 2) 룸 연결
+      const r = new Room();
+      setRoom(r);
+
+      r.on(RoomEvent.TrackSubscribed, (_t, pub, p) =>
+        setRemoteTracks((v) => [...v, { pub, id: p.identity }]),
+      );
+      r.on(RoomEvent.TrackUnsubscribed, (_t, pub) =>
+        setRemoteTracks((v) => v.filter((t) => t.pub.trackSid !== pub.trackSid)),
+      );
+
+      await r.connect(LIVEKIT_URL, token);
+      await r.localParticipant.enableCameraAndMicrophone();
+      const first = r.localParticipant.videoTrackPublications.values().next().value;
+      setLocalTrack(first?.videoTrack);
+    })();
+
+    return () => room?.disconnect();
+  }, [id]);
+
+  /* ───────── 레이아웃 정보 예시 ───────── */
+  const roomTitle = `공부합시다! (${id})`;
+  const participantCount = 1 + remoteTracks.length;
+
+  /* ───────── JSX 렌더링 ───────── */
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
-      {/* 상단 방 정보 */}
-      <div className="px-8 py-3 flex items-center border-b border-[#616680] gap-4">
-        <h2 className="text-xl font-semibold">{roomInfo.title}</h2>
+      {/* 상단 헤더 */}
+      <header className="px-8 py-3 flex items-center border-b border-[#616680] gap-4">
+        <h2 className="text-lg font-semibold">{roomTitle}</h2>
         <span className="flex items-center gap-1 text-sm">
-          <Users className="w-4 h-4" /> {roomInfo.participants}
+          <Users className="w-4 h-4" /> {participantCount}
         </span>
-        <span className="text-sm text-gray-400">{roomInfo.createdAt}</span>
-      </div>
+      </header>
 
-      {/* 본문: 비디오 그리드 + 우측 사이드바 */}
+      {/* 본문 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 비디오 그리드 */}
+        {/* ── 비디오 그리드 ── */}
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
-          {roomInfo.users.map((u) => (
-            <div
-              key={u}
-              className="relative bg-[#1D1F2C] rounded-lg aspect-video flex items-center justify-center"
-            >
-              <span className="text-gray-500">{u} 비디오</span>
-            </div>
-          ))}
+          {/* 내 카메라 */}
+          {localTrack && (
+            <VideoComponent
+              track={localTrack}
+              participantIdentity={participantName}
+              local
+            />
+          )}
+
+          {/* 원격 카메라 / 오디오 */}
+          {remoteTracks.map((t) =>
+            t.pub.kind === 'video' ? (
+              <VideoComponent
+                key={t.pub.trackSid}
+                track={t.pub.videoTrack}
+                participantIdentity={t.id}
+              />
+            ) : (
+              <AudioComponent key={t.pub.trackSid} track={t.pub.audioTrack} />
+            )
+          )}
         </div>
 
-        {/* 우측 사이드바 */}
-        <aside className="w-80 p-4 flex flex-col h-full space-y-4">
-          {/* 참가자 카드 */}
-          <div className="bg-white text-black rounded-xl p-4 shadow">
-            <h3 className="text-center font-medium mb-2">
-              참가자 수: {roomInfo.participants}
-            </h3>
-            <hr className="border-gray-300 mb-3" />
-            <ul className="space-y-2">
-              {roomInfo.users.map((u) => (
-                <li key={u} className="flex items-center gap-3">
-                  <img
-                    src={`/avatars/${u}.png`}
-                    alt={u}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="text-sm">{u}</span>
-                </li>
-              ))}
-            </ul>
+        {/* ── 우측 사이드바 (간단 채팅) ── */}
+        <aside className="w-80 p-4 flex flex-col">
+          <h3 className="text-center mb-2">채팅</h3>
+          <div className="flex-1 overflow-auto space-y-1 mb-2">
+            {chatLog.map((m, i) => (
+              <div key={i}>{m}</div>
+            ))}
           </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const txt = e.target.elements.msg.value.trim();
+              if (!txt || !room) return;
+              room.localParticipant.publishData(
+                new TextEncoder().encode(txt),
+                0,
+              );
+              setChatLog((v) => [...v, `나: ${txt}`]);
+              e.target.reset();
+            }}
+          >
+            <input
+              name="msg"
+              className="w-full bg-[#1D1F2C] border border-gray-600 px-2 py-1"
+              placeholder="메시지 입력"
+            />
+          </form>
 
-          {/* 메시지 카드 */}
-          <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
-            <h3 className="text-center font-medium mb-2">메시지</h3>
-            <hr className="border-gray-300 mb-3" />
-            <div className="h-80 overflow-auto mb-3 space-y-2">
-              {roomInfo.messages.length === 0 ? (
-                <p className="text-gray-500 italic">아직 대화가 없습니다.</p>
-              ) : (
-                roomInfo.messages.map((m) => (
-                  <div key={m.id}>
-                    <span className="font-semibold">{m.author}: </span>
-                    <span>{m.text}</span>
-                  </div>
-                ))
-              )}
-            </div>
-            <form className="flex gap-1">
-              <input
-                type="text"
-                placeholder="메시지를 입력하세요"
-                className="flex-1 border border-gray-300 rounded-l px-3 py-2 outline-none"
-              />
-                <button
-                  type="submit"
-                      className="
-                        bg-black text-white
-                        px-3 py-2
-                        rounded-r
-                        hover:bg-gray-800
-                        transition
-                        whitespace-nowrap   /* 줄 바꿈 방지 */
-                        text-center         /* 가운데 정렬 */
-                      "
-                >
-                  전송
-                </button>
-            </form>
-          </div>
-
-          {/* 컨트롤 버튼 */}
-          <div className="flex justify-center gap-4">
+          {/* 컨트롤 (토글 미구현: 버튼만 예시) */}
+          <div className="flex justify-center gap-3 mt-4">
             <button className="bg-green-500 p-3 rounded-full">🎤</button>
             <button className="bg-purple-500 p-3 rounded-full">📹</button>
             <Link to="/study-room">
