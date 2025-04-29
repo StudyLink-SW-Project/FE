@@ -1,6 +1,9 @@
 // src/pages/StudyRoomInside.jsx
 import { useParams, Link } from "react-router-dom";
 import { Users } from "lucide-react";
+import useLivekitRoom from '../hooks/useLivekitRoom';
+import VideoComponent from '../components/VideoComponent';
+import AudioComponent from '../components/AudioComponent';
 
 export default function StudyRoomInside() {
   const { id } = useParams();
@@ -19,6 +22,14 @@ export default function StudyRoomInside() {
     ],
   };
 
+  const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;   // wss://…7443
+  const { token } = useLoaderData();                      // 리액트 라우터 loader 등으로 백엔드에서 토큰 받아오기
+  
+  const {
+    localTrack, remoteTracks, chatLog,
+    toggleMic, toggleCam, sendChat,
+  } = useLivekitRoom(LIVEKIT_URL, token);
+  
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
       {/* 상단 방 정보 */}

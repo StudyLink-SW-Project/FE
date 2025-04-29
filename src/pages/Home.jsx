@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -50,6 +50,11 @@ export default function Home() {
           >
             지금 스터디 시작하기
           </button>
+          <Link
+            to = "/video-room"
+          >
+            test
+          </Link>
         </div>
 
         {/* 오른쪽 일러스트 영역 */}

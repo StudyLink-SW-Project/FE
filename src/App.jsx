@@ -6,6 +6,7 @@ import Questions from "./pages/Questions";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import StudyRoomInside from "./pages/StudyRoomInside";
+import VideoRoom from "./pages/VideoRoom";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage  />} />
       <Route path="/signup" element={<SignupPage  />} />
       <Route path="/study-room/:id" element={<StudyRoomInside />} />
+      <Route path="/video-room" element={<VideoRoom />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
