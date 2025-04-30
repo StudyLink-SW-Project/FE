@@ -6,9 +6,9 @@ import { Room, RoomEvent, LocalVideoTrack } from "livekit-client";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 
-/* LiveKit 서버 & 토큰 서버 URL */
+/* LiveKit 서버 URL */
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL || "ws://localhost:7880/";
-const APP_SERVER = import.meta.env.VITE_APP_SERVER || "http://localhost:6080/";
+const APP_SERVER   = import.meta.env.VITE_APP_SERVER  || "http://localhost:6080/";
 
 export default function StudyRoomInside() {
   const { id } = useParams();
@@ -21,11 +21,10 @@ export default function StudyRoomInside() {
   const [localTrack, setLocalTrack] = useState(null);
   const [remoteTracks, setRemoteTracks] = useState([]);
   const [chatLog, setChatLog] = useState([]);
-  const [camEnabled, setCamEnabled] = useState(true); // 카메라 상태
+  const [camEnabled, setCamEnabled] = useState(true);
 
   useEffect(() => {
     if (!token) return;
-
     const r = new Room();
     setRoom(r);
 
@@ -50,7 +49,6 @@ export default function StudyRoomInside() {
         await r.connect(LIVEKIT_URL, fetchedToken);
         await r.localParticipant.enableCameraAndMicrophone();
 
-        // 로컬 비디오 트랙 꺼내기
         const camPub = Array.from(
           r.localParticipant.videoTrackPublications.values()
         ).find(p => p.track instanceof LocalVideoTrack);
@@ -59,7 +57,6 @@ export default function StudyRoomInside() {
           setCamEnabled(true);
         }
 
-        // 지연 퍼블리시 시에도 잡기
         r.localParticipant.on(RoomEvent.LocalTrackPublished, pub => {
           if (pub.track instanceof LocalVideoTrack) {
             setLocalTrack(pub.track);
@@ -78,7 +75,6 @@ export default function StudyRoomInside() {
     };
   }, [id, token, participantName]);
 
-  // 카메라 On/Off 토글
   const toggleCamera = useCallback(() => {
     if (!room) return;
     room.localParticipant.setCameraEnabled(!camEnabled);
@@ -187,7 +183,6 @@ export default function StudyRoomInside() {
 
           {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
-            {/* 카메라 On/Off 버튼 */}
             <button
               onClick={toggleCamera}
               className={`p-3 rounded-full ${

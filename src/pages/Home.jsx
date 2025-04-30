@@ -53,7 +53,7 @@ export default function Home() {
           <Link
             to = "/video-room"
           >
-            test
+            .
           </Link>
         </div>
 
