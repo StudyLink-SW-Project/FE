@@ -1,7 +1,7 @@
+// src/components/CreateQuestionModal.jsx
 import { useEffect, useState } from "react";
 
 export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
-
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
 
@@ -23,11 +23,11 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl w-1/2 max-w-2x1 max-h-[200vh] h-200 p-10 text-black relative overflow-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+      <div className="bg-[#1D1F2C] rounded-xl w-1/2 max-w-2xl max-h-[90vh] p-10 text-white relative overflow-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
         >
           ✕
         </button>
@@ -36,23 +36,23 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">제목</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">제목</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="질문 제목을 입력하세요"
-              className="w-full border border-gray-300 rounded px-3 py-2 outline-none"
+              className="w-full bg-[#2A2D3F] border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-gray-600 outline-none"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">내용</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">내용</label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               placeholder="질문의 요약 또는 내용을 입력하세요"
-              className="w-full border border-gray-300 rounded px-3 py-3 outline-none"
+              className="w-full bg-[#2A2D3F] border border-gray-600 rounded px-3 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-gray-600 outline-none"
               rows={20}
               required
             />
@@ -62,14 +62,15 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
             type="submit"
             className="
               block
-              w-1/4        /* 너비를 절반으로 */
-              mx-auto      /* 가운데 정렬 */
-              bg-purple-600 text-white
-              py-2         /* 세로 패딩 반으로 */
+              w-1/4
+              mx-auto
+              bg-gray-700 text-white
+              py-2
               rounded
-              hover:bg-purple-700
+              hover:bg-gray-600
               transition
-          ">
+            "
+          >
             질문 등록
           </button>
         </form>
