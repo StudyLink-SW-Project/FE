@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
 
-const APP_SERVER = import.meta.env.production.VITE_APP_SERVER || "http://localhost:6080/";
+const APP_SERVER = import.meta.env.production.VITE_APP_SERVER || "http://localhost:6080";
 
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   const [name, setName] = useState("");

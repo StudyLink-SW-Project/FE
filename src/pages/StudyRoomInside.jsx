@@ -7,8 +7,8 @@ import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 
 /* LiveKit 서버 URL */
-const LIVEKIT_URL = import.meta.env.production.VITE_LIVEKIT_URL || "ws://localhost:7880/";
-const APP_SERVER   = import.meta.env.production.VITE_APP_SERVER  || "http://localhost:6080/";
+const LIVEKIT_URL = import.meta.env.production.VITE_LIVEKIT_URL || "ws://localhost:7880";
+const APP_SERVER   = import.meta.env.production.VITE_APP_SERVER  || "http://localhost:6080";
 
 export default function StudyRoomInside() {
   const { id } = useParams();
