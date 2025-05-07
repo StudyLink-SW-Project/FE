@@ -9,7 +9,8 @@ export default function Home() {
       className="
         min-h-screen
         //bg-[linear-gradient(to_bottom,#1D1F2C,#353F84,#7A8AF4)]
-        bg-[linear-gradient(to_bottom,#1D1F2C,#000E76_30%,#7A8AF4)]
+        //bg-[linear-gradient(to_bottom,#1D1F2C,#000E76_30%,#7A8AF4)]
+        bg-gradient-to-b from-slate-950 via-blue-900 to-indigo-300
         text-white
         flex flex-col
       "
@@ -26,8 +27,8 @@ export default function Home() {
         "
       >
         {/* 왼쪽 텍스트 영역 */}
-        <div className="md:w-1/2 space-y-6 mt-8 md:mt-30">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+        <div className="md:w-1/2 space-y-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-normal">
             쉽고 빠른 연결.<br />
             Study Link
           </h1>
@@ -37,14 +38,11 @@ export default function Home() {
           <button
             onClick={() => navigate("/study-room")}
             className="
-              px-8 py-4
-              // bg-gradient-to-t from-[#0918CC] to-[#3744DA]
-              bg-gradient-to-t from-purple-600 to-purple-500
+              px-8 py-5
+              bg-gradient-to-t from-[#0918CC] to-[#3744DA]
               rounded-full
-              text-white font-bold
-              // hover:from-[#00021B] hover:to-[#323DC2]
-              hover:from-purple-900 hover:to-purple-700
-
+              text-white font-bold text-3x1
+              hover:from-[#00021B] hover:to-[#323DC2]
               transition
               "
           >
