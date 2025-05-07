@@ -27,7 +27,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
     setError("");
     try {
       // 🔑 1) 토큰 발급
-      const res = await fetch(`${APP_SERVER}token`, {
+      const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
