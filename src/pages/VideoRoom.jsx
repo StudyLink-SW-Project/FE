@@ -18,35 +18,31 @@ import AudioComponent from "../components/AudioComponent";
  * @property {string} participantIdentity - 참가자 ID(이름)
  */
 
-// ── 서버 URL 설정 (.env 활용) ──
+// .env 변수로 설정된 서버 URL
 const APPLICATION_SERVER_URL = import.meta.env.VITE_APP_SERVER;
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
-export default function VideoRoom() {
-  const [room, setRoom] = useState();              // Room 인스턴스
-  const [localTrack, setLocalTrack] = useState();  // 내 카메라 트랙
-  const [remoteTracks, setRemoteTracks] = useState([]); // 원격 트랙들
+export default function VideoRoom({ tokenFromModal, id }) {
+  const [room, setRoom] = useState();
+  const [localTrack, setLocalTrack] = useState();
+  const [remoteTracks, setRemoteTracks] = useState([]);
 
   const [participantName, setParticipantName] = useState(
     `Participant${Math.floor(Math.random() * 100)}`
   );
-  const [roomName, setRoomName] = useState("Test Room");
 
   const subscribedRef   = useRef();
   const unsubscribedRef = useRef();
 
   useEffect(() => {
-    return () => {
-      // 컴포넌트 언마운트 시 연결 해제
-      room?.disconnect();
-    };
+    return () => room?.disconnect();
   }, [room]);
 
   async function joinRoom() {
     const r = new Room();
     setRoom(r);
 
-    // 1) 원격 트랙 구독 이벤트
+    // 원격 트랙 구독
     subscribedRef.current = (track, publication, participant) => {
       setRemoteTracks(prev => [
         ...prev,
@@ -55,7 +51,7 @@ export default function VideoRoom() {
     };
     r.on(RoomEvent.TrackSubscribed, subscribedRef.current);
 
-    // 2) 원격 트랙 제거 이벤트
+    // 원격 트랙 구독 해제
     unsubscribedRef.current = (_, publication) => {
       setRemoteTracks(prev =>
         prev.filter(t => t.trackPublication.trackSid !== publication.trackSid)
@@ -64,11 +60,25 @@ export default function VideoRoom() {
     r.on(RoomEvent.TrackUnsubscribed, unsubscribedRef.current);
 
     try {
-      // 3) 토큰 발급 → 룸 연결
-      const token = await getToken(roomName, participantName);
-      await r.connect(LIVEKIT_URL, token);
+      // 모달에서 받은 토큰 우선 사용, 없으면 백엔드 호출
+      const livekitToken = tokenFromModal ?? await (async () => {
+        const res = await fetch(
+          `${APPLICATION_SERVER_URL}/api/v1/video/token`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ roomName: id, participantName }),
+          }
+        );
+        if (!res.ok) throw new Error("토큰 서버 오류");
+        const { token } = await res.json();
+        return token;
+      })();
 
-      // 4) 카메라·마이크 퍼블리시
+      // 룸 연결
+      await r.connect(LIVEKIT_URL, livekitToken);
+
+      // 카메라·마이크 퍼블리시 및 로컬 트랙 설정
       await r.localParticipant.enableCameraAndMicrophone();
       const pubIter = r.localParticipant.videoTrackPublications.values();
       setLocalTrack(pubIter.next().value.videoTrack);
@@ -80,30 +90,12 @@ export default function VideoRoom() {
 
   async function leaveRoom() {
     if (!room) return;
-    // 이벤트 리스너 정리
     room.off(RoomEvent.TrackSubscribed,   subscribedRef.current);
     room.off(RoomEvent.TrackUnsubscribed, unsubscribedRef.current);
     await room.disconnect();
     setRoom(undefined);
     setLocalTrack(undefined);
     setRemoteTracks([]);
-  }
-
-  async function getToken(roomName, participantName) {
-    const res = await fetch(
-      `${APPLICATION_SERVER_URL}token`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomName, participantName }),
-      }
-    );
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(`토큰 발급 실패: ${err.errorMessage}`);
-    }
-    const { token } = await res.json();
-    return token;
   }
 
   return (
@@ -121,22 +113,14 @@ export default function VideoRoom() {
                   required
                 />
               </label>
-              <label>
-                Room
-                <input
-                  value={roomName}
-                  onChange={e => setRoomName(e.target.value)}
-                  required
-                />
-              </label>
-              <button disabled={!participantName || !roomName}>Join!</button>
+              <button disabled={!participantName}>Join!</button>
             </form>
           </div>
         </div>
       ) : (
         <div id="room">
           <header>
-            <h2>{roomName}</h2>
+            <h2>{id}</h2>
             <button onClick={leaveRoom}>Leave Room</button>
           </header>
           <section id="layout-container">
