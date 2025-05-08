@@ -7,7 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import StudyRoomInside from "./pages/StudyRoomInside";
 import QuestionDetail from "./pages/QuestionDetail";
-import VideoRoom from "./components/VideoRoom";
+import VideoRoom from "./pages/VideoRoom";
 
 export default function App() {
   return (
