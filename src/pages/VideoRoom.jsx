@@ -20,11 +20,29 @@ import AudioComponent from "../components/AudioComponent";
 
 
   // 토큰 발급 서버
-  const APPLICATION_SERVER_URL = "https://api.studylink.store/";
-
+  let APPLICATION_SERVER_URL = "";
   // LiveKit WebSocket URL
-  const LIVEKIT_URL = "wss://studylink.store";
+  let LIVEKIT_URL = ""; 
 
+
+      // If APPLICATION_SERVER_URL is not configured, use default value from OpenVidu Local deployment
+      if (!APPLICATION_SERVER_URL) {
+        if (window.location.hostname === "localhost") {
+            APPLICATION_SERVER_URL = "http://localhost:6080/";
+        } else {
+            APPLICATION_SERVER_URL = "https://" + window.location.hostname + ":6443/";
+        }
+    }
+
+    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
+    if (!LIVEKIT_URL) {
+        if (window.location.hostname === "localhost") {
+            LIVEKIT_URL = "ws://localhost:7880/";
+        } else {
+            LIVEKIT_URL = "wss://" + window.location.hostname + ":7443/";
+        }
+    }
+    
 export default function VideoRoom() {
   const [room, setRoom] = useState();              // Room 인스턴스
   const [localTrack, setLocalTrack] = useState();  // 내 카메라 트랙
