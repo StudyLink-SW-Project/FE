@@ -12,6 +12,8 @@
   "dependencies": {
     "@livekit/components-react": "^2.9.3",
     "@livekit/components-styles": "^1.1.5",
+    "@livekit/react-native": "^2.7.4",
+    "@livekit/react-native-webrtc": "^125.0.9",
     "@tailwindcss/vite": "^4.1.4",
     "livekit-client": "^2.11.4",
     "lucide-react": "^0.501.0",
