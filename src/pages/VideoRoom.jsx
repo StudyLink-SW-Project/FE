@@ -8,18 +8,38 @@ import "../App.css";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 
-// ── 유틸: URL 끝 슬래시 제거 ──
-function trimSlash(url) {
-  return url.replace(/\/+$/, "");
+// ── URL 자동 설정 함수 (OpenVidu 튜토리얼 기반) ──
+function configureUrls() {
+  const hostname = window.location.hostname;
+  let appUrl = import.meta.env.VITE_APP_SERVER;
+  let liveKitUrl = import.meta.env.VITE_LIVEKIT_URL;
+
+  // 애플리케이션 서버 URL 설정
+  if (!appUrl) {
+    if (hostname === "localhost") {
+      appUrl = "http://localhost:6080";
+    } else {
+      appUrl = `https://${hostname}:6443`;
+    }
+  }
+
+  // LiveKit WebSocket URL 설정
+  if (!liveKitUrl) {
+    if (hostname === "localhost") {
+      liveKitUrl = "ws://localhost:7880";
+    } else {
+      liveKitUrl = `wss://${hostname}:7443`;
+    }
+  }
+
+  // 끝 슬래시 제거
+  appUrl = appUrl.replace(/\/+$/, "");
+  liveKitUrl = liveKitUrl.replace(/\/+$/, "");
+
+  return { appUrl, liveKitUrl };
 }
 
-// 환경 변수에서 서버 URL 가져오기
-const APPLICATION_SERVER_BASE = trimSlash(
-  import.meta.env.VITE_APP_SERVER || "http://localhost:6080"
-);
-const LIVEKIT_WS_URL = trimSlash(
-  import.meta.env.VITE_LIVEKIT_URL || "ws://localhost:7880"
-);
+const { appUrl: APPLICATION_SERVER_BASE, liveKitUrl: LIVEKIT_WS_URL } = configureUrls();
 
 export default function VideoRoom() {
   const [room, setRoom] = useState/** @type {Room|undefined} */();
@@ -31,12 +51,11 @@ export default function VideoRoom() {
   );
   const [roomName, setRoomName] = useState("Test Room");
 
-  // 이벤트 핸들러 레퍼런스 (cleanup 용)
   const handleSubscribedRef = useRef();
   const handleUnsubscribedRef = useRef();
   const handleLocalPublishedRef = useRef();
 
-  // 컴포넌트 언마운트 시 리소스 정리
+  // 컴포넌트 언마운트 시 cleanup
   useEffect(() => {
     return () => {
       if (room) {
@@ -48,20 +67,16 @@ export default function VideoRoom() {
   async function joinRoom() {
     const r = new Room();
 
-    // 구독된 트랙 처리
+    // 트랙 구독 핸들러 등록
     const handleSubscribed = (track, publication, participant) => {
       setRemoteTracks((prev) => [
         ...prev,
-        {
-          trackPublication: publication,
-          participantIdentity: participant.identity,
-        },
+        { trackPublication: publication, participantIdentity: participant.identity },
       ]);
     };
     handleSubscribedRef.current = handleSubscribed;
     r.on(RoomEvent.TrackSubscribed, handleSubscribed);
 
-    // 구독 해제된 트랙 처리
     const handleUnsubscribed = (_track, publication) => {
       setRemoteTracks((prev) =>
         prev.filter((t) => t.trackPublication.trackSid !== publication.trackSid)
@@ -70,17 +85,13 @@ export default function VideoRoom() {
     handleUnsubscribedRef.current = handleUnsubscribed;
     r.on(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
 
-    // 로컬 비디오 트랙 퍼블리시 감지
     const handleLocalPublished = (publication) => {
       if (publication.track && publication.kind === "video") {
         setLocalTrack(publication.track);
       }
     };
     handleLocalPublishedRef.current = handleLocalPublished;
-    r.localParticipant.on(
-      ParticipantEvent.LocalTrackPublished,
-      handleLocalPublished
-    );
+    r.localParticipant.on(ParticipantEvent.LocalTrackPublished, handleLocalPublished);
 
     setRoom(r);
 
@@ -102,13 +113,8 @@ export default function VideoRoom() {
     // 이벤트 리스너 정리
     room.off(RoomEvent.TrackSubscribed, handleSubscribedRef.current);
     room.off(RoomEvent.TrackUnsubscribed, handleUnsubscribedRef.current);
-    room.localParticipant.off(
-      ParticipantEvent.LocalTrackPublished,
-      handleLocalPublishedRef.current
-    );
-    // 룸 연결 해제
+    room.localParticipant.off(ParticipantEvent.LocalTrackPublished, handleLocalPublishedRef.current);
     await room.disconnect();
-    // 상태 초기화
     setRoom(undefined);
     setLocalTrack(undefined);
     setRemoteTracks([]);
@@ -133,12 +139,7 @@ export default function VideoRoom() {
     <div id="join">
       <div id="join-dialog">
         <h2>Join a Video Room</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            joinRoom();
-          }}
-        >
+        <form onSubmit={(e) => { e.preventDefault(); joinRoom(); }}>
           <label>
             Participant
             <input
@@ -167,11 +168,7 @@ export default function VideoRoom() {
       </header>
       <section id="layout-container">
         {localTrack && (
-          <VideoComponent
-            track={localTrack}
-            participantIdentity={participantName}
-            local
-          />
+          <VideoComponent track={localTrack} participantIdentity={participantName} local />
         )}
         {remoteTracks.map((info) =>
           info.trackPublication.kind === "video" ? (
