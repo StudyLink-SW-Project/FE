@@ -74,8 +74,14 @@ import {
     }
   
     async function getToken(roomName, participantName) {
-      const res = await fetch(`${APPLICATION_SERVER_URL}/api/v1/video/token`, {
-        method: "POST",
+      // 1) base 끝에 / 가 없으면 붙이고, 있으면 그대로
+      const base = APPLICATION_SERVER_URL.endsWith("/")
+      ? APPLICATION_SERVER_URL
+      : APPLICATION_SERVER_URL + "/";
+      // 2) "/api/v1/video/token" 앞에 / 가 있으니 URL 합치면 정확히 한 번만 들어갑니다
+      const url = `${base}api/v1/video/token`;
+      
+      const res = await fetch(url, {        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomName, participantName }),
       });
