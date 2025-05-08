@@ -18,24 +18,12 @@ import AudioComponent from "../components/AudioComponent";
  * @property {string} participantIdentity - 참가자 ID(이름)
  */
 
-// ── 서버 URL 설정 ──
-let APPLICATION_SERVER_URL = "";
-let LIVEKIT_URL = "";
-configureUrls();
-
-function configureUrls() {
-  const host = window.location.hostname;
 
   // 토큰 발급 서버
-  APPLICATION_SERVER_URL = host === "localhost"
-    ? "http://localhost:6080/"
-    : `https://${host}:6443/`;
+  const APPLICATION_SERVER_URL = "https://api.studylink.store/";
 
   // LiveKit WebSocket URL
-  LIVEKIT_URL = host === "localhost"
-    ? "ws://localhost:7880/"
-    : `wss://${host}:7443/`;
-}
+  const LIVEKIT_URL = "wss://studylink.store";
 
 export default function VideoRoom() {
   const [room, setRoom] = useState();              // Room 인스턴스
