@@ -18,9 +18,24 @@ import AudioComponent from "../components/AudioComponent";
  * @property {string} participantIdentity - 참가자 ID(이름)
  */
 
-// .env 변수로 설정된 서버 URL
-const APPLICATION_SERVER_URL = import.meta.env.VITE_APP_SERVER;
-const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
+// ── 서버 URL 설정 ──
+let APPLICATION_SERVER_URL = "";
+let LIVEKIT_URL = "";
+configureUrls();
+
+function configureUrls() {
+  const host = window.location.hostname;
+
+  // 토큰 발급 서버
+  APPLICATION_SERVER_URL = host === "localhost"
+    ? "http://localhost:6080/"
+    : `https://${host}:6443/`;
+
+  // LiveKit WebSocket URL
+  LIVEKIT_URL = host === "localhost"
+    ? "ws://localhost:7880/"
+    : `wss://${host}:7443/`;
+}
 
 export default function VideoRoom() {
   const [room, setRoom] = useState();              // Room 인스턴스
@@ -36,7 +51,10 @@ export default function VideoRoom() {
   const unsubscribedRef = useRef();
 
   useEffect(() => {
-    return () => room?.disconnect();
+    return () => {
+      // 컴포넌트 언마운트 시 연결 해제
+      room?.disconnect();
+    };
   }, [room]);
 
   async function joinRoom() {
@@ -77,6 +95,7 @@ export default function VideoRoom() {
 
   async function leaveRoom() {
     if (!room) return;
+    // 이벤트 리스너 정리
     room.off(RoomEvent.TrackSubscribed,   subscribedRef.current);
     room.off(RoomEvent.TrackUnsubscribed, unsubscribedRef.current);
     await room.disconnect();
@@ -85,15 +104,9 @@ export default function VideoRoom() {
     setRemoteTracks([]);
   }
 
-  /**
-   * 토큰 발급
-   * @param {string} roomName
-   * @param {string} participantName
-   */
   async function getToken(roomName, participantName) {
     const res = await fetch(
-      // .env.production 에 설정된 VITE_APP_SERVER를 기반으로 호출
-      `${APPLICATION_SERVER_URL}api/v1/video/token`,
+      `${APPLICATION_SERVER_URL}token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
