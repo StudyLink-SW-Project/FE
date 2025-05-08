@@ -24,7 +24,7 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-[#1D1F2C] rounded-xl w-1/2 max-w-2xl max-h-[90vh] p-10 text-white relative overflow-auto">
+      <div className="bg-[#1D1F2C] rounded-xl w-1/2 max-w-2xl p-10 text-white relative flex flex-col">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
@@ -34,7 +34,7 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
 
         <h2 className="text-2xl font-semibold mb-4">질문 작성</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-auto space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-300">제목</label>
             <input
@@ -62,13 +62,14 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
             type="submit"
             className="
               block
-              w-1/4
+              w-1/3
               mx-auto
               bg-gray-700 text-white
               py-2
               rounded
               hover:bg-gray-600
               transition
+              mt-3
             "
           >
             질문 등록

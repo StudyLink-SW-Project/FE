@@ -128,7 +128,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
               <select
                 value={maxUsers}
                 onChange={(e) => setMaxUsers(+e.target.value)}
-                className="bg-transparent border border-gray-600 text-white rounded px-2 py-1 outline-none"
+                className="bg-transparent border border-gray-600 text-gray-400 rounded px-2 py-1 outline-none"
               >
                 {[4, 8, 12, 16, 20].map((n) => (
                   <option key={n} value={n}>
@@ -142,7 +142,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
           {/* 생성 버튼 */}
           <button
             type="submit"
-            className="w-full py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition"
+            className="w-1/3 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition block mx-auto mt-10"
           >
             생성하기
           </button>
