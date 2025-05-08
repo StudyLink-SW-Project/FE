@@ -106,7 +106,7 @@ export default function VideoRoom() {
 
   async function getToken(roomName, participantName) {
     const res = await fetch(
-      `${APPLICATION_SERVER_URL}token`,
+      `${APPLICATION_SERVER_URL}api/v1/video/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
