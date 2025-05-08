@@ -46,40 +46,73 @@ export default function VideoRoom() {
   }, [room]);
 
   async function joinRoom() {
+    console.log("joinRoom 함수 시작");
     const r = new Room();
+    console.log("Room 인스턴스 생성:", r);
     setRoom(r);
 
-    // 1) 원격 트랙 구독 이벤트
-    subscribedRef.current = (track, publication, participant) => {
-      setRemoteTracks(prev => [
-        ...prev,
-        { trackPublication: publication, participantIdentity: participant.identity }
-      ]);
-    };
-    r.on(RoomEvent.TrackSubscribed, subscribedRef.current);
 
-    // 2) 원격 트랙 제거 이벤트
-    unsubscribedRef.current = (_, publication) => {
-      setRemoteTracks(prev =>
-        prev.filter(t => t.trackPublication.trackSid !== publication.trackSid)
-      );
-    };
-    r.on(RoomEvent.TrackUnsubscribed, unsubscribedRef.current);
+  // Room 객체 생성 후 이벤트 리스너 추가 (여기에 추가)
+  r.on(RoomEvent.Connected, () => console.log("WebSocket 연결됨"));
+  r.on(RoomEvent.Disconnected, (reason) => console.log("WebSocket 연결 해제됨:", reason));
+  r.on(RoomEvent.ConnectionStateChanged, (state) => console.log("WebSocket 상태 변경:", state));
+  r.on(RoomEvent.ConnectionQualityChanged, (connectionQuality) => console.log("연결 품질 변경:", connectionQuality));
+  r.on(RoomEvent.SignalConnected, () => console.log("시그널링 서버 연결됨"));
+  r.on(RoomEvent.SignalConnectionStateChanged, (state) => console.log("시그널링 상태 변경:", state));
+  r.on(RoomEvent.Reconnecting, () => console.log("재연결 시도 중"));
+  r.on(RoomEvent.Reconnected, () => console.log("재연결 성공"));
 
-    try {
-      // 3) 토큰 발급 → 룸 연결
-      const token = await getToken(roomName, participantName);
-      await r.connect(LIVEKIT_URL, token);
 
-      // 4) 카메라·마이크 퍼블리시
-      await r.localParticipant.enableCameraAndMicrophone();
-      const pubIter = r.localParticipant.videoTrackPublications.values();
-      setLocalTrack(pubIter.next().value.videoTrack);
-    } catch (err) {
-      console.error("룸 연결 중 오류:", err);
-      await leaveRoom();
-    }
+
+  // 1) 원격 트랙 구독 이벤트
+  subscribedRef.current = (track, publication, participant) => {
+    console.log("TrackSubscribed 이벤트:", { track, publication, participant });
+    setRemoteTracks(prev => [
+      ...prev,
+      { trackPublication: publication, participantIdentity: participant.identity }
+    ]);
+  };
+  r.on(RoomEvent.TrackSubscribed, subscribedRef.current);
+
+  // 2) 원격 트랙 제거 이벤트
+  unsubscribedRef.current = (_, publication) => {
+    console.log("TrackUnsubscribed 이벤트:", publication);
+    setRemoteTracks(prev =>
+      prev.filter(t => t.trackPublication.trackSid !== publication.trackSid)
+    );
+  };
+  r.on(RoomEvent.TrackUnsubscribed, unsubscribedRef.current);
+
+  try {
+    // 3) 토큰 발급 → 룸 연결
+    console.log("토큰 발급 시작:", { roomName, participantName });
+    const token = await getToken(roomName, participantName);
+    console.log("토큰 발급 완료:", token);
+    
+    console.log("LiveKit 서버 연결 시작:", { LIVEKIT_URL });
+    await r.connect(LIVEKIT_URL, token);
+    console.log("LiveKit 서버 연결 완료");
+
+    // 4) 카메라·마이크 퍼블리시
+    console.log("카메라/마이크 활성화 시작");
+    await r.localParticipant.enableCameraAndMicrophone();
+    console.log("카메라/마이크 활성화 완료");
+    
+    const pubIter = r.localParticipant.videoTrackPublications.values();
+    const videoTrack = pubIter.next().value?.videoTrack;
+    console.log("로컬 비디오 트랙:", videoTrack);
+    setLocalTrack(videoTrack);
+  } catch (err) {
+    console.error("룸 연결 중 오류:", err);
+    console.log("오류 상세 정보:", { 
+      message: err.message,
+      name: err.name,
+      stack: err.stack,
+      cause: err.cause
+    });
+    await leaveRoom();
   }
+}
 
   async function leaveRoom() {
     if (!room) return;
@@ -93,20 +126,33 @@ export default function VideoRoom() {
   }
 
   async function getToken(roomName, participantName) {
-    const res = await fetch(
-      `${APPLICATION_SERVER_URL}api/v1/video/token`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomName, participantName }),
+    console.log("getToken 함수 호출:", { roomName, participantName, url: `${APPLICATION_SERVER_URL}api/v1/video/token` });
+    
+    try {
+      const res = await fetch(
+        `${APPLICATION_SERVER_URL}api/v1/video/token`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roomName, participantName }),
+        }
+      );
+      
+      console.log("토큰 요청 응답:", { status: res.status, ok: res.ok });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("토큰 발급 실패 응답:", err);
+        throw new Error(`토큰 발급 실패: ${err.errorMessage}`);
       }
-    );
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(`토큰 발급 실패: ${err.errorMessage}`);
+      
+      const data = await res.json();
+      console.log("토큰 발급 성공:", data);
+      return data.token;
+    } catch (error) {
+      console.error("토큰 요청 중 예외 발생:", error);
+      throw error;
     }
-    const { token } = await res.json();
-    return token;
   }
 
   return (
