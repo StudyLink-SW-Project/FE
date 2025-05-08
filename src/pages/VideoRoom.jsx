@@ -1,132 +1,150 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Room,
-  RoomEvent,
-  ParticipantEvent,
-} from "livekit-client";
+import { Room, RoomEvent, ParticipantEvent } from "livekit-client";
 import "../App.css";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 
-// ── URL 자동 설정 함수 (OpenVidu 튜토리얼 기반) ──
+// JWT 디코딩 유틸 (라이브러리 불필요)
+function decodeJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+  return JSON.parse(jsonPayload);
+}
+
+// ── URL 자동 설정 함수 ──
 function configureUrls() {
   const hostname = window.location.hostname;
   let appUrl = import.meta.env.VITE_APP_SERVER;
   let liveKitUrl = import.meta.env.VITE_LIVEKIT_URL;
 
-  // 애플리케이션 서버 URL 설정
   if (!appUrl) {
-    if (hostname === "localhost") {
-      appUrl = "http://localhost:6080";
-    } else {
-      appUrl = `https://${hostname}:6443`;
-    }
+    appUrl = hostname === "localhost"
+      ? "http://localhost:6080"
+      : `https://${hostname}:6443`;
   }
-
-  // LiveKit WebSocket URL 설정
   if (!liveKitUrl) {
-    if (hostname === "localhost") {
-      liveKitUrl = "ws://localhost:7880";
-    } else {
-      liveKitUrl = `wss://${hostname}:7443`;
-    }
+    liveKitUrl = hostname === "localhost"
+      ? "ws://localhost:7880"
+      : `wss://${hostname}:7443`;
   }
 
-  // 끝 슬래시 제거
-  appUrl = appUrl.replace(/\/+$/, "");
-  liveKitUrl = liveKitUrl.replace(/\/+$/, "");
-
-  return { appUrl, liveKitUrl };
+  return {
+    appUrl: appUrl.replace(/\/+$/, ""),
+    liveKitUrl: liveKitUrl.replace(/\/+$/, ""),
+  };
 }
 
 const { appUrl: APPLICATION_SERVER_BASE, liveKitUrl: LIVEKIT_WS_URL } = configureUrls();
 
 export default function VideoRoom() {
-  const [room, setRoom] = useState/** @type {Room|undefined} */();
-  const [localTrack, setLocalTrack] = useState/** @type {import('livekit-client').LocalVideoTrack|undefined} */();
-  const [remoteTracks, setRemoteTracks] = useState/** @type {TrackInfo[]} */([]);
+  const [room, setRoom] = useState(null);
+  const [localTrack, setLocalTrack] = useState(null);
+  const [remoteTracks, setRemoteTracks] = useState([]);
 
   const [participantName, setParticipantName] = useState(
     `Participant${Math.floor(Math.random() * 100)}`
   );
   const [roomName, setRoomName] = useState("Test Room");
 
-  const handleSubscribedRef = useRef();
-  const handleUnsubscribedRef = useRef();
-  const handleLocalPublishedRef = useRef();
+  const handleSubscribedRef = useRef(null);
+  const handleUnsubscribedRef = useRef(null);
+  const handleLocalPublishedRef = useRef(null);
 
-  // 컴포넌트 언마운트 시 cleanup
   useEffect(() => {
     return () => {
-      if (room) {
-        room.disconnect();
-      }
+      room?.disconnect();
     };
   }, [room]);
 
   async function joinRoom() {
     const r = new Room();
 
-    // 트랙 구독 핸들러 등록
-    const handleSubscribed = (track, publication, participant) => {
-      setRemoteTracks((prev) => [
+    handleSubscribedRef.current = (track, publication, participant) => {
+      setRemoteTracks(prev => [
         ...prev,
-        { trackPublication: publication, participantIdentity: participant.identity },
+        { trackPublication: publication, participantIdentity: participant.identity }
       ]);
     };
-    handleSubscribedRef.current = handleSubscribed;
-    r.on(RoomEvent.TrackSubscribed, handleSubscribed);
+    r.on(RoomEvent.TrackSubscribed, handleSubscribedRef.current);
 
-    const handleUnsubscribed = (_track, publication) => {
-      setRemoteTracks((prev) =>
-        prev.filter((t) => t.trackPublication.trackSid !== publication.trackSid)
+    handleUnsubscribedRef.current = (_track, publication) => {
+      setRemoteTracks(prev =>
+        prev.filter(t => t.trackPublication.trackSid !== publication.trackSid)
       );
     };
-    handleUnsubscribedRef.current = handleUnsubscribed;
-    r.on(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
+    r.on(RoomEvent.TrackUnsubscribed, handleUnsubscribedRef.current);
 
-    const handleLocalPublished = (publication) => {
+    handleLocalPublishedRef.current = (publication) => {
       if (publication.track && publication.kind === "video") {
         setLocalTrack(publication.track);
       }
     };
-    handleLocalPublishedRef.current = handleLocalPublished;
-    r.localParticipant.on(ParticipantEvent.LocalTrackPublished, handleLocalPublished);
+    r.localParticipant.on(
+      ParticipantEvent.LocalTrackPublished,
+      handleLocalPublishedRef.current
+    );
 
     setRoom(r);
 
     try {
-      // 토큰 발급
-      const token = await getToken(roomName, participantName);
-      // LiveKit 룸 연결
-      await r.connect(LIVEKIT_WS_URL, token);
-      // 카메라·마이크 활성화
+      // 최초 연결용 토큰 발급
+      const initialToken = await getToken(roomName, participantName);
+      await r.connect(LIVEKIT_WS_URL, initialToken);
       await r.localParticipant.enableCameraAndMicrophone();
-    } catch (e) {
-      console.error("룸 연결 중 오류:", e);
-      await leaveRoom();
+
+      // 토큰 갱신 로직 (만료 5분 전)
+      const { exp } = decodeJwt(initialToken);
+      const now = Math.floor(Date.now() / 1000);
+      const ttl = exp - now;
+      const refreshDelay = (ttl - 300) * 1000;
+
+      const refreshLoop = async () => {
+        try {
+          const newToken = await getToken(roomName, participantName);
+          await r.updateToken(newToken);
+          const { exp: newExp } = decodeJwt(newToken);
+          const nextDelay = (newExp - Math.floor(Date.now() / 1000) - 300) * 1000;
+          setTimeout(refreshLoop, nextDelay);
+        } catch (err) {
+          console.error("토큰 갱신 중 오류:", err);
+        }
+      };
+      setTimeout(refreshLoop, refreshDelay);
+    } catch (err) {
+      console.error("룸 연결 중 오류:", err);
+      leaveRoom();
     }
   }
 
   async function leaveRoom() {
     if (!room) return;
-    // 이벤트 리스너 정리
     room.off(RoomEvent.TrackSubscribed, handleSubscribedRef.current);
     room.off(RoomEvent.TrackUnsubscribed, handleUnsubscribedRef.current);
-    room.localParticipant.off(ParticipantEvent.LocalTrackPublished, handleLocalPublishedRef.current);
+    room.localParticipant.off(
+      ParticipantEvent.LocalTrackPublished,
+      handleLocalPublishedRef.current
+    );
     await room.disconnect();
-    setRoom(undefined);
-    setLocalTrack(undefined);
+    setRoom(null);
+    setLocalTrack(null);
     setRemoteTracks([]);
   }
 
   async function getToken(roomName, participantName) {
-    const url = `${APPLICATION_SERVER_BASE}/api/v1/video/token`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomName, participantName }),
-    });
+    const res = await fetch(
+      `${APPLICATION_SERVER_BASE}/api/v1/video/token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomName, participantName }),
+      }
+    );
     if (!res.ok) {
       const err = await res.json();
       throw new Error(`토큰 발급 실패: ${err.errorMessage}`);
@@ -139,12 +157,12 @@ export default function VideoRoom() {
     <div id="join">
       <div id="join-dialog">
         <h2>Join a Video Room</h2>
-        <form onSubmit={(e) => { e.preventDefault(); joinRoom(); }}>
+        <form onSubmit={e => { e.preventDefault(); joinRoom(); }}>
           <label>
             Participant
             <input
               value={participantName}
-              onChange={(e) => setParticipantName(e.target.value)}
+              onChange={e => setParticipantName(e.target.value)}
               required
             />
           </label>
@@ -152,7 +170,7 @@ export default function VideoRoom() {
             Room
             <input
               value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
+              onChange={e => setRoomName(e.target.value)}
               required
             />
           </label>
@@ -168,9 +186,13 @@ export default function VideoRoom() {
       </header>
       <section id="layout-container">
         {localTrack && (
-          <VideoComponent track={localTrack} participantIdentity={participantName} local />
+          <VideoComponent
+            track={localTrack}
+            participantIdentity={participantName}
+            local
+          />
         )}
-        {remoteTracks.map((info) =>
+        {remoteTracks.map(info =>
           info.trackPublication.kind === "video" ? (
             <VideoComponent
               key={info.trackPublication.trackSid}
