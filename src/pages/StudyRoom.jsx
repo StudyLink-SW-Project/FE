@@ -111,7 +111,8 @@ export default function StudyRoom() {
               <div
                 key={room.id}
                 className="cursor-pointer"
-                onClick={() => handleCardClick(room)}
+                // onClick={() => handleCardClick(room)}
+                onClick={() => navigate("/video-room")}
               >
                 <StudyRoomCard {...room} />
               </div>
