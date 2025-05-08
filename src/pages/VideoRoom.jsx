@@ -74,7 +74,7 @@ import {
     }
   
     async function getToken(roomName, participantName) {
-      const res = await fetch(APPLICATION_SERVER_URL + "token", {
+      const res = await fetch(`${APPLICATION_SERVER_URL}/api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomName, participantName }),
