@@ -100,7 +100,7 @@ export default function StudyRoomInside() {
   const { state } = useLocation();
   const tokenFromModal = state?.token;  // 모달에서 넘어온 토큰
   const participantName =
-    state?.name || `Guest_${Math.random().toString(36).slice(2, 6)}`;
+    state?.name;
 
   const [room, setRoom] = useState(null);
   const [localTrack, setLocalTrack] = useState(null);
@@ -179,7 +179,7 @@ export default function StudyRoomInside() {
 
   const roomTitle = `공부합시다! (${id})`;
   const participantCount = 1 + remoteTracks.length;
-  
+
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
       {/* 상단 방 정보 */}

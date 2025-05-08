@@ -69,9 +69,10 @@ export default function StudyRoom() {
   // 🌟 토큰(state)과 닉네임을 받아서 페이지 이동
   const handleEnterRoom = (roomId, token, name) => {
     setShowJoinModal(false);
-    navigate(`/study-room/${roomId}`, {
-      state: { token, name },
-    });
+    navigate(
+      `/study-room/${roomId}`,
+      { state: { token, name } }      // <-- 여기에 넘겨줍니다
+    );
   };
 
   return (
