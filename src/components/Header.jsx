@@ -1,12 +1,12 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserMenu from './UserMenu';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  
-  // 실제 로그인 여부를 확인하는 로직으로 대체하세요.
-  const isLoggedIn = false;
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <header className="bg-[#1D1F2C] text-white flex justify-between items-center px-8 py-4 h-20 border-b border-[#616680]">
@@ -24,12 +24,18 @@ export default function Header() {
 
       {/* 오른쪽: 로그인 상태에 따라 다르게 */}
       <div className="flex items-center gap-4">
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <div className="relative">
             <button onClick={() => setMenuOpen(!menuOpen)}>
               <img src="/user_icon.png" alt="User" className="w-13 h-13 rounded-full" />
             </button>
-            {menuOpen && <UserMenu />}
+            {menuOpen && (
+              <UserMenu 
+                user={user} 
+                onClose={() => setMenuOpen(false)}
+                onLogout={logout}
+              />
+            )}
           </div>
         ) : (
           <>
