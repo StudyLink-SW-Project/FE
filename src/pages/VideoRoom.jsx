@@ -29,7 +29,7 @@ import AudioComponent from "../components/AudioComponent";
         if (window.location.hostname === "localhost") {
             LIVEKIT_URL = "ws://localhost:7880/";
         } else {
-            LIVEKIT_URL = "wss://" + window.location.hostname + ":443/";
+            LIVEKIT_URL = "wss://" + window.location.hostname + ":8443/";
         }
     }
 
