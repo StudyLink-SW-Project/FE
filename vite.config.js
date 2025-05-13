@@ -5,14 +5,27 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),    
+    react(),
     tailwindcss(),
   ],
   server: {
     port: 5173,
     proxy: {
-      // '/token' 로 오는 요청을 백엔드 6080 번으로 전달
-      '/token': 'http://localhost:6080',
+// 모든 API 요청들을 백엔드로 프록시
+      // /user 로 들어오는 요청은 https://api.studylink.store 로 포워딩
+      '/user': {
+        target: 'http://localhost:8081/',
+        changeOrigin: true,
+      },
+      // 만약 API 엔드포인트가 /api 로 시작한다면 아래처럼 추가
+      '/api': {
+        target: 'http://localhost:8081/',
+        changeOrigin: true,
+      },
+      '/oauth2': {
+        target: 'http://localhost:8081/',
+        changeOrigin: true,
+      }
     },
   }
 })
