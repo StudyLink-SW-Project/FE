@@ -1,17 +1,24 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserMenu from './UserMenu';
-import { useAuth } from '../contexts/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutThunk } from '../store/authThunks';
 import userIcon from '../assets/user_icon.png';
+import UserMenu from './UserMenu';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
+  const isAuthenticated = !!user;
+
+  const handleLogout = async () => {
+    await dispatch(logoutThunk()).unwrap();
+    setMenuOpen(false);
+  };
 
   return (
     <header className="bg-[#1D1F2C] text-white flex justify-between items-center px-8 py-4 h-20 border-b border-[#616680]">
-      {/* 로고 + 메뉴 */}
+      {/* 로고 + 네비게이션 */}
       <div className="flex items-center gap-15">
         <Link to="/">
           <img src="/logo_white.png" alt="Study Link Logo" className="h-20" />
@@ -23,19 +30,15 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* 오른쪽: 로그인 상태에 따라 다르게 */}
+      {/* 로그인 상태에 따른 UI */}
       <div className="flex items-center gap-4">
         {isAuthenticated ? (
           <div className="relative">
-            <button onClick={() => setMenuOpen(!menuOpen)}>
+            <button onClick={() => setMenuOpen(prev => !prev)}>
               <img src={userIcon} alt="User" className="w-13 h-13 rounded-full" />
             </button>
             {menuOpen && (
-              <UserMenu 
-                user={user} 
-                onClose={() => setMenuOpen(false)}
-                onLogout={logout}
-              />
+              <UserMenu onClose={() => setMenuOpen(false)} onLogout={handleLogout} />
             )}
           </div>
         ) : (

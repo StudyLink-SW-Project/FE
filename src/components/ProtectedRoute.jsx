@@ -1,17 +1,14 @@
-
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useSelector } from 'react-redux';
 
 export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { user, loading } = useSelector(state => state.auth);
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
   }
-
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 }
