@@ -5,11 +5,16 @@ import App from "./App.jsx";
 import "./index.css";
 
 import { BrowserRouter } from "react-router-dom";
+// Redux 관련 import
+import { Provider } from "react-redux";
+import store from "./store";    // src/store/index.js 에서 export 한 스토어
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );

@@ -1,35 +1,31 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { loginThunk, fetchInfoThunk } from "../store/authThunks";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  
-  const { login, getSocialLoginUrl } = useAuth();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector(state => state.auth);
+  const base = import.meta.env.VITE_APP_SERVER || '/';
+  const getSocialLoginUrl = provider =>
+    `${base}oauth2/authorization/${provider}`;
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    // loginThunk에서 loading/error 상태가 관리됩니다
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        navigate("/");
-      } else {
-        setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
-      }
+           await dispatch(loginThunk({ email, password })).unwrap();
+     // 로그인 성공
+     await dispatch(fetchInfoThunk());
+     navigate("/");
     } catch (err) {
-      setError("로그인 중 오류가 발생했습니다.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+      console.error("로그인 오류:", err);
     }
   };
   
