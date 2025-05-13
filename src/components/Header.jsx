@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserMenu from './UserMenu';
 import { useAuth } from '../contexts/AuthContext';
+import userIcon from '../assets/user_icon.png';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,7 +28,7 @@ export default function Header() {
         {isAuthenticated ? (
           <div className="relative">
             <button onClick={() => setMenuOpen(!menuOpen)}>
-              <img src="/user_icon.png" alt="User" className="w-13 h-13 rounded-full" />
+              <img src={userIcon} alt="User" className="w-13 h-13 rounded-full" />
             </button>
             {menuOpen && (
               <UserMenu 
