@@ -12,16 +12,18 @@ export default defineConfig({
     port: 5173,
     proxy: {
 // 모든 API 요청들을 백엔드로 프록시
-      '/api': {
-        target: 'https://api.studylink.store',
+      // /user 로 들어오는 요청은 https://api.studylink.store 로 포워딩
+      '/user': {
+        target: 'http://localhost:8081/',
         changeOrigin: true,
       },
-      '/user': {
-        target: 'https://api.studylink.store',
+      // 만약 API 엔드포인트가 /api 로 시작한다면 아래처럼 추가
+      '/api': {
+        target: 'http://localhost:8081/',
         changeOrigin: true,
       },
       '/oauth2': {
-        target: 'https://api.studylink.store',
+        target: 'http://localhost:8081/',
         changeOrigin: true,
       }
     },
