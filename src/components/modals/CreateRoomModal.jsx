@@ -10,7 +10,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
   const [maxUsers, setMaxUsers] = useState(16);
   const [bgFile, setBgFile] = useState(null);
 
-  // 모달이 열릴 때 입력값 초기화
   useEffect(() => {
     if (isOpen) {
       setRoomName("");
@@ -38,12 +37,27 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-[#1D1F2C] rounded-2xl w-full max-w-md p-8 relative text-white">
+    <div
+      className="
+        fixed inset-0 z-50 flex items-center justify-center
+        bg-black bg-opacity-70 dark:bg-white dark:bg-opacity-30
+      "
+    >
+      <div
+        className="
+          bg-background text-foreground
+          rounded-2xl w-full max-w-md p-8
+          relative flex flex-col
+        "
+      >
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
+          className="
+            absolute top-4 right-4
+            text-foreground/60 hover:text-foreground
+            transition
+          "
         >
           ✕
         </button>
@@ -53,15 +67,27 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* 방 이름 */}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">방 이름</label>
-            <div className="flex items-center border-b border-gray-600 pb-1">
-              <Home className="w-5 h-5 text-gray-400 mr-2" />
+            <label className="block text-sm font-medium mb-1 text-foreground/70">
+              방 이름
+            </label>
+            <div
+              className="
+                flex items-center
+                border-b border-foreground/50 pb-1
+              "
+            >
+              <Home className="w-5 h-5 text-foreground/50 mr-2" />
               <input
                 type="text"
                 placeholder="방 이름을 입력하세요.."
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
-                className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none"
+                className="
+                  flex-1
+                  bg-transparent
+                  text-foreground placeholder-foreground/50
+                  outline-none
+                "
                 required
               />
             </div>
@@ -69,37 +95,59 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
 
           {/* 방 소개 */}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">방 소개</label>
-            <div className="flex items-center border-b border-gray-600 pb-1">
-              <FileText className="w-5 h-5 text-gray-400 mr-2" />
+            <label className="block text-sm font-medium mb-1 text-foreground/70">
+              방 소개
+            </label>
+            <div
+              className="
+                flex items-center
+                border-b border-foreground/50 pb-1
+              "
+            >
+              <FileText className="w-5 h-5 text-foreground/50 mr-2" />
               <input
                 type="text"
                 placeholder="방 소개 문구를 작성하세요.."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none"
+                className="
+                  flex-1
+                  bg-transparent
+                  text-foreground placeholder-foreground/50
+                  outline-none
+                "
               />
             </div>
           </div>
 
           {/* 비밀번호 */}
           <div>
-            <label className="flex items-center text-sm text-gray-300 mb-1">
-              <Lock className="w-4 h-4 mr-1" />
+            <label className="flex items-center text-sm font-medium mb-1 text-foreground/70">
+              <Lock className="w-4 h-4 mr-1 text-foreground/50" />
               비밀번호
             </label>
-            <div className="flex items-center border-b border-gray-600 pb-1">
+            <div
+              className="
+                flex items-center
+                border-b border-foreground/50 pb-1
+              "
+            >
               <input
                 type={showPwd ? "text" : "password"}
                 placeholder="비밀번호를 설정하세요.."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none"
+                className="
+                  flex-1
+                  bg-transparent
+                  text-foreground placeholder-foreground/50
+                  outline-none
+                "
               />
               <button
                 type="button"
                 onClick={() => setShowPwd((v) => !v)}
-                className="text-gray-400"
+                className="text-foreground/50 hover:text-foreground transition"
               >
                 {showPwd ? (
                   <EyeOff className="w-5 h-5" />
@@ -112,8 +160,8 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
 
           {/* 배경 업로드 & 인원 수 */}
           <div className="flex items-center justify-between">
-            <label className="flex items-center text-sm text-gray-300 cursor-pointer">
-              <Image className="w-5 h-5 mr-1 text-gray-400" />
+            <label className="flex items-center text-sm text-foreground/70 cursor-pointer">
+              <Image className="w-5 h-5 text-foreground/50 mr-1" />
               배경 업로드
               <input
                 type="file"
@@ -124,11 +172,19 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
             </label>
 
             <div className="flex items-center">
-              <span className="text-sm text-gray-300 mr-2">인원 수 설정</span>
+              <span className="text-sm text-foreground/70 mr-2">
+                인원 수 설정
+              </span>
               <select
                 value={maxUsers}
                 onChange={(e) => setMaxUsers(+e.target.value)}
-                className="bg-transparent border border-gray-600 text-gray-400 rounded px-2 py-1 outline-none"
+                className="
+                  bg-transparent
+                  border border-foreground/50
+                  text-foreground placeholder-foreground/50
+                  rounded px-2 py-1
+                  outline-none
+                "
               >
                 {[4, 8, 12, 16, 20].map((n) => (
                   <option key={n} value={n}>
@@ -142,7 +198,14 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
           {/* 생성 버튼 */}
           <button
             type="submit"
-            className="w-1/3 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition block mx-auto mt-10"
+            className="
+              w-1/3 py-3 mx-auto
+              bg-primary text-white
+              rounded-full
+              hover:bg-primary/80
+              transition
+              mt-10
+            "
           >
             생성하기
           </button>
