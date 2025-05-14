@@ -202,20 +202,21 @@ export default function StudyRoom() {
   };
 
   return (
-    <div className="min-h-screen bg-[#282A36] text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Header />
 
-      {/* 상단 타이틀/검색 */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
+      <div className="flex-1 p-8">
+        {/* 상단 타이틀 + 새 생성 + 검색 */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <h1 className="text-4xl font-bold flex items-center gap-2">
             스터디 룸
             <PlusCircle
-              className="w-6 h-6 hover:text-blue-400 cursor-pointer"
+              className="w-6 h-6 text-primary hover:text-primary/80 cursor-pointer"
               onClick={() => setShowCreateModal(true)}
             />
           </h1>
-          <div className="relative w-64">
+
+          <div className="relative w-full md:w-64">
             <input
               type="text"
               placeholder="검색"
@@ -224,27 +225,34 @@ export default function StudyRoom() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="
+                w-full pl-4 pr-10 py-2 rounded-full
+                bg-white dark:bg-gray-700
+                text-black dark:text-white
+                placeholder-gray-400 dark:placeholder-gray-500
+                focus:outline-none focus:ring-2 focus:ring-primary
+                transition
+              "
             />
-            <Search className="w-5 h-5 text-gray-300 absolute right-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-gray-400 dark:text-gray-500 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 
         {/* 카드 그리드 */}
-        <div className="container mx-auto mt-10 px-2 sm:px-4 lg:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 justify-items-center">
-            {currentRooms.map((room) => (
-              <div
-                key={room.id}
-                className="cursor-pointer"
-                onClick={() => navigate("/video-room")}
-              >
-                <StudyRoomCard {...room} />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center">
+          {currentRooms.map((room) => (
+            <div
+              key={room.id}
+              className="cursor-pointer"
+              onClick={() => navigate(`/study-room/${room.id}`)}
+            >
+              <StudyRoomCard {...room} />
+            </div>
+          ))}
+        </div>
 
-          {/* 페이지네이션 */}
+        {/* 페이지네이션 */}
+        <div className="mt-8">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

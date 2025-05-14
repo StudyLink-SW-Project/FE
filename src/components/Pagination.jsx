@@ -1,48 +1,62 @@
 // src/components/Pagination.jsx
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-    // if (totalPages <= 1) return null;
-  
-    return (
-          <div
-            className="
-              fixed bottom-0 left-0 w-full      /* 하단 고정, 풀 너비 */
-              bg-[#282A36]                       /* 뒤 배경색 (페이지 배경과 맞추거나 반투명으로) */
-              flex justify-center               /* 가운데 정렬 */
-              py-4 space-x-2 text-white z-50     /* 위아래 패딩·간격·전면 배치 */
-          ">        
-        {/* 이전 버튼 */}
+  // if (totalPages <= 1) return null;
+
+  return (
+    <div
+      className="
+        fixed bottom-0 left-0 w-full
+        bg-background            /* 라이트/다크 모드 배경 */
+        flex justify-center
+        py-4 space-x-2
+        text-foreground          /* 텍스트도 라이트/다크 모드 대응 */
+        z-50
+      "
+    >
+      {/* 이전 버튼 */}
+      <button
+        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
+        disabled={currentPage === 1}
+        className="
+          px-3 py-1 rounded
+          bg-background
+          hover:bg-background/20 dark:hover:bg-background/40
+          disabled:opacity-50
+        "
+      >
+        &laquo;
+      </button>
+
+      {/* 번호 버튼 */}
+      {Array.from({ length: totalPages }, (_, i) => (
         <button
-          onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 rounded bg-gray-600 hover:bg-gray-500 disabled:opacity-50"
+          key={i + 1}
+          onClick={() => onPageChange(i + 1)}
+          className={`
+            px-3 py-1 rounded
+            ${currentPage === i + 1
+              ? "bg-primary text-white font-semibold"      /* 활성 페이지 색상 */
+              : "bg-background hover:bg-background/20 dark:hover:bg-background/40" /* 비활성 페이지 */
+            }
+          `}
         >
-          &laquo;
+          {i + 1}
         </button>
-  
-        {/* 번호 버튼 */}
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i + 1}
-            onClick={() => onPageChange(i + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === i + 1
-                ? "bg-blue-500 font-semibold"
-                : "bg-gray-600 hover:bg-gray-500"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-  
-        {/* 다음 버튼 */}
-        <button
-          onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded bg-gray-600 hover:bg-gray-500 disabled:opacity-50"
-        >
-          &raquo;
-        </button>
-      </div>
-    );
-  }
-  
+      ))}
+
+      {/* 다음 버튼 */}
+      <button
+        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+        disabled={currentPage === totalPages}
+        className="
+          px-3 py-1 rounded
+          bg-background
+          hover:bg-background/20 dark:hover:bg-background/40
+          disabled:opacity-50
+        "
+      >
+        &raquo;
+      </button>
+    </div>
+  );
+}
