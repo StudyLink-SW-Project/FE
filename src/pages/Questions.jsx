@@ -20,8 +20,9 @@ export default function Questions() {
         "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
       author: "이호준",
       date: "2025-04-10",
-      answers: 6,
-      views: 157,
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
     },
     // … 더 많은 질문 예시 추가 …
   ]);
@@ -35,8 +36,9 @@ export default function Questions() {
         accepted: false,
         title: newQ.title,
         excerpt: newQ.excerpt,
-        author: "익명",
+        author: newQ.author,
         date: new Date().toISOString().slice(0, 10),
+        dateTime: new Date().toISOString(),
         answers: 0,
         views: 0,
       },

@@ -11,6 +11,9 @@ export default function Header() {
   const user = useSelector(state => state.auth.user);
   const isAuthenticated = !!user;
 
+  // ④ localStorage avatar 읽기
+  const storedAvatar = localStorage.getItem('avatar');
+
   const handleLogout = async () => {
     await dispatch(logoutThunk()).unwrap();
     setMenuOpen(false);
@@ -35,7 +38,11 @@ export default function Header() {
         {isAuthenticated ? (
           <div className="relative">
             <button onClick={() => setMenuOpen(prev => !prev)}>
-              <img src={userIcon} alt="User" className="w-13 h-13 rounded-full" />
+              <img
+                src={storedAvatar || user.avatarUrl || userIcon}
+                alt="User"
+                className="w-13 h-13 rounded-full"
+              />
             </button>
             {menuOpen && (
               <UserMenu onClose={() => setMenuOpen(false)} onLogout={handleLogout} />

@@ -1,6 +1,6 @@
 // src/pages/SignupPage.jsx
 import { useState } from "react";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signupThunk } from "../store/authThunks";
@@ -37,7 +37,16 @@ export default function SignupPage() {
           <img src="/logo_black.png" alt="logo" className="absolute top-2 left-2 w-24" />
         </Link>
         <div className="w-full max-w-sm">
-          <h1 className="text-3xl font-bold mb-2">회원가입</h1>
+          {/* ➕ 뒤로가기 버튼 + 제목을 같은 줄에 배치 */}
+          <div className="flex items-center mb-2">
+            <button
+              onClick={() => navigate("/")}
+              className="p-2 focus:outline-none transform -translate-x-2"
+            >
+              <ArrowLeft className="w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
+            </button>
+            <h1 className="text-3xl font-bold -ml-4">회원가입</h1>
+          </div>
           <p className="text-sm text-gray-500 mb-15">
             이미 계정이 있으신가요?{' '}
             <Link to="/login" className="text-purple-600 underline">여기</Link>를 클릭해 로그인하세요!

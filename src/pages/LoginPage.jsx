@@ -1,7 +1,7 @@
 // src/pages/LoginPage.jsx
 import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";  // ✨ useLocation 추가
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, fetchInfoThunk } from "../store/authThunks";
 
@@ -12,17 +12,20 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const { loading, error } = useSelector(state => state.auth);
   const base = import.meta.env.DEV
-   ? 'http://localhost:8081/'
-   : (import.meta.env.VITE_APP_SERVER || 'https://api.studylink.store/');
+    ? 'http://localhost:8081/'
+    : (import.meta.env.VITE_APP_SERVER || 'https://api.studylink.store/');
   const getSocialLoginUrl = provider => `${base}oauth2/authorization/${provider}`;
   const navigate = useNavigate();
+  const location = useLocation();  // 현재 location 정보
+  const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await dispatch(loginThunk({ email, password })).unwrap();
       await dispatch(fetchInfoThunk()).unwrap();
-      navigate("/");
+      // 로그인 성공 시, 원래 가려던 경로로 이동
+      navigate(from, { replace: true });
     } catch (err) {
       console.error("로그인 오류:", err);
     }
@@ -36,11 +39,21 @@ export default function LoginPage() {
     <div className="flex h-screen">
       {/* 왼쪽: 로그인 폼 */}
       <div className="w-1/2 flex flex-col justify-center items-center px-16 relative">
+
         <Link to="/">
           <img src="/logo_black.png" alt="logo" className="absolute top-2 left-2 w-24" />
         </Link>
         <div className="w-full max-w-sm">
-          <h1 className="text-3xl font-bold mb-2">로그인</h1>
+        {/* ➕ 버튼과 제목을 같은 줄에 배치 */}
+          <div className="flex items-center mb-2">
+            <button
+              onClick={() => navigate("/")}
+              className="p-2 focus:outline-none"
+            >
+              <ArrowLeft className="w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
+            </button>
+            <h1 className="text-3xl font-bold -ml-4">로그인</h1>
+          </div>
           <p className="text-sm text-gray-500 mb-15">
             계정이 없으신가요?{' '}
             <Link to="/signup" className="text-purple-600 underline">여기</Link>를 클릭해 회원가입하세요!
@@ -118,5 +131,5 @@ export default function LoginPage() {
         <p className="text-sm mt-2">쉽고 빠르게, 스터디를 연결해보세요</p>
       </div>
     </div>
-);
+  );
 }

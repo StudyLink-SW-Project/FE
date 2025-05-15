@@ -1,9 +1,11 @@
 // src/components/CreateQuestionModal.jsx
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const user = useSelector(state => state.auth.user);
 
   // 모달이 열릴 때 초기화
   useEffect(() => {
@@ -18,7 +20,11 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title.trim() && excerpt.trim()) {
-      onCreate({ title, excerpt });
+      onCreate({
+        title,
+        excerpt,
+        author: user?.userName || ""   // 로그인된 사용자의 이름을 author로 전달
+      });
     }
   };
 

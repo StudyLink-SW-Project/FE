@@ -1,10 +1,13 @@
 import userIcon from '../assets/user_icon.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../store/authThunks';
+import { Link } from 'react-router-dom';
 
 export default function UserMenu({ onClose, onLogout }) {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
+
+  const storedAvatar = localStorage.getItem('avatar');
 
   const handleLogout = async () => {
     // 부모로부터 전달된 onLogout 호출
@@ -17,9 +20,9 @@ export default function UserMenu({ onClose, onLogout }) {
       <div className="p-6 border-b">
         <div className="flex items-center gap-3">
           <img
-            src={userIcon}
+            src={storedAvatar || user.avatarUrl || userIcon}
             alt="User"
-            className="w-15 h-15 rounded-full -ml-2 mr-1"
+            className="w-15 h-15 rounded-full mr-2"
           />
           <div>
             <p className="font-semibold">{user?.userName}</p>
@@ -28,7 +31,11 @@ export default function UserMenu({ onClose, onLogout }) {
         </div>
       </div>
       <ul className="text-sm">
-        <li className="px-4 py-4 hover:bg-gray-100 cursor-pointer">내 프로필</li>
+        <li className="px-4 py-4 hover:bg-gray-100">
+          <Link to="/profile" onClick={onClose} className="block">
+            내 프로필
+          </Link>
+        </li>      
         <li className="px-4 py-4 hover:bg-gray-100 cursor-pointer">내 질문</li>
         <li
           className="px-4 py-4 hover:bg-gray-100 cursor-pointer"

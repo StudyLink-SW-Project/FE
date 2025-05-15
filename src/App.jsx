@@ -12,6 +12,7 @@ import StudyRoomInside from "./pages/StudyRoomInside";
 import QuestionDetail from "./pages/QuestionDetail";
 import VideoRoom from "./pages/VideoRoom";
 import OAuth2Callback from "./pages/OAuth2Callback";
+import ProfilePage from "./pages/ProfilePage"; 
 
 export default function App() {
   return (
@@ -22,7 +23,11 @@ export default function App() {
           <StudyRoom />
         </ProtectedRoute>
       } />
-      <Route path="/questions" element={<Questions />} />
+      <Route path="/questions" element={
+        <ProtectedRoute>
+          <Questions />
+        </ProtectedRoute>
+      } />
       <Route path="/questions/:id" element={<QuestionDetail />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
@@ -38,6 +43,14 @@ export default function App() {
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
