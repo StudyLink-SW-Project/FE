@@ -2,19 +2,21 @@
 import { useLocation, Link } from "react-router-dom";
 import { ArrowLeft, ThumbsUp } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
   if (!state) return <Link to="/questions">목록으로 돌아가기</Link>;
 
-  const { title, excerpt, author, date, answers, views, accepted } = state;
+  const { title, excerpt, author, date, dateTime, answers, views, accepted } = state;
 
   // 기존 댓글 및 새 댓글 입력값 상태
   const [comments, setComments] = useState([
-    { id: 1, author: "익명1", text: "좋은 질문이네요!", likes: 0 },
-    { id: 2, author: "익명2", text: "저도 궁금합니다 😊", likes: 2 },
+    
   ]);
   const [newComment, setNewComment] = useState("");
+
+  const user = useSelector(state => state.auth.user);  // ✨ 로그인 유저 정보 가져오기
 
   // '좋아요' 토글 상태를 관리할 ID 목록
   const [likedComments, setLikedComments] = useState([]);
@@ -45,8 +47,13 @@ export default function QuestionDetail() {
     if (!text) return;
     setComments((prev) => [
       ...prev,
-      { id: prev.length + 1, author: "익명", text, likes: 0 },
-    ]);
+      {
+        id: prev.length + 1,
+        author: user?.userName || "익명",             // ✨ userName 사용
+        text,
+        likes: 0,
+        dateTime: new Date().toISOString(),           // ✨ ISO 형식 날짜/시간 기록
+      },    ]);
     setNewComment("");
   };
 
@@ -60,29 +67,40 @@ export default function QuestionDetail() {
       </Link>
 
       {/* 질문 본문 */}
-      <div className="bg-[#1D1F2C] rounded-xl p-6 mb-8 space-y-4">
-        <div className="flex items-center gap-2">
-          <span
-            className={`text-xs font-medium px-2 py-1 rounded ${
-              accepted
-                ? "bg-blue-600 text-white"
-                : "bg-transparent text-blue-400 border border-blue-400"
-            }`}
-          >
-            {accepted ? "채택됨" : "채택안됨"}
-          </span>
-          <h1 className="text-2xl font-semibold">{title}</h1>
-        </div>
-        <p className="text-gray-300 whitespace-pre-wrap">{excerpt}</p>
-        <div className="flex justify-between text-sm text-gray-400">
-          <div>
-            작성자: <span className="font-medium text-white">{author}</span>
+      <div className="bg-[#1D1F2C] rounded-xl p-6 mb-8 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span
+              className={`text-xs font-medium px-2 py-1 rounded ${
+                accepted
+                  ? "bg-blue-600 text-white"
+                  : "bg-transparent text-blue-400 border border-blue-400"
+              }`}
+            >
+              {accepted ? "채택됨" : "채택안됨"}
+            </span>
+            <h1 className="text-2xl font-semibold">{title}</h1>
           </div>
-          <div>{date}</div>
+          <p className="text-gray-300 whitespace-pre-wrap">{excerpt}</p>
         </div>
-        <div className="flex justify-end gap-6 text-gray-400">
-          <div>답변 {comments.length}개</div>
-          <div>조회 {views}회</div>
+
+        {/* 하단: 왼쪽 작성자&시간, 오른쪽 답변수&조회수 */}
+        <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
+          {/* 왼쪽: 작성자 + 작성일시 */}
+          <div className="flex items-center gap-4">
+            <span>
+              작성자: <span className="font-medium text-white">{author}</span>
+            </span>
+            <span className="text-xs">
+              {new Date(dateTime).toLocaleString()}
+            </span>
+          </div>
+
+          {/* 오른쪽: 답변수 + 조회수 */}
+          <div className="flex items-center gap-4">
+            <span>답변 {comments.length}개</span>
+            <span>조회 {views}회</span>
+          </div>
         </div>
       </div>
 
@@ -94,24 +112,30 @@ export default function QuestionDetail() {
         {comments.map((c) => (
           <div
             key={c.id}
-            className="bg-[#1D1F2C] rounded-xl p-4 flex justify-between items-start"
+            className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between"
           >
-            <div>
-              <div className="text-sm text-gray-400 mb-1">
-                작성자: {c.author}
+            {/* 상단: 작성자 + 날짜·시간, 오른쪽 좋아요 */}
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-sm text-gray-400">
+                작성자:
+                <span className="text-white ml-1">{c.author}</span>
+                <span className="ml-2 text-xs text-gray-400">
+                  {new Date(c.dateTime).toLocaleString()}
+                </span>
               </div>
-              <p className="text-white">{c.text}</p>
+              <button
+                onClick={() => handleLike(c.id)}
+                className={`flex items-center gap-1 text-sm ${
+                  likedComments.includes(c.id)
+                    ? "text-blue-400"
+                    : "text-gray-300 hover:text-white"
+                }`}
+              >
+                <ThumbsUp className="w-4 h-4" /> {c.likes}
+              </button>
             </div>
-            <button
-              onClick={() => handleLike(c.id)}
-              className={`flex items-center gap-1 text-sm ${
-                likedComments.includes(c.id)
-                  ? "text-blue-400"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              <ThumbsUp className="w-4 h-4" /> {c.likes}
-            </button>
+            {/* 댓글 본문 */}
+            <p className="text-white">{c.text}</p>
           </div>
         ))}
       </div>
