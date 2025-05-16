@@ -41,7 +41,6 @@ export default function App() {
           <VideoRoom />
         </ProtectedRoute>
       } />
-      <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />
       <Route
         path="/profile"
@@ -51,6 +50,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

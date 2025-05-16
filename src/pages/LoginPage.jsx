@@ -14,7 +14,7 @@ export default function LoginPage() {
   const base = import.meta.env.DEV
     ? 'http://localhost:8081/'
     : (import.meta.env.VITE_APP_SERVER || 'https://api.studylink.store/');
-  const getSocialLoginUrl = provider => `${base}oauth2/authorization/${provider}`;
+  const getSocialLoginUrl = provider => `/oauth2/authorization/${provider}`;
   const navigate = useNavigate();
   const location = useLocation();  // 현재 location 정보
   const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
