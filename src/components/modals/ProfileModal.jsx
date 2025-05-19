@@ -1,3 +1,4 @@
+// src/components/modals/ProfileModal.jsx
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import userIcon from '../../assets/user_icon.png';
@@ -17,7 +18,6 @@ export default function ProfileModal({ onClose }) {
     userIcon
   );
 
-  // 프로필 사진 파일 선택 핸들러
   const handleAvatarChange = e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -29,13 +29,20 @@ export default function ProfileModal({ onClose }) {
     reader.readAsDataURL(file);
   };
 
-  // 모달 닫기 핸들러
   const handleClose = () => {
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div
+      className="
+        fixed inset-0
+        w-full h-full
+        bg-black bg-opacity-75
+        flex items-center justify-center
+        z-[9999]
+      "
+    >
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 mx-4">
         {/* 아바타 영역 */}
         <div className="flex justify-center -mt-16 mb-6">
