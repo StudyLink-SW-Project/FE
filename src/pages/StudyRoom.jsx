@@ -163,7 +163,7 @@ export default function StudyRoom() {
   const roomsPerPage = 15;
 
   const [rooms, setRooms] = useState(
-    Array.from({ length: 0 }, (_, i) => ({
+    Array.from({ length: 17 }, (_, i) => ({
       id: i,
       participants: 1,
       maxParticipants: 4,
@@ -211,7 +211,7 @@ export default function StudyRoom() {
           <h1 className="text-4xl font-bold flex items-center gap-2">
             스터디 룸
             <PlusCircle
-              className="w-6 h-6 hover:text-blue-400 cursor-pointer"
+              className="w-10 h-10 ml-2 text-blue-400 hover:text-blue-600 cursor-pointer"
               onClick={() => setShowCreateModal(true)}
             />
           </h1>
@@ -226,7 +226,6 @@ export default function StudyRoom() {
               }}
               className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <Search className="w-5 h-5 text-gray-300 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 

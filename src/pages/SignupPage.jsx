@@ -43,7 +43,7 @@ export default function SignupPage() {
               onClick={() => navigate("/")}
               className="p-2 focus:outline-none transform -translate-x-2"
             >
-              <ArrowLeft className="w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
+              <ArrowLeft className="cursor-pointer w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
             </button>
             <h1 className="text-3xl font-bold -ml-4">회원가입</h1>
           </div>
@@ -97,7 +97,7 @@ export default function SignupPage() {
                 required
               />
               <button type="button" onClick={() => setShowPwd(prev => !prev)}>
-                {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
+                {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="cursor-pointer w-4 h-4 text-gray-400" />}
               </button>
             </div>
 
@@ -113,13 +113,13 @@ export default function SignupPage() {
                 required
               />
               <button type="button" onClick={() => setShowConfirm(prev => !prev)}>
-                {showConfirm ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
+                {showConfirm ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="cursor-pointer w-4 h-4 text-gray-400" />}
               </button>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition"
+              className="cursor-pointer w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition"
               disabled={loading}
             >
               {loading ? "처리 중..." : "회원가입"}
@@ -127,7 +127,7 @@ export default function SignupPage() {
           </form>
         </div>
       </div>
-      <div className="w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex flex-col items-center justify-center rounded-l-3xl">
+      <div className="w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex flex-col items-center justify-center">
         <img src="/Saly.png" alt="illustration" className="w-[60%]" />
         <h2 className="text-4xl mt-8 font-semibold">Study Link에 가입하세요</h2>
         <p className="text-sm mt-2">지금 바로 스터디를 시작해보세요</p>

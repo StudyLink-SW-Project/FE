@@ -1,15 +1,23 @@
+// src/store/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import { loginThunk, logoutThunk, signupThunk, fetchInfoThunk } from './authThunks';
+
+const initialUser = JSON.parse(localStorage.getItem('user')) || null;
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
+    user: initialUser,
     loading: false,
     error: null,
   },
   reducers: {
-    // 추가로 필요하다면 일반 액션도 정의
+    loginSuccess(state, action) {
+      state.user = action.payload.user;
+    },
+    logout(state) {
+      state.user = null;
+    },
   },
   extraReducers: builder => {
     builder
@@ -18,24 +26,30 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginThunk.fulfilled, (state, { payload }) => {
+      .addCase(loginThunk.fulfilled, state => {
         state.loading = false;
-        state.user = payload;       // payload: { name, email, ... }
       })
-      .addCase(loginThunk.rejected, (state, { error }) => {
+      .addCase(loginThunk.rejected, (state, { payload, error }) => {
         state.loading = false;
-        state.error = error.message;
+        state.error = payload || error.message;
       })
-      // fetchUserInfo
-      .addCase(fetchInfoThunk.fulfilled, (state, { payload }) => {
-        state.user = payload;
+
+      // fetchInfo
+      .addCase(fetchInfoThunk.fulfilled, state => {
+        state.loading = false;
       })
+      .addCase(fetchInfoThunk.rejected, (state, { payload, error }) => {
+        state.error = payload || error.message;
+      })
+
       // logout
       .addCase(logoutThunk.fulfilled, state => {
         state.user = null;
-      })
-      // signup 등도 유사하게…
+      });
+
+    // signupThunk 는 필요하다면 추가…
   }
 });
 
+export const { loginSuccess, logout } = authSlice.actions;
 export default authSlice.reducer;
