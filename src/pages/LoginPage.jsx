@@ -4,6 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";  // ✨ useLocation 추가
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, fetchInfoThunk } from "../store/authThunks";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
@@ -25,6 +26,7 @@ export default function LoginPage() {
       await dispatch(loginThunk({ email, password })).unwrap();
       await dispatch(fetchInfoThunk()).unwrap();
       // 로그인 성공 시, 원래 가려던 경로로 이동
+      toast.success('성공적으로 로그인되었습니다.');
       navigate(from, { replace: true });
     } catch (err) {
       console.error("로그인 오류:", err);
@@ -50,7 +52,7 @@ export default function LoginPage() {
               onClick={() => navigate("/")}
               className="p-2 focus:outline-none"
             >
-              <ArrowLeft className="w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
+              <ArrowLeft className="cursor-pointer w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
             </button>
             <h1 className="text-3xl font-bold -ml-4">로그인</h1>
           </div>
@@ -91,7 +93,7 @@ export default function LoginPage() {
                 required
               />
               <button type="button" onClick={() => setShowPwd(prev => !prev)}>
-                {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
+                {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="cursor-pointer w-4 h-4 text-gray-400" />}
               </button>
             </div>
 
@@ -104,7 +106,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition"
+              className="cursor-pointer w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition"
               disabled={loading}
             >
               {loading ? '로그인 중...' : '로그인'}
@@ -114,18 +116,18 @@ export default function LoginPage() {
           <p className="text-center text-gray-400 text-sm mt-8">또는 다음으로 진행하기</p>
           <div className="flex justify-center gap-7 mt-8">
             <button onClick={() => handleSocialLogin('google')}>
-              <img src="/google_icon.png" alt="Google 로그인" className="w-10 h-10" />
+              <img src="/google_icon.png" alt="Google 로그인" className="cursor-pointer w-10 h-10" />
             </button>
             <button onClick={() => handleSocialLogin('kakao')}>
-              <img src="/kakaotalk_icon.png" alt="카카오 로그인" className="w-10 h-10" />
+              <img src="/kakaotalk_icon.png" alt="카카오 로그인" className="cursor-pointer w-10 h-10" />
             </button>
             <button onClick={() => handleSocialLogin('naver')}>
-              <img src="/naver_icon.png" alt="네이버 로그인" className="w-10 h-10" />
+              <img src="/naver_icon.png" alt="네이버 로그인" className="cursor-pointer w-10 h-10" />
             </button>
           </div>
         </div>
       </div>
-      <div className="w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex flex-col items-center justify-center rounded-l-3xl">
+      <div className="w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex flex-col items-center justify-center">
         <img src="/Saly.png" alt="illustration" className="w-[60%]" />
         <h2 className="text-4xl mt-8 font-semibold">Study Link에 로그인하세요</h2>
         <p className="text-sm mt-2">쉽고 빠르게, 스터디를 연결해보세요</p>

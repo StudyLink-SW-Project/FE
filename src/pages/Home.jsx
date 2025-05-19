@@ -45,6 +45,7 @@ export default function Home() {
             <button
               onClick={() => navigate("/study-room")}
               className="
+                cursor-pointer
                 px-7 py-6
                 bg-gradient-to-t from-purple-700 to-purple-500
                 rounded-full

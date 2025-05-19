@@ -24,7 +24,67 @@ export default function Questions() {
       answers: 0,
       views: 0,
     },
-    // … 더 많은 질문 예시 추가 …
+    {
+      id: 2,
+      accepted: false,
+      title: "자바 스크립트 튜토리얼 추천",
+      excerpt:
+        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
+      author: "이호준",
+      date: "2025-04-10",
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
+    },
+    {
+      id: 3,
+      accepted: false,
+      title: "자바 스크립트 튜토리얼 추천",
+      excerpt:
+        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
+      author: "이호준",
+      date: "2025-04-10",
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
+    },
+    {
+      id: 4,
+      accepted: false,
+      title: "자바 스크립트 튜토리얼 추천",
+      excerpt:
+        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
+      author: "이호준",
+      date: "2025-04-10",
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
+    },
+    {
+      id: 5,
+      accepted: false,
+      title: "자바 스크립트 튜토리얼 추천",
+      excerpt:
+        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
+      author: "이호준",
+      date: "2025-04-10",
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
+    },
+    {
+      id: 6,
+      accepted: false,
+      title: "자바 스크립트 튜토리얼 추천",
+      excerpt:
+        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
+      author: "이호준",
+      date: "2025-04-10",
+      dateTime: "2025-04-10T10:30:00",
+      answers: 0,
+      views: 0,
+    },
+    
   ]);
 
   // 새 질문 생성
@@ -68,10 +128,10 @@ export default function Questions() {
       <div className="p-8">
         {/* 상단: 타이틀 + 새 질문 버튼 + 검색 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-4xl font-bold flex items-center gap-2">
             질문 게시판
             <PlusCircle
-              className="w-6 h-6 hover:text-purple-400 cursor-pointer"
+              className="w-10 h-10 ml-2 text-purple-400 hover:text-purple-600 cursor-pointer"
               onClick={() => setShowModal(true)}
             />
           </h1>
@@ -86,12 +146,11 @@ export default function Questions() {
               }}
               className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <Search className="w-5 h-5 text-gray-300 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 
         {/* 질문 목록 (현재 페이지 항목만) */}
-        <div className="space-y-4">
+        <div className="space-y">
           {currentQuestions.map((q) => (
             <QuestionCard key={q.id} {...q} />
           ))}

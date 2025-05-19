@@ -1,18 +1,29 @@
-import userIcon from '../assets/user_icon.png';
+// src/components/UserMenu.jsx
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../store/authThunks';
-import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import userIcon from '../assets/user_icon.png';
 
-export default function UserMenu({ onClose, onLogout }) {
+export default function UserMenu({ onClose, onOpenProfile }) {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
-
   const storedAvatar = localStorage.getItem('avatar');
 
   const handleLogout = async () => {
-    // 부모로부터 전달된 onLogout 호출
-    if (onLogout) await onLogout();
-    onClose();
+    try {
+      await dispatch(logoutThunk()).unwrap();
+      toast.success('성공적으로 로그아웃되었습니다.');
+      onClose();
+    } catch (error) {
+      console.error('로그아웃에 실패했습니다:', error);
+      toast.error('로그아웃에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleProfileClick = () => {
+    onOpenProfile();  // Header에서 넘겨준 모달 열기 함수
+    onClose();        // 메뉴 닫기
   };
 
   return (
@@ -22,7 +33,7 @@ export default function UserMenu({ onClose, onLogout }) {
           <img
             src={storedAvatar || user.avatarUrl || userIcon}
             alt="User"
-            className="w-15 h-15 rounded-full mr-2"
+            className="w-14 h-14 rounded-full"
           />
           <div>
             <p className="font-semibold">{user?.userName}</p>
@@ -31,14 +42,17 @@ export default function UserMenu({ onClose, onLogout }) {
         </div>
       </div>
       <ul className="text-sm">
-        <li className="px-4 py-4 hover:bg-gray-100">
-          <Link to="/profile" onClick={onClose} className="block">
-            내 프로필
-          </Link>
-        </li>      
-        <li className="px-4 py-4 hover:bg-gray-100 cursor-pointer">내 질문</li>
         <li
-          className="px-4 py-4 hover:bg-gray-100 cursor-pointer"
+          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+          onClick={handleProfileClick}
+        >
+          내 프로필
+        </li>
+        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+          내 질문
+        </li>
+        <li
+          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
           onClick={handleLogout}
         >
           로그아웃

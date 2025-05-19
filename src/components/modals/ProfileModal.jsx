@@ -1,0 +1,95 @@
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import userIcon from '../../assets/user_icon.png';
+
+/**
+ * ProfileModal
+ * 프로필 페이지 내용을 배경 어두운 모달로 보여줍니다.
+ * Props:
+ *  - onClose: 모달 닫기 핸들러
+ */
+export default function ProfileModal({ onClose }) {
+  const { user } = useSelector(state => state.auth);
+
+  const [avatar, setAvatar] = useState(
+    localStorage.getItem('avatar') ||
+    user?.avatarUrl ||
+    userIcon
+  );
+
+  // 프로필 사진 파일 선택 핸들러
+  const handleAvatarChange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAvatar(reader.result);
+      localStorage.setItem('avatar', reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // 모달 닫기 핸들러
+  const handleClose = () => {
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 mx-4">
+        {/* 아바타 영역 */}
+        <div className="flex justify-center -mt-16 mb-6">
+          <div
+            className="w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-200"
+            style={{
+              backgroundImage: `url(${avatar})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+        </div>
+
+        {/* 사진 변경 버튼 */}
+        <div className="text-center mb-6">
+          <label className="cursor-pointer inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded">
+            사진 변경
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        {/* 사용자 정보 */}
+        <div className="text-center mb-6 space-y-2">
+          <h2 className="text-3xl text-black font-semibold">{user?.userName}</h2>
+          <p className="text-gray-600">{user?.email}</p>
+        </div>
+
+        {/* 정보 섹션 */}
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <span className="w-24 text-gray-500">이름</span>
+            <span className="text-gray-600 font-medium">{user?.userName}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="w-24 text-gray-500">이메일</span>
+            <span className="text-gray-600 font-medium">{user?.email}</span>
+          </div>
+        </div>
+
+        {/* 닫기 버튼 */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={handleClose}
+            className="cursor-pointer inline-block bg-transparent text-indigo-400 hover:text-indigo-200 font-medium"
+          >
+            &larr; 닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,6 @@
 // src/pages/QuestionDetail.jsx
 import { useLocation, Link } from "react-router-dom";
-import { ArrowLeft, ThumbsUp } from "lucide-react";
+import { ArrowLeft, ThumbsUp, User } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -70,15 +70,6 @@ export default function QuestionDetail() {
       <div className="bg-[#1D1F2C] rounded-xl p-6 mb-8 flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded ${
-                accepted
-                  ? "bg-blue-600 text-white"
-                  : "bg-transparent text-blue-400 border border-blue-400"
-              }`}
-            >
-              {accepted ? "채택됨" : "채택안됨"}
-            </span>
             <h1 className="text-2xl font-semibold">{title}</h1>
           </div>
           <p className="text-gray-300 whitespace-pre-wrap">{excerpt}</p>
@@ -88,10 +79,9 @@ export default function QuestionDetail() {
         <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
           {/* 왼쪽: 작성자 + 작성일시 */}
           <div className="flex items-center gap-4">
-            <span>
-              작성자: <span className="font-medium text-white">{author}</span>
-            </span>
-            <span className="text-xs">
+            <User className="w-4 h-4 -mr-2 text-gray-400" />
+            <span className="font-medium text-white mr-5">{author}</span>
+            <span className="text-sm">
               {new Date(dateTime).toLocaleString()}
             </span>
           </div>
@@ -114,12 +104,15 @@ export default function QuestionDetail() {
             key={c.id}
             className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between"
           >
-            {/* 상단: 작성자 + 날짜·시간, 오른쪽 좋아요 */}
-            <div className="flex justify-between items-center mb-2">
-              <div className="text-sm text-gray-400">
-                작성자:
-                <span className="text-white ml-1">{c.author}</span>
-                <span className="ml-2 text-xs text-gray-400">
+            {/* 댓글 본문 */}
+            <p className="text-white mb-6">{c.text}</p>
+            {/* 하단: 작성자 + 날짜·시간, 오른쪽 좋아요 */}
+            <div className="flex justify-between items-center">
+                {/* 왼쪽: 작성자 + 작성일시 */}
+              <div className="flex items-center gap-4 text-sm">
+                <User className="w-4 h-4 -mr-2 text-gray-400" />
+                <span className="font-medium text-white mr-5">{c.author}</span>
+                <span className="text-gray-400 text-sm">
                   {new Date(c.dateTime).toLocaleString()}
                 </span>
               </div>
@@ -131,11 +124,10 @@ export default function QuestionDetail() {
                     : "text-gray-300 hover:text-white"
                 }`}
               >
-                <ThumbsUp className="w-4 h-4" /> {c.likes}
+                <ThumbsUp className="cursor-pointer w-4 h-4" /> {c.likes}
               </button>
             </div>
-            {/* 댓글 본문 */}
-            <p className="text-white">{c.text}</p>
+
           </div>
         ))}
       </div>
@@ -151,7 +143,7 @@ export default function QuestionDetail() {
         />
         <button
           type="submit"
-          className="px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition"
+          className="cursor-pointer px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition"
         >
           등록
         </button>

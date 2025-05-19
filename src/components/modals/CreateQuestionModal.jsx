@@ -67,6 +67,7 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
           <button
             type="submit"
             className="
+              cursor-pointer
               block
               w-1/3
               mx-auto
