@@ -30,7 +30,12 @@ export default defineConfig({
         target: 'http://localhost:8081/',
         changeOrigin: true,
         secure: false,
-      }
+      },
+      '/post': {
+        target: 'http://localhost:8081/',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   }
 })
