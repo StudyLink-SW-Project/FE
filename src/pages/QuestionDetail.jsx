@@ -8,7 +8,7 @@ export default function QuestionDetail() {
   const { state } = useLocation();
   if (!state) return <Link to="/questions">목록으로 돌아가기</Link>;
 
-  const { title, excerpt, author, date, dateTime, answers, views, accepted } = state;
+  const { title, excerpt, author, date, dateTime, answers, views } = state;
 
   // 기존 댓글 및 새 댓글 입력값 상태
   const [comments, setComments] = useState([

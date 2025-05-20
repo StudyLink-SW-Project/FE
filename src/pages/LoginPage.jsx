@@ -1,7 +1,7 @@
 // src/pages/LoginPage.jsx
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";  // ✨ useLocation 추가
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, fetchInfoThunk } from "../store/authThunks";
 import { toast } from "react-toastify";
@@ -12,9 +12,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { loading, error } = useSelector(state => state.auth);
-  const base = import.meta.env.DEV
-    ? 'http://localhost:8081/'
-    : (import.meta.env.VITE_APP_SERVER || 'https://api.studylink.store/');
   const getSocialLoginUrl = provider => `/oauth2/authorization/${provider}`;
   const navigate = useNavigate();
   const location = useLocation();  // 현재 location 정보

@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import QuestionCard from "../components/cards/QuestionCard";
 import CreateQuestionModal from "../components/modals/CreateQuestionModal";
 import Pagination from "../components/Pagination";
-import { Search, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 export default function Questions() {
   const [search, setSearch] = useState("");
@@ -127,7 +127,7 @@ export default function Questions() {
 
       <div className="p-8">
         {/* 상단: 타이틀 + 새 질문 버튼 + 검색 */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
           <h1 className="text-4xl font-bold flex items-center gap-2">
             질문 게시판            
           </h1>

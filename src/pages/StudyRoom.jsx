@@ -151,7 +151,7 @@ import Header from "../components/Header";
 import StudyRoomCard from "../components/cards/StudyRoomCard";
 import CreateRoomModal from "../components/modals/CreateRoomModal";
 import Pagination from "../components/Pagination";
-import { Search, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
@@ -208,7 +208,7 @@ export default function StudyRoom() {
       {/* 상단 타이틀/검색 */}
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold flex items-center gap-2">
+          <h1 className="text-4xl font-bold flex items-center mb-5 gap-2">
             스터디 룸           
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-2">
@@ -231,7 +231,7 @@ export default function StudyRoom() {
 
         {/* 카드 그리드 */}
         <div className="container mx-auto mt-10 px-2 sm:px-4 lg:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 justify-items-center">
             {currentRooms.map((room) => (
               <div
                 key={room.id}

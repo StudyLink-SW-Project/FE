@@ -26,7 +26,7 @@ export default function QuestionCard({
         answers,
         views
       }}
-      className="block -mx-8 px-8 border-b border-gray-700 py-7 hover:bg-[#2D2F40] transition"
+      className="block -mx-8 px-8 border-b border-gray-700 py-7 hover:bg-[#2D2F40] transition-colors duration-200"
     >
       {/* 왼쪽: 태그 + 제목/요약 */}
       <div className="flex-1">
