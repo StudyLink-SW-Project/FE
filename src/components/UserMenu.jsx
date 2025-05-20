@@ -13,7 +13,6 @@ export default function UserMenu({ onClose, onOpenProfile }) {
   const handleLogout = async () => {
     try {
       await dispatch(logoutThunk()).unwrap();
-      toast.success('성공적으로 로그아웃되었습니다.');
       onClose();
     } catch (error) {
       console.error('로그아웃에 실패했습니다:', error);

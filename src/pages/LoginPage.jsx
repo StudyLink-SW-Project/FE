@@ -26,10 +26,10 @@ export default function LoginPage() {
       await dispatch(loginThunk({ email, password })).unwrap();
       await dispatch(fetchInfoThunk()).unwrap();
       // 로그인 성공 시, 원래 가려던 경로로 이동
-      toast.success('성공적으로 로그인되었습니다.');
       navigate(from, { replace: true });
     } catch (err) {
       console.error("로그인 오류:", err);
+      toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
     }
   };
 

@@ -129,24 +129,25 @@ export default function Questions() {
         {/* 상단: 타이틀 + 새 질문 버튼 + 검색 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <h1 className="text-4xl font-bold flex items-center gap-2">
-            질문 게시판
+            질문 게시판            
+          </h1>
+          <div className="flex items-center w-full md:w-64 space-x-2">
             <PlusCircle
-              className="w-10 h-10 ml-2 text-purple-400 hover:text-purple-600 cursor-pointer"
+              className="w-10 h-10 text-purple-400 hover:text-purple-600 cursor-pointer"
               onClick={() => setShowModal(true)}
             />
-          </h1>
-          <div className="relative w-full md:w-64">
             <input
               type="text"
               placeholder="검색"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setCurrentPage(1); // 검색 시 1페이지로 리셋
+                setCurrentPage(1);
               }}
-              className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
+         
         </div>
 
         {/* 질문 목록 (현재 페이지 항목만) */}

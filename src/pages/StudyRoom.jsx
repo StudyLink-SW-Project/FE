@@ -209,13 +209,13 @@ export default function StudyRoom() {
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold flex items-center gap-2">
-            스터디 룸
+            스터디 룸           
+          </h1>
+          <div className="flex items-center w-full md:w-64 space-x-2">
             <PlusCircle
-              className="w-10 h-10 ml-2 text-blue-400 hover:text-blue-600 cursor-pointer"
+              className="w-10 h-10 text-blue-400 hover:text-blue-600 cursor-pointer"
               onClick={() => setShowCreateModal(true)}
             />
-          </h1>
-          <div className="relative w-64">
             <input
               type="text"
               placeholder="검색"
@@ -224,7 +224,7 @@ export default function StudyRoom() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 w-full pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
