@@ -11,6 +11,10 @@ export default function QuestionCard({
   answers,
   likes,
 }) {
+  // 최대 100자까지 보여주고 초과 시 ... 처리
+  const displayExcerpt =
+    excerpt.length > 100 ? excerpt.slice(0, 100) + "..." : excerpt;
+
   return (
     <Link
       to={`/questions/${id}`}
@@ -32,7 +36,7 @@ export default function QuestionCard({
           <FileText className="w-5 h-5 text-gray-300" />
           <h3 className="text-lg font-semibold text-white">{title}</h3>
         </div>
-        <p className="text-sm text-gray-400 mt-1 line-clamp-2 mb-6">{excerpt}</p>
+        <p className="text-sm text-gray-400 mt-1 mb-6">{displayExcerpt}</p>
       </div>
       {/* 하단: 왼쪽 작성자&시간, 오른쪽 답변수&조회수 */}
         <div className="flex justify-between items-center text-gray-400 text-sm mt-8">

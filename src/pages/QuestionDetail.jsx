@@ -145,7 +145,7 @@ export default function QuestionDetail() {
             <FileText className="w-6 h-6 mt-0.5 text-gray-300" />
             <h1 className="text-2xl font-semibold">{titleToShow}</h1>
           </div>
-          <p className="text-gray-300 whitespace-pre-wrap">{excerptToShow}</p>
+          <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
         </div>
         <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
           <div className="flex items-center gap-4">
