@@ -38,9 +38,9 @@ export default function Questions() {
           excerpt:  p.content,
           author:   p.userName,
           date:     p.createDate,
-          dateTime: `${p.createDate}T00:00:00`,
+          dateTime: `${p.createDate}`,
           answers:  p.commentCount,
-          views:    0,
+          likes:    0,
         }))
       );
       setTotalPages(tp);
@@ -103,7 +103,7 @@ export default function Questions() {
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-2 mt-2.5">
             <PlusCircle
-              className="w-10 h-10 text-purple-400 hover:text-purple-600 cursor-pointer"
+              className="w-10 h-10 mt-1 text-purple-400 hover:text-purple-600 cursor-pointer"
               onClick={() => setShowModal(true)}
             />
             <input

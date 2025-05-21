@@ -1,30 +1,28 @@
 import { Link } from "react-router-dom";
-import { FileText, User } from "lucide-react";
+import { FileText, User, ThumbsUp, MessageCircle } from "lucide-react";
 
 export default function QuestionCard({
   id,
-  accepted,
   title,
   excerpt,
   author,
   date,
   dateTime,
   answers,
-  views,
+  likes,
 }) {
   return (
     <Link
       to={`/questions/${id}`}
       state={{          // ← 이 부분에 author 가 포함되어야
         id,
-        accepted,
         title,
         excerpt,
         author,         // ← author 추가
         date,
         dateTime,
         answers,
-        views
+        likes
       }}
       className="block -mx-8 px-8 border-b border-gray-700 py-6 hover:bg-[#2D2F40] transition-colors duration-200"
     >
@@ -43,14 +41,20 @@ export default function QuestionCard({
             <User className="w-4 h-4 -mr-2 text-gray-400" />
             <span className="font-medium text-white mr-5">{author}</span>
             <span className="text-sm">
-              {new Date(dateTime).toLocaleString()}
+              {new Date(dateTime).toLocaleDateString()}
             </span>
           </div>
 
           {/* 오른쪽: 답변수 + 조회수 */}
           <div className="flex items-center gap-4">
-            <span>답변 {answers}개</span>
-            <span>조회 {views}회</span>
+            <span className="flex items-center gap-1">
+              <MessageCircle className="w-4 h-4 text-gray-400" /> 
+              {answers}
+            </span>
+            <span className="flex items-center gap-1">
+             <ThumbsUp className="w-4 h-4 text-gray-400" />
+             {likes}
+           </span>
           </div>
         </div>
     </Link>
