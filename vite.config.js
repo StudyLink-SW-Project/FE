@@ -12,27 +12,32 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/user': {
-        target: 'http://localhost:8081/',
+        target: 'http://localhost:6080/',
         changeOrigin: true,
         secure: false,
       },
       '/api': {
-        target: 'http://localhost:8081/',
+        target: 'http://localhost:6080/',
         changeOrigin: true,
         secure: false,
       },
       '/oauth2': {
-        target: 'http://localhost:8081/',
+        target: 'http://localhost:6080/',
         changeOrigin: true,
         secure: false,
       },
       '/login/oauth2': {
-        target: 'http://localhost:8081/',
+        target: 'http://localhost:6080/',
         changeOrigin: true,
         secure: false,
       },
       '/post': {
-        target: 'http://localhost:8081/',
+        target: 'http://localhost:6080/',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/comment': {
+        target: 'http://localhost:6080/',
         changeOrigin: true,
         secure: false,
       },

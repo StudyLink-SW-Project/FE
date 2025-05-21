@@ -1,31 +1,56 @@
 // src/pages/QuestionDetail.jsx
 import { useLocation, Link } from "react-router-dom";
 import { ArrowLeft, ThumbsUp, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";              // ← useEffect는 react에서!
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
   if (!state) return <Link to="/questions">목록으로 돌아가기</Link>;
 
-  const { title, excerpt, author, date, dateTime, answers, views } = state;
+  const { title, excerpt, author, date, dateTime, answers, views, id } = state;
 
-  // 기존 댓글 및 새 댓글 입력값 상태
-  const [comments, setComments] = useState([
-    
-  ]);
+  // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
+  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
+
+  // 댓글 상태
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-
-  const user = useSelector(state => state.auth.user);  // ✨ 로그인 유저 정보 가져오기
-
-  // '좋아요' 토글 상태를 관리할 ID 목록
+  const user = useSelector((state) => state.auth.user);
   const [likedComments, setLikedComments] = useState([]);
 
-  // 댓글 좋아요 토글
+  // ① 컴포넌트 마운트 시, 백엔드에서 댓글 목록 불러오기
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API}post/${id}`, {
+          credentials: "include",
+        });
+        const json = await resp.json();
+        if (!json.isSuccess) {
+          throw new Error(json.message || "상세 조회에 실패했습니다.");
+        }
+        const detail = json.result;
+        setComments(
+          detail.comments.map((c) => ({
+            id: c.id,
+            author: c.userName,
+            text: c.comment,
+            likes: 0,
+            dateTime: c.createDate,
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+        toast.error(err.message);
+      }
+    })();
+  }, [API, id]);
+
+  // 좋아요 토글
   const handleLike = (commentId) => {
     const isLiked = likedComments.includes(commentId);
-
-    // 1) 댓글 좋아요 수 증감
     setComments((prev) =>
       prev.map((c) =>
         c.id === commentId
@@ -33,28 +58,48 @@ export default function QuestionDetail() {
           : c
       )
     );
-
-    // 2) likedComments 배열 업데이트 (토글)
     setLikedComments((prev) =>
-      isLiked ? prev.filter((id) => id !== commentId) : [...prev, commentId]
+      isLiked ? prev.filter((i) => i !== commentId) : [...prev, commentId]
     );
   };
 
   // 댓글 등록
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     const text = newComment.trim();
     if (!text) return;
-    setComments((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        author: user?.userName || "익명",             // ✨ userName 사용
-        text,
-        likes: 0,
-        dateTime: new Date().toISOString(),           // ✨ ISO 형식 날짜/시간 기록
-      },    ]);
-    setNewComment("");
+
+    try {
+      const resp = await fetch(`${API}comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          comment: text,
+          postId: id,
+          parentCommentId: null,
+        }),
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) {
+        throw new Error(json.message || "댓글 작성에 실패했습니다.");
+      }
+      toast.success("댓글이 등록되었습니다.");
+      setComments((prev) => [
+        ...prev,
+        {
+          id: Date.now(),            // 실제 ID는 백엔드 응답으로 교체해주세요
+          author: user?.userName || "익명",
+          text,
+          likes: 0,
+          dateTime: new Date().toISOString(),
+        },
+      ]);
+      setNewComment("");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -74,10 +119,7 @@ export default function QuestionDetail() {
           </div>
           <p className="text-gray-300 whitespace-pre-wrap">{excerpt}</p>
         </div>
-
-        {/* 하단: 왼쪽 작성자&시간, 오른쪽 답변수&조회수 */}
         <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
-          {/* 왼쪽: 작성자 + 작성일시 */}
           <div className="flex items-center gap-4">
             <User className="w-4 h-4 -mr-2 text-gray-400" />
             <span className="font-medium text-white mr-5">{author}</span>
@@ -85,8 +127,6 @@ export default function QuestionDetail() {
               {new Date(dateTime).toLocaleString()}
             </span>
           </div>
-
-          {/* 오른쪽: 답변수 + 조회수 */}
           <div className="flex items-center gap-4">
             <span>답변 {comments.length}개</span>
             <span>조회 {views}회</span>
@@ -104,11 +144,8 @@ export default function QuestionDetail() {
             key={c.id}
             className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between"
           >
-            {/* 댓글 본문 */}
             <p className="text-white mb-6">{c.text}</p>
-            {/* 하단: 작성자 + 날짜·시간, 오른쪽 좋아요 */}
             <div className="flex justify-between items-center">
-                {/* 왼쪽: 작성자 + 작성일시 */}
               <div className="flex items-center gap-4 text-sm">
                 <User className="w-4 h-4 -mr-2 text-gray-400" />
                 <span className="font-medium text-white mr-5">{c.author}</span>
@@ -127,7 +164,6 @@ export default function QuestionDetail() {
                 <ThumbsUp className="cursor-pointer w-4 h-4" /> {c.likes}
               </button>
             </div>
-
           </div>
         ))}
       </div>

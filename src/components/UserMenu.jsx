@@ -72,18 +72,18 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
       </div>
       <ul className="text-sm">
         <li
-          className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 cursor-pointer flex items-center gap-2"
+          className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2"
           onClick={handleProfileClick}
         >
           <UserIcon className="w-5 h-5 text-gray-600" />
           내 프로필
         </li>
-        <li className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 cursor-pointer flex items-center gap-2">
+        <li className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2">
           <FileText className="w-5 h-5 text-gray-600" />
           내 질문
         </li>
         <li
-          className="px-4 py-3 hover:bg-red-100 cursor-pointer flex items-center gap-2 text-red-600"
+          className="px-4 py-3 hover:bg-red-100 transition-colors duration-200 cursor-pointer flex items-center gap-2 text-red-600"
           onClick={handleLogout}
         >
           <LogOut className="w-5 h-5" />

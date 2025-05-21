@@ -1,5 +1,5 @@
 // src/pages/Questions.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import QuestionCard from "../components/cards/QuestionCard";
 import CreateQuestionModal from "../components/modals/CreateQuestionModal";
@@ -11,28 +11,50 @@ export default function Questions() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  // 예시 질문들
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      accepted: false,
-      title: "자바 스크립트 튜토리얼 추천",
-      excerpt:
-        "자바스크립트를 처음 배우려고 하는데, 추천해주실만한 튜토리얼 사이트나 강좌를 알려주세요. 온라인에서 무료로 배울 수 있는 자료가 좋지만, 유료도 괜찮습니다.",
-      author: "이호준",
-      date: "2025-04-10",
-      dateTime: "2025-04-10T10:30:00",
-      answers: 0,
-      views: 0,
-    },
-    // … 추가 예시 질문 …
-  ]);
+  // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
+  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
 
-  // // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
-  // const API = import.meta.env.DEV
-  //   ? '/'
-  //   : import.meta.env.VITE_APP_SERVER;
-  const API = import.meta.env.VITE_APP_SERVER;
+  // 페이징 및 질문 목록 상태
+  const [questions, setQuestions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // 1부터 시작
+  const [totalPages, setTotalPages] = useState(1);
+
+  // 페이지 조회 함수
+  async function loadPage(page) {
+    try {
+      const resp = await fetch(`${API}post/list?page=${page}`, {
+        credentials: "include",
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) {
+        throw new Error(json.message || "게시글 목록 조회에 실패했습니다.");
+      }
+      const { posts, totalPages: tp } = json.result;
+      setQuestions(
+        posts.map((p) => ({
+          id:       p.id,
+          accepted: p.isDone,
+          title:    p.title,
+          excerpt:  p.content,
+          author:   p.userName,
+          date:     p.createDate,
+          dateTime: `${p.createDate}T00:00:00`,
+          answers:  p.commentCount,
+          views:    0,
+        }))
+      );
+      setTotalPages(tp);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  }
+
+  // 페이지가 바뀔 때마다, 그리고 최초 마운트 시 목록 조회
+  useEffect(() => {
+    loadPage(currentPage - 1);
+  }, [currentPage]);
+
   // 새 질문 생성
   const handleCreateQuestion = async (newQ) => {
     try {
@@ -41,58 +63,33 @@ export default function Questions() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          title: newQ.title,
+          title:   newQ.title,
           content: newQ.excerpt,
-          author: newQ.author,
+          author:  newQ.author,
         }),
       });
       const apiRes = await resp.json();
-      // 1) HTTP wrapper가 실패를 알린 경우
-      if (!apiRes.isSuccess) {
+      if (!apiRes.isSuccess || !apiRes.result?.isSuccess) {
         throw new Error(apiRes.message || "게시글 작성에 실패했습니다.");
-      }
-      // 2) 실제 로직 결과 확인
-      if (apiRes.result?.isSuccess) {
-        setQuestions(prev => [
-          {
-            id: prev.length + 1,
-            accepted: false,
-            title: newQ.title,
-            excerpt: newQ.excerpt,
-            author: newQ.author,
-            date: new Date().toISOString().slice(0, 10),
-            dateTime: new Date().toISOString(),
-            answers: 0,
-            views: 0,
-          },
-          ...prev,
-        ]);
-        toast.success("게시글이 성공적으로 등록되었습니다.");
-        setShowModal(false);
-      } else {
-        throw new Error("게시글 작성 로직에 실패했습니다.");
       }
       toast.success("게시글이 성공적으로 등록되었습니다.");
       setShowModal(false);
+      // 작성 후 현재 페이지가 1이면 직접 다시 조회,
+      // 아니면 페이지를 1로 변경해서 useEffect가 호출되도록
+      if (currentPage === 1) {
+        loadPage(0);
+      } else {
+        setCurrentPage(1);
+      }
     } catch (err) {
       console.error(err);
       toast.error(err.message);
     }
   };
 
-  // 검색 필터링
+  // 검색 필터링 (클라이언트 사이드)
   const filtered = questions.filter((q) =>
     q.title.includes(search)
-  );
-
-  // 페이지네이션 로직 — 1페이지에 4개씩
-  const [currentPage, setCurrentPage] = useState(1);
-  const questionsPerPage = 4;
-  const totalPages = Math.ceil(filtered.length / questionsPerPage);
-  const startIndex = (currentPage - 1) * questionsPerPage;
-  const currentQuestions = filtered.slice(
-    startIndex,
-    startIndex + questionsPerPage
   );
 
   return (
@@ -100,12 +97,11 @@ export default function Questions() {
       <Header />
 
       <div className="p-8">
-        {/* 상단: 타이틀 + 새 질문 버튼 + 검색 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
-          <h1 className="text-4xl font-bold flex items-center gap-2">
+          <h1 className="text-4xl font-bold flex items-center">
             질문 게시판
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-2">
+          <div className="flex items-center w-full md:w-64 space-x-2 mt-2.5">
             <PlusCircle
               className="w-10 h-10 text-purple-400 hover:text-purple-600 cursor-pointer"
               onClick={() => setShowModal(true)}
@@ -123,14 +119,12 @@ export default function Questions() {
           </div>
         </div>
 
-        {/* 질문 목록 (현재 페이지 항목만) */}
-        <div className="space-y-4">
-          {currentQuestions.map((q) => (
+        <div className="space-y-2">
+          {filtered.map((q) => (
             <QuestionCard key={q.id} {...q} />
           ))}
         </div>
 
-        {/* 페이지네이션 */}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -138,7 +132,6 @@ export default function Questions() {
         />
       </div>
 
-      {/* 생성 모달 */}
       <CreateQuestionModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}

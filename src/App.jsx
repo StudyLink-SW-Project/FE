@@ -13,7 +13,6 @@ import StudyRoomInside from "./pages/StudyRoomInside";
 import QuestionDetail from "./pages/QuestionDetail";
 import VideoRoom from "./pages/VideoRoom";
 import OAuth2Callback from "./pages/OAuth2Callback";
-import ProfilePage from "./pages/ProfilePage"; 
 
 export default function App() {
   return (
@@ -44,15 +43,7 @@ export default function App() {
             <VideoRoom />
           </ProtectedRoute>
         } />
-        <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />      
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
