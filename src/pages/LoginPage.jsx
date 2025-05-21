@@ -95,9 +95,9 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-between text-xs text-gray-500 mb-15">
-              <label className="flex items-center gap-1">
+              {/* <label className="flex items-center gap-1">
                 <input type="checkbox" /> 유지하기
-              </label>
+              </label> */}
               <span>비밀번호를 잊으셨나요?</span>
             </div>
 
