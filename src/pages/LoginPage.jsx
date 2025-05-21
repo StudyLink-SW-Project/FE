@@ -14,7 +14,7 @@ export default function LoginPage() {
   const { loading, error } = useSelector(state => state.auth);
   const getSocialLoginUrl = provider => `/oauth2/authorization/${provider}`;
   const navigate = useNavigate();
-  const location = useLocation();  // 현재 location 정보
+  const location = useLocation();
   const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
 
   const handleLogin = async (e) => {
@@ -43,7 +43,7 @@ export default function LoginPage() {
           <img src="/logo_black.png" alt="logo" className="absolute top-2 left-2 w-24" />
         </Link>
         <div className="w-full max-w-sm">
-        {/* ➕ 버튼과 제목을 같은 줄에 배치 */}
+        {/* 버튼과 제목을 같은 줄에 배치 */}
           <div className="flex items-center mb-2">
             <button
               onClick={() => navigate("/")}

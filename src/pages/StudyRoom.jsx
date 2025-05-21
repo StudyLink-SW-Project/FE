@@ -65,7 +65,7 @@ export default function StudyRoom() {
           <h1 className="text-4xl font-bold flex items-center mb-5 gap-2 mt-1">
             스터디 룸           
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-2">
+          <div className="flex items-center w-full md:w-64 space-x-3">
             <PlusCircle
               className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
               onClick={() => setShowCreateModal(true)}

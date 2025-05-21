@@ -10,14 +10,14 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
 
-  // ① 아바타 상태: 로컬Storage 우선, 없으면 user.avatarUrl, 없으면 기본 아이콘
+  // 아바타 상태: 로컬Storage 우선, 없으면 user.avatarUrl, 없으면 기본 아이콘
   const [avatar, setAvatar] = useState(
     localStorage.getItem('avatar') ||
     user?.avatarUrl ||
     userIcon
   );
 
-  // ② 사진 변경 핸들러
+  // 사진 변경 핸들러
   const handleAvatarChange = e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -55,7 +55,7 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
             <img
               src={avatar}
               alt="User"
-              className="w-18 h-18 rounded-full"
+              className="cursor-pointer w-16 h-16 rounded-full border-2 border-gray-500 bg-gray-400"
             />
             <input
               type="file"

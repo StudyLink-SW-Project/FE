@@ -26,7 +26,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
     e.preventDefault();
     setError("");
     try {
-      // 🔑 1) 토큰 발급
+      // 1) 토큰 발급
       const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
       if (!res.ok) throw new Error("토큰 서버 오류");
       const { token } = await res.json();
 
-      // 🔑 2) 발급된 토큰과 닉네임을 부모로 전달
+      // 2) 발급된 토큰과 닉네임을 부모로 전달
       onEnter(String(room.id), token, name);
       onClose();
     } catch (err) {

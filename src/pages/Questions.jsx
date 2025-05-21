@@ -101,7 +101,7 @@ export default function Questions() {
           <h1 className="text-4xl font-bold flex items-center">
             질문 게시판
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-2 mt-2.5">
+          <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
             <PlusCircle
               className="w-10 h-10 mt-1 text-purple-400 hover:text-purple-600 cursor-pointer"
               onClick={() => setShowModal(true)}
