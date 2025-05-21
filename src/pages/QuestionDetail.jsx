@@ -143,7 +143,7 @@ export default function QuestionDetail() {
         />
         <button
           type="submit"
-          className="cursor-pointer px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition"
+          className="cursor-pointer -ml-2 px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition"
         >
           등록
         </button>

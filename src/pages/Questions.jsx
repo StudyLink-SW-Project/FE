@@ -46,7 +46,7 @@ export default function Questions() {
           author: newQ.author,
         }),
       });
-            const apiRes = await resp.json();
+      const apiRes = await resp.json();
       // 1) HTTP wrapper가 실패를 알린 경우
       if (!apiRes.isSuccess) {
         throw new Error(apiRes.message || "게시글 작성에 실패했습니다.");
