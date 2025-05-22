@@ -113,7 +113,10 @@ export default function StudyRoom() {
               <div
                 key={room.id}
                 className="cursor-pointer"
-                onClick={() => handleCardClick(room)}
+                onClick={() => {
+                  setSelectedRoom(room);
+                  setShowJoinModal(true);
+                }}
               >
                 <StudyRoomCard {...room} />
               </div>
@@ -140,7 +143,7 @@ export default function StudyRoom() {
       <JoinRoomModal
         room={selectedRoom}
         isOpen={showJoinModal}
-        onClose={handleJoinClose}
+        onClose={() => setShowJoinModal(false)}
         onEnter={handleEnter}
       />
     </div>
