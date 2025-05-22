@@ -15,7 +15,7 @@ import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
             LIVEKIT_URL = "wss://api.studylink.store:443";
         }
     }
-    
+
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +39,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
     setError("");
     try {
       // 1) 토큰 발급
-      const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
+      const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -129,7 +129,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
             type="submit"
             className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition"
           >
-            입장
+            입장1
           </button>
         </form>
       </div>
