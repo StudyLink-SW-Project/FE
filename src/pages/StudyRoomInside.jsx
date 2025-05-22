@@ -6,10 +6,20 @@ import { Room, RoomEvent, LocalVideoTrack } from "livekit-client";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 
-/* LiveKit 서버 URL */
-const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL || "ws://localhost:7880/";
-const APP_SERVER   = import.meta.env.VITE_APP_SERVER  || "http://localhost:6080/";
+  // 토큰 발급 서버
+  let APP_SERVER = "https://api.studylink.store/";
+  // LiveKit WebSocket URL
+  let LIVEKIT_URL = ""; 
 
+    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
+    if (!LIVEKIT_URL) {
+        if (window.location.hostname === "localhost") {
+            LIVEKIT_URL = "ws://localhost:7880/";
+        } else {
+            LIVEKIT_URL = "wss://api.studylink.store:443";
+        }
+    }
+    
 export default function StudyRoomInside() {
   const { id } = useParams();
   const { state } = useLocation();
