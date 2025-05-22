@@ -2,8 +2,20 @@
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
 
-const APP_SERVER = import.meta.env.VITE_APP_SERVER || "http://localhost:6080";
+  // 토큰 발급 서버
+  let APP_SERVER = "https://api.studylink.store/";
+  // LiveKit WebSocket URL
+  let LIVEKIT_URL = ""; 
 
+    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
+    if (!LIVEKIT_URL) {
+        if (window.location.hostname === "localhost") {
+            LIVEKIT_URL = "ws://localhost:7880/";
+        } else {
+            LIVEKIT_URL = "wss://api.studylink.store:443";
+        }
+    }
+    
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");

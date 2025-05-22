@@ -86,7 +86,7 @@ export default function StudyRoom() {
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold flex items-center mb-5 gap-2 mt-1">
-            스터디 룸
+            스터디 룸o
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3">
             <PlusCircle
