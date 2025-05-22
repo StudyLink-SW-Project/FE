@@ -17,15 +17,15 @@ export default function StudyRoom() {
   const roomsPerPage = 15;
 
   const [rooms, setRooms] = useState(
-    // Array.from({ length:  0}, (_, i) => ({
-    //   id: i,
-    //   participants: 1,
-    //   maxParticipants: 4,
-    //   title: `공부합시다! ${i + 1}`,
-    //   subtitle: "화이팅!",
-    //   imageSrc: "/book1.jpg",
-    //   isLocked: false,
-    // }))
+    Array.from({ length:  0}, (_, i) => ({
+      id: i,
+      participants: 1,
+      maxParticipants: 4,
+      title: `공부합시다! ${i + 1}`,
+      subtitle: "화이팅!",
+      imageSrc: "/book1.jpg",
+      isLocked: false,
+    }))
   );
 
   // 검색 필터링
