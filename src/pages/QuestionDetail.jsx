@@ -24,6 +24,12 @@ export default function QuestionDetail() {
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+
+   // 답글 달 댓글 ID
+   const [replyTo, setReplyTo] = useState(null);
+   // 답글 입력값
+   const [replyText, setReplyText] = useState("");
+
   const user = useSelector((state) => state.auth.user);
   const [likedComments, setLikedComments] = useState([]);
 
@@ -53,6 +59,7 @@ export default function QuestionDetail() {
             likes:    c.likeCount,
             liked:    c.liked,
             dateTime: c.createDate,
+            topParentId: c.topParentId,
           }))
         );
 
@@ -154,11 +161,57 @@ export default function QuestionDetail() {
         }))
       );
       setLikedComments(detail.comments.filter(c => c.liked).map(c => c.id));
+      await reloadComments();
       setNewComment("");
     } catch (err) {
       console.error(err);
       toast.error(err.message);
     }
+  };
+
+   // 답글 전용 등록 핸들러
+  const handleReplySubmit = async (e, parentId) => {
+    e.preventDefault();
+    const text = replyText.trim();
+    if (!text) return;
+    try {
+      const resp = await fetch(`${API}comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          comment: text,
+          postId: id,
+          parentCommentId: parentId,
+        }),
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) throw new Error(json.message || "답글 작성에 실패했습니다.");
+      toast.success("답글이 등록되었습니다.");
+      setReplyTo(null);
+      setReplyText("");
+      await reloadComments();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  // 댓글 목록 재조회 함수
+  const reloadComments = async () => {
+    const resp = await fetch(`${API}post/${id}`, { credentials: "include" });
+    const json = await resp.json();
+    if (!json.isSuccess) throw new Error(json.message);
+    const detail = json.result;
+    setComments(detail.comments.map(c => ({
+      id: c.id,
+      author: c.userName,
+      text: c.comment,
+      likes: c.likeCount,
+      liked: c.liked,
+      dateTime: c.createDate,
+    })));
+    setLikedComments(detail.comments.filter(c => c.liked).map(c => c.id));
   };
 
   const titleToShow    = postDetail?.title      || initTitle;
@@ -172,9 +225,9 @@ export default function QuestionDetail() {
         <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
       </Link>
 
-      <div className="bg-[#1D1F2C] rounded-xl p-6 mb-8 flex flex-col justify-between">
+      <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <FileText className="w-6 h-6 mt-0.5 text-purple-400" />
             <h1 className="text-2xl font-semibold">{titleToShow}</h1>
           </div>
@@ -203,35 +256,7 @@ export default function QuestionDetail() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold mb-2">댓글 ({comments.length})</h2>
-        {comments.map((c) => (
-          <div key={c.id} className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
-            <p className="text-white mb-6">{c.text}</p>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4 text-sm">
-                <User className="w-4 h-4 -mr-2 text-gray-400" />
-                <span className="font-medium text-white mr-5">{c.author}</span>
-                <span className="text-gray-400 text-sm">
-                  {new Date(c.dateTime).toLocaleString()}
-                </span>
-              </div>
-              <button
-                onClick={() => handleCommentLike(c.id)}
-                className={`flex cursor-pointer items-center gap-1 text-sm ${
-                  likedComments.includes(c.id)
-                    ? "text-blue-400"
-                    : "text-gray-400 hover:text-white"
-                }`}
-              >
-                <ThumbsUp className="cursor-pointer w-4 h-4" /> {c.likes}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <form onSubmit={handleCommentSubmit} className="mt-8 flex gap-2">
+      <form onSubmit={handleCommentSubmit} className="mb-5 flex gap-2">
         <input
           type="text"
           placeholder="댓글을 입력하세요..."
@@ -246,6 +271,109 @@ export default function QuestionDetail() {
           등록
         </button>
       </form>
+      
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold mb-4">댓글 ({comments.length})</h2>
+        {/*
+          1) 부모 댓글만 필터링 (topParentId가 null)
+          2) 각 부모 아래에 답글(자식)만 렌더링
+        */}
+        {comments
+          .filter(c => c.topParentId == null)
+          .map(parent => (
+            <div key={parent.id} className="space-y-4">
+              {/* — 부모 댓글 카드 */}
+              <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
+                <p className="text-white mb-6">{parent.text}</p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4 text-sm">
+                    <User className="w-4 h-4 -mr-2 text-gray-400" />
+                    <span className="font-medium text-white mr-3">{parent.author}</span>
+                    <span className="text-gray-400 text-sm">
+                      {new Date(parent.dateTime).toLocaleString()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleCommentLike(parent.id)}
+                    className={`flex cursor-pointer items-center gap-1 text-sm ${
+                      likedComments.includes(parent.id)
+                        ? "text-blue-400"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <ThumbsUp className="w-4 h-4" /> {parent.likes}
+                  </button>
+                </div>
+
+                {/* 답글 버튼 */}
+                <button
+                  className="self-start text-white text-xs mt-2 hover:underline"
+                  onClick={() => setReplyTo(prev => prev === parent.id ? null : parent.id)}
+                >
+                  답글
+                </button>
+
+                {/* 답글 입력창 */}
+                {replyTo === parent.id && (
+                  <form
+                    onSubmit={(e) => handleReplySubmit(e, parent.id)}
+                    className="mt-2 flex gap-2"
+                  >
+                    <input
+                      type="text"
+                      placeholder="답글을 입력하세요..."
+                      className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1 bg-blue-600 rounded-r text-xs hover:bg-blue-500"
+                    >
+                      등록
+                    </button>
+                  </form>
+                )}
+              </div>
+
+              {/* — 완전 분리된 답글 컨테이너 */}
+              <div className="ml-12 -mt-2 space-y-2">
+                {comments
+                  .filter(c => c.topParentId === parent.id)
+                  .map(reply => (
+                    <div
+                      key={reply.id}
+                      className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
+                    >
+                      <p className="text-white mb-6">{reply.text}</p>
+
+                      {/* 부모 댓글과 동일한 작성자·시간 + 좋아요 UI */}
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-4 text-sm">
+                          <User className="w-4 h-4 -mr-2 text-gray-400" />
+                          <span className="font-medium text-white mr-3">{reply.author}</span>
+                          <span className="text-gray-400 text-sm">
+                            {new Date(reply.dateTime).toLocaleString()}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleCommentLike(reply.id)}
+                          className={`flex cursor-pointer items-center gap-1 text-sm ${
+                            likedComments.includes(reply.id)
+                              ? "text-blue-400"
+                              : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          <ThumbsUp className="w-4 h-4" /> {reply.likes}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+        ))}
+      </div>
     </div>
   );
 }
