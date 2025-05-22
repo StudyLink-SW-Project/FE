@@ -40,7 +40,8 @@ export default function Questions() {
           date:     p.createDate,
           dateTime: `${p.createDate}`,
           answers:  p.commentCount,
-          likes:    0,
+          likes:    p.likeCount,
+          liked:    p.liked,
         }))
       );
       setTotalPages(tp);
@@ -87,6 +88,29 @@ export default function Questions() {
     }
   };
 
+   // (2) 게시글 좋아요 토글 핸들러
+   const handleQuestionLike = async (postId) => {
+     try {
+       const resp = await fetch(`${API}post/${postId}/like`, {
+         method: "POST",
+         credentials: "include",
+       });
+       const json = await resp.json();
+       if (!json.isSuccess) {
+         throw new Error(json.message || "좋아요 토글에 실패했습니다.");
+       }
+       const { liked, likeCount } = json.result;
+       // 해당 항목만 업데이트
+       setQuestions(prev =>
+         prev.map(q =>
+           q.id === postId ? { ...q, likes: likeCount, liked } : q
+         )
+       );
+     } catch (err) {
+       console.error(err);
+       toast.error(err.message);
+     }
+   };
   // 검색 필터링 (클라이언트 사이드)
   const filtered = questions.filter((q) =>
     q.title.includes(search)
@@ -121,7 +145,7 @@ export default function Questions() {
 
         <div className="space-y-2">
           {filtered.map((q) => (
-            <QuestionCard key={q.id} {...q} />
+            <QuestionCard key={q.id} {...q} onToggleLike={() => handleQuestionLike(q.id)}/>
           ))}
         </div>
 
