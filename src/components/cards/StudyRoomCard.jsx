@@ -10,7 +10,7 @@ export default function StudyRoomCard({
 }) {
   return (
     <div>
-      <div className="relative bg-[#1D1F2C] hover:bg-black transition-colors duration-200 overflow-hidden w-56 max-w-full border border-[#616680]">
+      <div className="relative z-0 bg-[#1D1F2C] w-56 max-w-full border border-[#616680]">
         {/* 방 이미지 */}
         <img
           src={imageSrc}

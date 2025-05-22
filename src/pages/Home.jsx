@@ -34,9 +34,9 @@ export default function Home() {
           <p className="text-lg md:text-xl text-gray-200">
             지금 바로 스터디를 시작해보세요
           </p>
-          {/* ➕ 버튼을 감싸는 컨테이너에 relative */}
+          {/* 버튼을 감싸는 컨테이너에 relative */}
           <div className="relative inline-block mt-8">
-            {/* ➕ 데코 이미지: 버튼 왼쪽 위에 absolute 배치 */}
+            {/* 데코 이미지: 버튼 왼쪽 위에 absolute 배치 */}
             <img
               src={"/effect.png"}
               alt="decorative"
@@ -69,7 +69,7 @@ export default function Home() {
           />
         </div>
       </main>
-      {/* ➕ 우측 하단 고정 아이콘 */}
+      {/* 우측 하단 고정 아이콘 */}
       <img
         src={"/logo_black.png"}
         alt="Decorative Icon"

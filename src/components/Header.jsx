@@ -1,7 +1,8 @@
 // src/components/Header.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutThunk } from '../store/authThunks';
 import userIcon from '../assets/user_icon.png';
 import UserMenu from './UserMenu';
 import ProfileModal from './modals/ProfileModal';
@@ -9,25 +10,46 @@ import ProfileModal from './modals/ProfileModal';
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
   const isAuthenticated = !!user;
-  const storedAvatar = localStorage.getItem('avatar');
 
-  // 메뉴에서 "내 프로필" 클릭 시 호출
+  // avatar 상태 관리
+  const initialAvatar = localStorage.getItem('avatar') || user?.avatarUrl || userIcon;
+  const [avatar, setAvatar] = useState(initialAvatar);
+
+  // 다른 탭에서 avatar 변경 시 동기화
+  useEffect(() => {
+    const onStorage = e => {
+      if (e.key === 'avatar') {
+        setAvatar(e.newValue || user?.avatarUrl || userIcon);
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [user]);
+
   const handleOpenProfile = () => {
     setShowProfileModal(true);
     setMenuOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutThunk()).unwrap();
+      setMenuOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
-      {/* 프로필 모달 */}
       {showProfileModal && (
         <ProfileModal onClose={() => setShowProfileModal(false)} />
       )}
 
-      <header className="bg-[#1D1F2C] text-white flex justify-between items-center px-8 py-4 h-20 border-b border-[#616680] relative">
-        {/* 로고 + 네비게이션 */}
+      <header className="bg-[#1D1F2C] text-white flex justify-between items-center px-8 py-4 h-20 border-b border-[#616680] relative z-50">
         <div className="flex items-center gap-15">
           <Link to="/">
             <img src="/logo_white.png" alt="Study Link Logo" className="h-20" />
@@ -39,22 +61,40 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* 로그인 상태에 따른 UI */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           {isAuthenticated ? (
-            <div className="relative">
+            <div className="flex items-start gap-4 relative">
+              {/* 유저 아이콘 */}
               <button onClick={() => setMenuOpen(prev => !prev)}>
                 <img
-                  src={storedAvatar || user.avatarUrl || userIcon}
+                  src={avatar}
                   alt="User"
-                  className="cursor-pointer w-10 h-10 rounded-full"
+                  className="cursor-pointer w-16 h-16 rounded-full border-2 border-gray-600"
                 />
               </button>
+
+              {/* 우측: 환영 메시지와 로그아웃 버튼 */}
+              <div className="flex flex-col mt-3">
+                <span className="text-sm font-semibold">
+                  {user.userName}님 환영합니다
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="mt-1 w-14 py-0.5 bg-red-500 rounded text-xs font-medium hover:bg-red-600 cursor-pointer transition"
+                >
+                  로그아웃
+                </button>
+              </div>
+
+              {/* 드롭다운 메뉴 */}
               {menuOpen && (
-                <UserMenu
-                  onClose={() => setMenuOpen(false)}
-                  onOpenProfile={handleOpenProfile}
-                />
+                <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2">
+                  <UserMenu
+                    onClose={() => setMenuOpen(false)}
+                    onOpenProfile={handleOpenProfile}
+                    onAvatarChange={setAvatar}
+                  />
+                </div>
               )}
             </div>
           ) : (
