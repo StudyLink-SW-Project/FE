@@ -17,7 +17,7 @@ export default function StudyRoom() {
   const roomsPerPage = 15;
 
   const [rooms, setRooms] = useState(
-    Array.from({ length:  0}, (_, i) => ({
+    Array.from({ length: 17 }, (_, i) => ({
       id: i,
       participants: 1,
       maxParticipants: 4,
