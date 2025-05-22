@@ -37,11 +37,11 @@ export default function Home() {
           {/* 버튼을 감싸는 컨테이너에 relative */}
           <div className="relative inline-block mt-8">
             {/* 데코 이미지: 버튼 왼쪽 위에 absolute 배치 */}
-            <img
+            {/* <img
               src={"/effect.png"}
               alt="decorative"
               className="absolute -top-6 -left-9 w-15 h-8 transform -rotate-45"
-            />
+            /> */}
             <button
               onClick={() => navigate("/study-room")}
               className="
