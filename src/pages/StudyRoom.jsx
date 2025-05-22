@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import StudyRoomCard from "../components/cards/StudyRoomCard";
 import CreateRoomModal from "../components/modals/CreateRoomModal";
 import Pagination from "../components/Pagination";
+import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle } from "lucide-react";
 
 export default function StudyRoom() {
@@ -12,6 +13,10 @@ export default function StudyRoom() {
 
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // join 모달 관련 state
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const roomsPerPage = 15;
@@ -27,6 +32,24 @@ export default function StudyRoom() {
       isLocked: false,
     }))
   );
+
+  // 카드 클릭 핸들러: 모달 열기
+  const handleCardClick = (room) => {
+    setSelectedRoom(room);
+    setShowJoinModal(true);
+  };
+
+  // 모달 닫기
+  const handleJoinClose = () => {
+    setShowJoinModal(false);
+    setSelectedRoom(null);
+  };
+
+  // 모달에서 “입장” 눌렀을 때
+  const handleEnter = (roomId, token, participantName) => {
+    // token, participantName 은 필요하시면 state로 넘기세요
+    navigate(`/video-room/${roomId}`, { state: { token, participantName } });
+  };
 
   // 검색 필터링
   const filtered = rooms.filter((r) => r.title.includes(search));
@@ -63,7 +86,7 @@ export default function StudyRoom() {
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold flex items-center mb-5 gap-2 mt-1">
-            스터디 룸           
+            스터디 룸
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3">
             <PlusCircle
@@ -90,7 +113,7 @@ export default function StudyRoom() {
               <div
                 key={room.id}
                 className="cursor-pointer"
-                onClick={() => navigate("/video-room")}
+                onClick={() => handleCardClick(room)}
               >
                 <StudyRoomCard {...room} />
               </div>
@@ -111,6 +134,14 @@ export default function StudyRoom() {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreate}
+      />
+
+      {/* 방 입장 모달 */}
+      <JoinRoomModal
+        room={selectedRoom}
+        isOpen={showJoinModal}
+        onClose={handleJoinClose}
+        onEnter={handleEnter}
       />
     </div>
   );
