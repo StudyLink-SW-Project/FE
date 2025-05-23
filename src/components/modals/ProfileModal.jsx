@@ -3,12 +3,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import userIcon from '../../assets/user_icon.png';
 
-/**
- * ProfileModal
- * 프로필 페이지 내용을 배경 어두운 모달로 보여줍니다.
- * Props:
- *  - onClose: 모달 닫기 핸들러
- */
 export default function ProfileModal({ onClose }) {
   const { user } = useSelector(state => state.auth);
 

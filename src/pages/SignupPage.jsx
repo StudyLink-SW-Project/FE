@@ -37,7 +37,7 @@ export default function SignupPage() {
           <img src="/logo_black.png" alt="logo" className="absolute top-2 left-2 w-24" />
         </Link>
         <div className="w-full max-w-sm">
-          {/* ➕ 뒤로가기 버튼 + 제목을 같은 줄에 배치 */}
+          {/* 뒤로가기 버튼 + 제목을 같은 줄에 배치 */}
           <div className="flex items-center mb-2">
             <button
               onClick={() => navigate("/")}
