@@ -57,7 +57,7 @@ export default function Header() {
             <img
               src="/logo_white.png"
               alt="Study Link Logo"
-              className="h-10 md:h-12"
+              className="h-10 md:h-20"
             />
           </Link>
           <nav className="hidden md:flex gap-6">
