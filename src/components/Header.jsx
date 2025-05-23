@@ -154,7 +154,7 @@ export default function Header() {
                   onClick={() => setMobileOpen(false)}
                   className="bg-white text-black px-4 py-2 rounded-full font-semibold hover:bg-gray-300"
                 >
-                  로그인
+                  로그인1
                 </Link>
                 <Link
                   to="/signup"
