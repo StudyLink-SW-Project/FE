@@ -50,7 +50,7 @@ export default function Header() {
         <ProfileModal onClose={() => setShowProfileModal(false)} />
       )}
 
-      <header className="bg-[#1D1F2C] text-white px-4 md:px-8 py-3 flex items-center justify-between border-b border-[#616680] relative z-50">
+      <header className="bg-[#1D1F2C] text-white px-4 md:px-8 h-20 flex items-center justify-between border-b border-[#616680] relative z-50">
         {/* ← 왼쪽 그룹: 로고 + 네비 */}
         <div className="flex items-center gap-4 sm:gap-15">
           <Link to="/" className="flex items-center">
@@ -61,13 +61,13 @@ export default function Header() {
             />
           </Link>
           <nav className="hidden md:flex gap-6">
-            <Link to="/" className="hover:text-gray-300 font-semibold">
+            <Link to="/" className="hover:text-gray-300 font-semibold px-10 py-1">
               홈
             </Link>
-            <Link to="/study-room" className="hover:text-gray-300 font-semibold">
+            <Link to="/study-room" className="hover:text-gray-300 font-semibold px-10 py-1">
               스터디 룸
             </Link>
-            <Link to="/questions" className="hover:text-gray-300 font-semibold">
+            <Link to="/questions" className="hover:text-gray-300 font-semibold px-10 py-1">
               질문 게시판
             </Link>
           </nav>
@@ -81,7 +81,7 @@ export default function Header() {
                 <img
                   src={avatar}
                   alt="User"
-                  className="w-12 h-12 rounded-full border-2 border-gray-600 cursor-pointer"
+                  className="w-16 h-16 rounded-full border-2 border-gray-600 cursor-pointer"
                 />
               </button>
               <div className="flex flex-col mt-2">
@@ -134,9 +134,15 @@ export default function Header() {
         {mobileOpen && (
           <div className="absolute top-full left-0 w-full bg-[#1D1F2C] border-b border-[#616680] flex flex-col items-center py-4 space-y-4 md:hidden">
             <nav className="flex flex-col items-center gap-4">
-              <Link to="/" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">홈</Link>
-              <Link to="/study-room" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">스터디 룸</Link>
-              <Link to="/questions" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">질문 게시판</Link>
+              <Link to="/" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">
+                홈
+              </Link>
+              <Link to="/study-room" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">
+                스터디 룸
+              </Link>
+              <Link to="/questions" onClick={() => setMobileOpen(false)} className="hover:text-gray-300 font-semibold">
+                질문 게시판
+              </Link>
             </nav>
             {isAuthenticated ? (
               <>
