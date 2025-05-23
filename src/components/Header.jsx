@@ -51,21 +51,27 @@ export default function Header() {
       )}
 
       <header className="bg-[#1D1F2C] text-white px-4 md:px-8 py-3 flex items-center justify-between border-b border-[#616680] relative z-50">
-        {/* 왼쪽: 로고 */}
-        <Link to="/" className="flex items-center">
-          <img
-            src="/logo_white.png"
-            alt="Study Link Logo"
-            className="h-10 md:h-12"
-          />
-        </Link>
-
-        {/* 데스크탑 내비: md 이상에서만 보인다 */}
-        <nav className="hidden md:flex gap-6">
-          <Link to="/" className="hover:text-gray-300 font-semibold">홈</Link>
-          <Link to="/study-room" className="hover:text-gray-300 font-semibold">스터디 룸</Link>
-          <Link to="/questions" className="hover:text-gray-300 font-semibold">질문 게시판</Link>
-        </nav>
+        {/* ← 왼쪽 그룹: 로고 + 네비 */}
+        <div className="flex items-center gap-4 sm:gap-15">
+          <Link to="/" className="flex items-center">
+            <img
+              src="/logo_white.png"
+              alt="Study Link Logo"
+              className="h-10 md:h-12"
+            />
+          </Link>
+          <nav className="hidden md:flex gap-6">
+            <Link to="/" className="hover:text-gray-300 font-semibold">
+              홈
+            </Link>
+            <Link to="/study-room" className="hover:text-gray-300 font-semibold">
+              스터디 룸
+            </Link>
+            <Link to="/questions" className="hover:text-gray-300 font-semibold">
+              질문 게시판
+            </Link>
+          </nav>
+        </div>
 
         {/* 우측 인증/유저 영역 (데스크탑) */}
         <div className="hidden md:flex items-center gap-6">
@@ -154,7 +160,7 @@ export default function Header() {
                   onClick={() => setMobileOpen(false)}
                   className="bg-white text-black px-4 py-2 rounded-full font-semibold hover:bg-gray-300"
                 >
-                  로그인1
+                  로그인
                 </Link>
                 <Link
                   to="/signup"
