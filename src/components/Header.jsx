@@ -107,13 +107,13 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="bg-white text-black px-4 py-2 rounded-full font-semibold hover:bg-gray-300"
+                className="bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-300"
               >
                 로그인
               </Link>
               <Link
                 to="/signup"
-                className="border border-white px-4 py-2 rounded-full font-semibold hover:bg-gray-700"
+                className="border border-white px-5 py-3 rounded-full font-semibold hover:bg-gray-700"
               >
                 회원가입
               </Link>
