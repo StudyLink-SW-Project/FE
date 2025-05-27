@@ -1,8 +1,11 @@
 // src/components/CreateRoomModal.jsx
 import { useEffect, useState } from "react";
 import { Home, FileText, Lock, Eye, EyeOff, Image } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateRoomModal({ isOpen, onClose, onCreate }) {
+  const navigate = useNavigate();
+  
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");

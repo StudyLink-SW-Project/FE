@@ -1,5 +1,5 @@
 // src/pages/StudyRoom.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import StudyRoomCard from "../components/cards/StudyRoomCard";
@@ -7,6 +7,7 @@ import CreateRoomModal from "../components/modals/CreateRoomModal";
 import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
@@ -21,29 +22,39 @@ export default function StudyRoom() {
   const [currentPage, setCurrentPage] = useState(1);
   const roomsPerPage = 15;
 
-  const [rooms, setRooms] = useState(
-    Array.from({ length: 0 }, (_, i) => ({
-      id: i,
-      participants: 1,
-      maxParticipants: 4,
-      title: `공부합시다! ${i + 1}`,
-      subtitle: "화이팅!",
-      imageSrc: "/book1.jpg",
-      isLocked: false,
-    }))
-  );
 
-  // 카드 클릭 핸들러: 모달 열기
-  const handleCardClick = (room) => {
-    setSelectedRoom(room);
-    setShowJoinModal(true);
-  };
+  // 서버에서 가져온 방 목록
+  const [rooms, setRooms] = useState([]);
 
-  // 모달 닫기
-  const handleJoinClose = () => {
-    setShowJoinModal(false);
-    setSelectedRoom(null);
-  };
+  // API 기본 URL
+  const API = import.meta.env.DEV
+    ? "/"
+    : import.meta.env.VITE_APP_SERVER;
+  // 마운트 시 방 목록 조회
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API}room/rooms`);
+        if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
+        const data = await resp.json();
+        // data.rooms: RoomDto[]
+        setRooms(
+          data.rooms.map((r) => ({
+            id: r.sid,
+            participants: r.numParticipants,
+            maxParticipants: r.maxParticipants,
+            title: r.name,
+            subtitle: r.metadata || "",
+            imageSrc: "/study-room.png",
+            isLocked: false,
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+        toast.error(err.message);
+      }
+    })();
+  }, [API]);
 
   // 모달에서 “입장” 눌렀을 때
   const handleEnter = (roomId, token, participantName) => {

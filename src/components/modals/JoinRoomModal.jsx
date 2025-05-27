@@ -120,7 +120,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
             type="submit"
             className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition"
           >
-            입장1
+            입장
           </button>
         </form>
       </div>
