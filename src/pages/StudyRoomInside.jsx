@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Room, RoomEvent, LocalVideoTrack } from "livekit-client";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
+import { useSelector } from "react-redux";
 
   // 토큰 발급 서버
   let APP_SERVER = "https://api.studylink.store/";
@@ -24,8 +25,8 @@ export default function StudyRoomInside() {
   const { id } = useParams();
   const { state } = useLocation();
   const tokenFromModal = state?.token;  // 모달에서 넘어온 토큰
-  const participantName =
-    state?.userName;
+  const reduxUser = useSelector(state => state.auth.user);
+  const participantName = state?.participantName || reduxUser?.userName || 'Guest';
 
   const [room, setRoom] = useState(null);
   const [localTrack, setLocalTrack] = useState(null);
