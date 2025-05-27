@@ -376,7 +376,63 @@ export default function StudyRoomInside() {
               ))}
             </ul>
           </div>
-          {/* 메시지와 컨트롤 생략 for brevity */}
+          {/* 메시지 카드 */}
+          <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
+            <h3 className="text-center font-medium mb-2">메시지</h3>
+            <hr className="border-gray-300 mb-3" />
+            <div className="h-80 overflow-auto mb-3 space-y-2">
+              {chatLog.length === 0 ? (
+               <p className="text-gray-500 italic">아직 대화가 없습니다.</p>
+              ) : (
+                chatLog.map((m, i) => (
+                  <div key={i}>
+                    <span className="font-semibold">{m.author}: </span>
+                    <span>{m.text}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            <form
+              className="flex gap-1"
+              onSubmit={e => {
+                e.preventDefault();
+                const txt = e.target.elements.msg.value.trim();
+                if (!txt || !room) return;
+                room.localParticipant.publishData(
+                  new TextEncoder().encode(txt),
+                  0
+                );
+                setChatLog(prev => [...prev, { author: "나", text: txt }]);
+                e.target.reset();
+              }}
+            >
+              <input
+                name="msg"
+                type="text"
+                placeholder="메시지를 입력하세요"
+                className="flex-1 border border-gray-300 rounded-l px-3 py-2 outline-none"
+              />
+              <button
+                type="submit"
+                className="bg-black text-white px-3 py-2 rounded-r hover:bg-gray-800 transition whitespace-nowrap text-center"
+              >
+                전송
+              </button>
+            </form>
+          </div>
+
+          {/* 컨트롤 버튼 */}
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={toggleCamera}
+              className={`p-3 rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
+            >
+              📹
+            </button>
+            <Link to="/study-room">
+              <button className="bg-red-500 p-3 rounded-full">🚪</button>
+            </Link>
+          </div>
         </aside>
       </div>
     </div>
