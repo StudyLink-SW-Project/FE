@@ -25,7 +25,7 @@ export default function StudyRoomInside() {
   const { state } = useLocation();
   const tokenFromModal = state?.token;  // 모달에서 넘어온 토큰
   const participantName =
-    state?.name;
+    state?.userName;
 
   const [room, setRoom] = useState(null);
   const [localTrack, setLocalTrack] = useState(null);
