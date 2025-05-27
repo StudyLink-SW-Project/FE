@@ -45,7 +45,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          roomName: String(room.id), // "0"도 허용되도록 String
+          roomName: String(room.title), // "0"도 허용되도록 String
           participantName: userName,
         }),
       });
@@ -53,7 +53,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
       const { token } = await res.json();
 
       // 2) 발급된 토큰을 부모로 전달
-      onEnter(String(room.id), token);
+      onEnter(String(room.title), token);
       onClose();
     } catch (err) {
       setError(err.message);
