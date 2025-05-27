@@ -1,11 +1,12 @@
 // src/store/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { loginThunk, logoutThunk, fetchInfoThunk } from './authThunks';
+import { loginThunk, logoutThunk, signupThunk, fetchInfoThunk } from './authThunks';
 
+const initialUser = JSON.parse(localStorage.getItem('user')) || null;
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
+    user: initialUser,
     loading: false,
     error: null,
   },
