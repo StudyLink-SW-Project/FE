@@ -37,6 +37,11 @@ export default function StudyRoom() {
         const resp = await fetch(`${API}room/rooms`);
         if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
         const data = await resp.json();
+        console.log("room/rooms 응답:", data);
+        const roomsArray = data.rooms || data.result?.rooms; 
+      if (!Array.isArray(roomsArray)) {
+        throw new Error("rooms 배열을 찾을 수 없습니다");
+      }
         // data.rooms: RoomDto[]
         setRooms(
           data.rooms.map((r) => ({
