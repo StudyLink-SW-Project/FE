@@ -254,14 +254,16 @@ export default function StudyRoomInside() {
     const r = new Room();
     setRoom(r);
 
-    // 비디오 트랙만 구독하여 저장
+        // 비디오 트랙만 구독하여 저장
     r.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
-      if (publication.kind === "video" &&
-          !remoteTracks.some(r => r.pub.trackSid === publication.trackSid)) {
-        setRemoteTracks(prev => [...prev, { pub: publication, id: participant.identity }]);
+      if (publication.kind === "video") {
+        setRemoteTracks(prev => {
+          if (prev.some(r => r.pub.trackSid === publication.trackSid)) return prev;
+          return [...prev, { pub: publication, id: participant.identity }];
+        });
       }
     });
-    r.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+    r.on(RoomEvent.TrackUnsubscribed, (_track, publication) => (_track, publication) => {
       setRemoteTracks(prev => prev.filter(t => t.pub.trackSid !== publication.trackSid));
     });
 
