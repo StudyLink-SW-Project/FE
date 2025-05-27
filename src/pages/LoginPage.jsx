@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider) => {
-    window.location.href = getSocialLoginUrl(provider);
+      window.location.href = `https://api.studylink.store/oauth2/authorization/${provider}`;
   };
 
   return (
