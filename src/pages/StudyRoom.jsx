@@ -42,9 +42,9 @@ export default function StudyRoom() {
       if (!Array.isArray(roomsArray)) {
         throw new Error("rooms 배열을 찾을 수 없습니다");
       }
-        // data.rooms: RoomDto[]
-        setRooms(
-          data.rooms.map((r) => ({
+      const roomsDto = data.result?.rooms ?? [];
+      setRooms(
+        roomsDto.map((r) => ({
             id: r.sid,
             participants: r.numParticipants,
             maxParticipants: r.maxParticipants,
@@ -102,7 +102,7 @@ export default function StudyRoom() {
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold flex items-center mb-5 gap-2 mt-1">
-            스터디 룸.
+            스터디 룸
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3">
             <PlusCircle
