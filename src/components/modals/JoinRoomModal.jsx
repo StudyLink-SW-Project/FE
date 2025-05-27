@@ -53,7 +53,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
       const { token } = await res.json();
 
       // 2) 발급된 토큰과 닉네임을 부모로 전달
-      onEnter(String(room.id), token, userName);
+      onEnter(String(room.id), token);
       onClose();
     } catch (err) {
       setError(err.message);
