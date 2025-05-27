@@ -118,7 +118,7 @@ export default function StudyRoomInside() {
   }, [room, camEnabled]);
 
   const roomTitle = `공부합시다! (${id})`;
-  const participantCount = 1 + remoteTracks.length;
+  const participantCount = remoteTracks.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
@@ -160,7 +160,11 @@ export default function StudyRoomInside() {
             <h3>참가자 수: {participantCount}</h3>
             <ul>
               {participants.map(id => (
-                <li key={id}>{id === participantName ? `${id} (나)` : id}</li>
+                <li key={id} className="flex items-center gap-3">
+                  <span className="text-sm">
+                    {id === participantName ? `${id} (나)` : id}
+                  </span>
+                </li>
               ))}
             </ul>
           </div>
