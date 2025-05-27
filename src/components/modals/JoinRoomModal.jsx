@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   // 리덕스에서 유저 정보 가져오기
   const user = useSelector(state => state.auth.user);
-  const participantName = user?.userName || `Guest_${Math.random().toString(36).slice(2,6)}`;
+  const userName = user?.userName || `Guest_${Math.random().toString(36).slice(2,6)}`;
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
@@ -46,14 +46,14 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roomName: String(room.id), // "0"도 허용되도록 String
-          participantName,
+          participantName: userName,
         }),
       });
       if (!res.ok) throw new Error("토큰 서버 오류");
       const { token } = await res.json();
 
       // 2) 발급된 토큰과 닉네임을 부모로 전달
-      onEnter(String(room.id), token, participantName);
+      onEnter(String(room.id), token, userName);
       onClose();
     } catch (err) {
       setError(err.message);
