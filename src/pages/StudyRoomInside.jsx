@@ -7,24 +7,23 @@ import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 import { useSelector } from "react-redux";
 
-  // 토큰 발급 서버
-  let APP_SERVER = "https://api.studylink.store/";
-  // LiveKit WebSocket URL
-  let LIVEKIT_URL = ""; 
+// 토큰 발급 서버
+const APP_SERVER = "https://api.studylink.store/";
+// LiveKit WebSocket URL
+let LIVEKIT_URL = "";
 
-    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
-    if (!LIVEKIT_URL) {
-        if (window.location.hostname === "localhost") {
-            LIVEKIT_URL = "ws://localhost:7880/";
-        } else {
-            LIVEKIT_URL = "wss://api.studylink.store:443";
-        }
-    }
-    
+if (!LIVEKIT_URL) {
+  if (window.location.hostname === "localhost") {
+    LIVEKIT_URL = "ws://localhost:7880/";
+  } else {
+    LIVEKIT_URL = "wss://api.studylink.store:443";
+  }
+}
+
 export default function StudyRoomInside() {
   const { id } = useParams();
   const { state } = useLocation();
-  const tokenFromModal = state?.token;  // 모달에서 넘어온 토큰
+  const tokenFromModal = state?.token;
   const reduxUser = useSelector(state => state.auth.user);
   const participantName = state?.participantName || reduxUser?.userName || 'Guest';
 
@@ -36,60 +35,45 @@ export default function StudyRoomInside() {
   const [participants, setParticipants] = useState([participantName]);
 
   useEffect(() => {
-    if (!tokenFromModal) return;
+    if (!tokenFromModal && !id) return;
+
     const r = new Room();
     setRoom(r);
 
-    // 1) 콜백을 변수에 할당
-    const handleSubscribed = (_t, pub, participant) => {
-      setRemoteTracks(prev => [...prev, { pub, id: participant.identity }]);
+    const handleTrackSubscribed = (_track, pub, participant) => {
+      setRemoteTracks(prev => {
+        const exists = prev.some(t => t.pub.trackSid === pub.trackSid);
+        if (exists) return prev;
+        return [...prev, { pub, id: participant.identity }];
+      });
     };
-    const handleUnsubscribed = (_t, pub) => {
+
+    const handleTrackUnsubscribed = (_track, pub) => {
       setRemoteTracks(prev =>
         prev.filter(t => t.pub.trackSid !== pub.trackSid)
       );
     };
-    const handleJoin = p => {
+
+    const handleParticipantConnected = p => {
       setParticipants(prev =>
         prev.includes(p.identity) ? prev : [...prev, p.identity]
       );
     };
-    const handleLeave = p => {
+
+    const handleParticipantDisconnected = p => {
       setParticipants(prev =>
-        prev.filter(id => id !== p.identity)
+        prev.filter(identity => identity !== p.identity)
       );
     };
 
-    // 2) on 에도, off 에도 같은 변수를 사용
-    r.on(RoomEvent.TrackSubscribed,   handleSubscribed);
-    r.on(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
-    r.on(RoomEvent.ParticipantConnected,    handleJoin);
-    r.on(RoomEvent.ParticipantDisconnected, handleLeave);
+    r.on(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+    r.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+    r.on(RoomEvent.ParticipantConnected, handleParticipantConnected);
+    r.on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
 
-    r.on(RoomEvent.TrackSubscribed, (_t, pub, participant) =>
-      setRemoteTracks(prev => [...prev, { pub, id: participant.identity }])
-    );
-    r.on(RoomEvent.TrackUnsubscribed, (_t, pub) =>
-      setRemoteTracks(prev =>
-        prev.filter(t => t.pub.trackSid !== pub.trackSid)
-      )
-    );
-
-    // 참가자 연결/해제
-    r.on(RoomEvent.ParticipantConnected, p => {
-      setParticipants(prev =>
-        prev.includes(p.identity) ? prev : [...prev, p.identity]
-      );
-    });
-    r.on(RoomEvent.ParticipantDisconnected, p => {
-      setParticipants(prev =>
-        prev.filter(id => id !== p.identity)
-      );
-    });
-
-    (async () => {
+    const setupConnection = async () => {
       try {
-        // 1) 모달에서 넘어온 토큰을 우선 사용, 없으면 백엔드 호출
+        // 1) 토큰 획득
         const livekitToken = tokenFromModal ?? await (async () => {
           const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
             method: "POST",
@@ -97,74 +81,75 @@ export default function StudyRoomInside() {
             body: JSON.stringify({ roomName: id, participantName }),
           });
           if (!res.ok) throw new Error("토큰 서버 오류");
-          const { token } = await res.json();
-          return token;
+          const json = await res.json();
+          return json.token;
         })();
 
         // 2) LiveKit 서버 연결
         await r.connect(LIVEKIT_URL, livekitToken);
 
-        // 이미 방에 있는 참가자들(identity) 가져와서 상태에 추가
-        const existing = Array.from(r.participants.values()).map(p => p.identity);
-        setParticipants([participantName, ...existing.filter(id => id !== participantName)]);
+        // 초기 참가자 목록 설정 (로컬 + 이미 연결된 참가자)
+        setParticipants([
+          r.localParticipant.identity,
+          ...Array.from(r.participants.values()).map(p => p.identity),
+        ]);
+
         // 3) 카메라·마이크 퍼블리시
         await r.localParticipant.enableCameraAndMicrophone();
 
-        // 4) 퍼블리시된 로컬 비디오 트랙 획득
-        const camPub = Array.from(
-          r.localParticipant.videoTrackPublications.values()
-        ).find(p => p.track instanceof LocalVideoTrack);
+        // 4) 로컬 비디오 트랙 설정
+        const camPub = Array.from(r.localParticipant.videoTrackPublications.values())
+          .find(p => p.track instanceof LocalVideoTrack);
         if (camPub) {
           setLocalTrack(camPub.track);
           setCamEnabled(true);
         }
 
-        // 5) 이후 퍼블리시되는 트랙도 동일하게 처리
-        const handleLocalPub = pub => {
+        // 5) 이후 퍼블리시되는 로컬 트랙 처리
+        const handleLocalTrackPublished = pub => {
           if (pub.track instanceof LocalVideoTrack) {
             setLocalTrack(pub.track);
             setCamEnabled(true);
-            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalPub);
+            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
           }
         };
-        r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalPub);
+        r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
       } catch (err) {
         console.error("LiveKit 연결 오류:", err);
       }
-    })();
+    };
 
-    // 3) cleanup 에도 off 호출
+    setupConnection();
+
     return () => {
-      r.off(RoomEvent.TrackSubscribed, handleSubscribed);
-      r.off(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
-      r.off(RoomEvent.ParticipantConnected, handleJoin);
-      r.off(RoomEvent.ParticipantDisconnected, handleLeave);
+      r.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+      r.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+      r.off(RoomEvent.ParticipantConnected, handleParticipantConnected);
+      r.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
       r.disconnect();
     };
-}, [id, tokenFromModal, participantName]);
+  }, [id, tokenFromModal, participantName]);
 
   const toggleCamera = useCallback(() => {
     if (!room) return;
-    room.localParticipant.setCameraEnabled(!camEnabled);
-    setCamEnabled(prev => !prev);
-  }, [room, camEnabled]);
+    setCamEnabled(prev => {
+      room.localParticipant.setCameraEnabled(!prev);
+      return !prev;
+    });
+  }, [room]);
 
   const roomTitle = `공부합시다! (${id})`;
   const participantCount = participants.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
-      {/* 상단 방 정보 */}
       <header className="px-8 py-3 flex items-center border-b border-[#616680] gap-4">
         <h2 className="text-xl font-semibold">{roomTitle}</h2>
         <span className="flex items-center gap-1 text-sm">
           <Users className="w-4 h-4" /> {participantCount}
         </span>
       </header>
-
-      {/* 본문: 비디오 그리드 + 우측 사이드바 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 비디오 그리드 */}
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localTrack && (
             <VideoComponent
@@ -183,25 +168,19 @@ export default function StudyRoomInside() {
               />
             ))}
         </div>
-
-        {/* 우측 사이드바 */}
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
-          {/* 참가자 카드 */}
           <div className="bg-white text-black rounded-xl p-4 shadow">
-            {/* 참가자 수 */}
             <h3>참가자 수: {participantCount}</h3>
             <ul>
-              {participants.map(id => (
-                <li key={id} className="flex items-center gap-3">
+              {participants.map(identity => (
+                <li key={identity} className="flex items-center gap-3">
                   <span className="text-sm">
-                    {id === participantName ? `${id} (나)` : id}
+                    {identity === participantName ? `${identity} (나)` : identity}
                   </span>
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* 메시지 카드 */}
           <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
             <h3 className="text-center font-medium mb-2">메시지</h3>
             <hr className="border-gray-300 mb-3" />
@@ -245,14 +224,10 @@ export default function StudyRoomInside() {
               </button>
             </form>
           </div>
-
-          {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
             <button
               onClick={toggleCamera}
-              className={`p-3 rounded-full ${
-                camEnabled ? "bg-purple-500" : "bg-gray-500"
-              }`}
+              className={`p-3 rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
             >
               📹
             </button>
