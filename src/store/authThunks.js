@@ -26,9 +26,6 @@ export const loginThunk = createAsyncThunk(
       // 1) 리덕스 스토어에 저장
       dispatch(loginSuccess({ user }));
 
-      // 2) 브라우저 저장소에도 저장
-      localStorage.setItem('user', JSON.stringify(user));
-
       return user;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -53,8 +50,6 @@ export const fetchInfoThunk = createAsyncThunk(
 
       // 1) 리덕스 스토어에 저장
       dispatch(loginSuccess({ user }));
-      // 2) 브라우저 저장소에도 저장
-      localStorage.setItem('user', JSON.stringify(user));
 
       return user;
     } catch (err) {
@@ -75,9 +70,6 @@ export const logoutThunk = createAsyncThunk(
 
       // 1) 리덕스 스토어에서 제거
       dispatch(logoutAction());
-
-      // 2) 브라우저 저장소에서도 제거
-      localStorage.removeItem('user');
 
       return;
     } catch (err) {

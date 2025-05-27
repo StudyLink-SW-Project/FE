@@ -104,7 +104,7 @@ export default function StudyRoomInside() {
   }, [room, camEnabled]);
 
   const roomTitle = `공부합시다! (${id})`;
-  const participantCount = 1 + remoteTracks.length;
+  const participantCount = remoteTracks.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
