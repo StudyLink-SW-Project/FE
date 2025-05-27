@@ -130,7 +130,7 @@ export default function StudyRoom() {
                 key={room.id}
                 className="cursor-pointer"
                 onClick={() => {
-                  setSelectedRoom(room);
+                  setSelectedRoom(room.title);
                   setShowJoinModal(true);
                 }}
               >
