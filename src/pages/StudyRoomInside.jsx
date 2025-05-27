@@ -33,6 +33,7 @@ export default function StudyRoomInside() {
   const [remoteTracks, setRemoteTracks] = useState([]);
   const [chatLog, setChatLog] = useState([]);
   const [camEnabled, setCamEnabled] = useState(true);
+  const [participants, setParticipants] = useState([participantName]);
 
   useEffect(() => {
     if (!tokenFromModal) return;
@@ -47,6 +48,18 @@ export default function StudyRoomInside() {
         prev.filter(t => t.pub.trackSid !== pub.trackSid)
       )
     );
+
+    // 참가자 연결/해제
+    r.on(RoomEvent.ParticipantConnected, p => {
+      setParticipants(prev =>
+        prev.includes(p.identity) ? prev : [...prev, p.identity]
+      );
+    });
+    r.on(RoomEvent.ParticipantDisconnected, p => {
+      setParticipants(prev =>
+        prev.filter(id => id !== p.identity)
+      );
+    });
 
     (async () => {
       try {
@@ -91,11 +104,12 @@ export default function StudyRoomInside() {
     })();
 
     return () => {
-      r.disconnect();
-      setLocalTrack(null);
-      setRemoteTracks([]);
-    };
-  }, [id, tokenFromModal, participantName]);
+    // 기존 cleanup 외에
+    r.off(RoomEvent.ParticipantConnected);
+    r.off(RoomEvent.ParticipantDisconnected);
+    r.disconnect();
+  };
+}, [id, tokenFromModal, participantName]);
 
   const toggleCamera = useCallback(() => {
     if (!room) return;
@@ -142,18 +156,11 @@ export default function StudyRoomInside() {
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
           {/* 참가자 카드 */}
           <div className="bg-white text-black rounded-xl p-4 shadow">
-            <h3 className="text-center font-medium mb-2">
-              참가자 수: {participantCount}
-            </h3>
-            <hr className="border-gray-300 mb-3" />
-            <ul className="space-y-2">
-              <li className="flex items-center gap-3">
-                <span className="text-sm">{participantName} (나)</span>
-              </li>
-              {remoteTracks.map(t => (
-                <li key={t.id} className="flex items-center gap-3">
-                  <span className="text-sm">{t.id}</span>
-                </li>
+            {/* 참가자 수 */}
+            <h3>참가자 수: {participantCount}</h3>
+            <ul>
+              {participants.map(id => (
+                <li key={id}>{id === participantName ? `${id} (나)` : id}</li>
               ))}
             </ul>
           </div>

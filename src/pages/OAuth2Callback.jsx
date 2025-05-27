@@ -1,6 +1,7 @@
 // src/pages/OAuth2Callback.jsx
 import { useEffect } from 'react';
-import { useNavigate, useDispatch } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 import { fetchInfoThunk } from '../store/authThunks';
 
 export default function OAuth2Callback() {
