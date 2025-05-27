@@ -330,7 +330,7 @@ export default function StudyRoomInside() {
     });
   }, [room]);
 
-  const roomTitle = `공부합시다! (${id})`;
+  const roomTitle = `(${id})`;
   const uniqueIds = [...new Set(remoteTracks.map(t => t.id))];
   const participantCount = 1 + uniqueIds.length;
 

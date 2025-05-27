@@ -123,7 +123,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
           </div>
           {/* 버튼 */}
           <div className="mt-8">
-            <button type="submit" className="w-full py-3 bg-green-600 text-white rounded-full hover:bg-green-500 transition">
+            <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition">
               생성 후 입장하기
             </button>
           </div>

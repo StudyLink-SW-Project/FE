@@ -47,7 +47,7 @@ export default function StudyRoom() {
         roomsDto.map((r) => ({
             id: r.sid,
             participants: r.numParticipants,
-            maxParticipants: r.maxParticipants,
+            maxParticipants: 4,
             title: r.name,
             subtitle: r.metadata || "",
             imageSrc: "/study-room.png",
