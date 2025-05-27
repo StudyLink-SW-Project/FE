@@ -90,8 +90,8 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               />
             </div>
           </div>
-          {/* 비밀번호 */}
-          <div>
+          {/* 비밀번호 보류*/}
+          {/* <div>
             <label className="flex items-center text-sm text-gray-300 mb-1">
               <Lock className="w-4 h-4 mr-1" /> 비밀번호
             </label>
@@ -107,9 +107,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                 {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-          </div>
-          {/* 배경 업로드 & 인원 수 */}
-          <div className="flex items-center justify-between">
+          </div> */}
+          {/* 배경 업로드 & 인원 수 보류*/}
+          {/* <div className="flex items-center justify-between">
             <label className="flex items-center text-sm text-gray-300 cursor-pointer">
               <Image className="w-5 h-5 mr-1 text-gray-400" /> 배경 업로드
               <input type="file" accept="image/*" onChange={e => setBgFile(e.target.files[0])} className="sr-only" />
@@ -120,7 +120,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                 {[4,8,12,16,20].map(n => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
-          </div>
+          </div> */}
           {/* 버튼 */}
           <div className="mt-8">
             <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition cursor-pointer">
