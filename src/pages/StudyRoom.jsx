@@ -153,6 +153,7 @@ export default function StudyRoom() {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreate}
+        onEnter={handleEnter}
       />
 
       {/* 방 입장 모달 */}
