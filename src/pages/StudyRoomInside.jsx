@@ -254,18 +254,22 @@ export default function StudyRoomInside() {
     const r = new Room();
     setRoom(r);
 
-        // 비디오 트랙만 구독하여 저장
-    r.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
+    // 핸들러 정의
+    const handleTrackSubscribed = (_track, publication, participant) => {
       if (publication.kind === "video") {
         setRemoteTracks(prev => {
           if (prev.some(r => r.pub.trackSid === publication.trackSid)) return prev;
           return [...prev, { pub: publication, id: participant.identity }];
         });
       }
-    });
-        r.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+    };
+    const handleTrackUnsubscribed = (_track, publication) => {
       setRemoteTracks(prev => prev.filter(t => t.pub.trackSid !== publication.trackSid));
-    });
+    };
+
+    // 비디오 트랙만 구독하여 저장
+    r.on(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+    r.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
 
     (async () => {
       try {
@@ -297,7 +301,10 @@ export default function StudyRoomInside() {
           if (publication.track instanceof LocalVideoTrack) {
             setLocalTrack(publication.track);
             setCamEnabled(true);
-            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalPub);
+            r.localParticipant.off(
+              RoomEvent.LocalTrackPublished,
+              handleLocalPub
+            );
           }
         };
         r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalPub);
@@ -307,13 +314,13 @@ export default function StudyRoomInside() {
     })();
 
     return () => {
-      r.off(RoomEvent.TrackSubscribed);
-      r.off(RoomEvent.TrackUnsubscribed);
+      r.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+      r.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
       r.disconnect();
       setLocalTrack(null);
       setRemoteTracks([]);
     };
-  }, [id, tokenFromModal, participantName, remoteTracks]);
+  }, [id, tokenFromModal, participantName]);
 
   const toggleCamera = useCallback(() => {
     if (!room) return;
