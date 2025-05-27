@@ -107,7 +107,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
           {/* 입장 버튼 */}
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition"
+            className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition cursor-pointer"
           >
             입장
           </button>

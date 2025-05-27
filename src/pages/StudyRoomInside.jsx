@@ -414,7 +414,7 @@ export default function StudyRoomInside() {
               />
               <button
                 type="submit"
-                className="bg-black text-white px-3 py-2 rounded-r hover:bg-gray-800 transition whitespace-nowrap text-center"
+                className="bg-black text-white px-3 py-2 rounded-r hover:bg-gray-800 transition whitespace-nowrap text-center cursor-pointer"
               >
                 전송
               </button>
@@ -425,12 +425,12 @@ export default function StudyRoomInside() {
           <div className="flex justify-center gap-4">
             <button
               onClick={toggleCamera}
-              className={`p-3 rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
+              className={`p-3 cursor-pointer rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
             >
               📹
             </button>
             <Link to="/study-room">
-              <button className="bg-red-500 p-3 rounded-full">🚪</button>
+              <button className="bg-red-500 p-3 rounded-full cursor-pointer">🚪</button>
             </Link>
           </div>
         </aside>
