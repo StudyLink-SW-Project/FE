@@ -40,6 +40,32 @@ export default function StudyRoomInside() {
     const r = new Room();
     setRoom(r);
 
+    // 1) 콜백을 변수에 할당
+    const handleSubscribed = (_t, pub, participant) => {
+      setRemoteTracks(prev => [...prev, { pub, id: participant.identity }]);
+    };
+    const handleUnsubscribed = (_t, pub) => {
+      setRemoteTracks(prev =>
+        prev.filter(t => t.pub.trackSid !== pub.trackSid)
+      );
+    };
+    const handleJoin = p => {
+      setParticipants(prev =>
+        prev.includes(p.identity) ? prev : [...prev, p.identity]
+      );
+    };
+    const handleLeave = p => {
+      setParticipants(prev =>
+        prev.filter(id => id !== p.identity)
+      );
+    };
+
+    // 2) on 에도, off 에도 같은 변수를 사용
+    r.on(RoomEvent.TrackSubscribed,   handleSubscribed);
+    r.on(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
+    r.on(RoomEvent.ParticipantConnected,    handleJoin);
+    r.on(RoomEvent.ParticipantDisconnected, handleLeave);
+
     r.on(RoomEvent.TrackSubscribed, (_t, pub, participant) =>
       setRemoteTracks(prev => [...prev, { pub, id: participant.identity }])
     );
@@ -77,6 +103,10 @@ export default function StudyRoomInside() {
 
         // 2) LiveKit 서버 연결
         await r.connect(LIVEKIT_URL, livekitToken);
+
+        // 이미 방에 있는 참가자들(identity) 가져와서 상태에 추가
+        const existing = Array.from(r.participants.values()).map(p => p.identity);
+        setParticipants([participantName, ...existing.filter(id => id !== participantName)]);
         // 3) 카메라·마이크 퍼블리시
         await r.localParticipant.enableCameraAndMicrophone();
 
@@ -103,12 +133,14 @@ export default function StudyRoomInside() {
       }
     })();
 
+    // 3) cleanup 에도 off 호출
     return () => {
-    // 기존 cleanup 외에
-    r.off(RoomEvent.ParticipantConnected);
-    r.off(RoomEvent.ParticipantDisconnected);
-    r.disconnect();
-  };
+      r.off(RoomEvent.TrackSubscribed, handleSubscribed);
+      r.off(RoomEvent.TrackUnsubscribed, handleUnsubscribed);
+      r.off(RoomEvent.ParticipantConnected, handleJoin);
+      r.off(RoomEvent.ParticipantDisconnected, handleLeave);
+      r.disconnect();
+    };
 }, [id, tokenFromModal, participantName]);
 
   const toggleCamera = useCallback(() => {
@@ -118,7 +150,7 @@ export default function StudyRoomInside() {
   }, [room, camEnabled]);
 
   const roomTitle = `공부합시다! (${id})`;
-  const participantCount = remoteTracks.length;
+  const participantCount = participants.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
