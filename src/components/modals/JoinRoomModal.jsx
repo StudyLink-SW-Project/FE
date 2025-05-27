@@ -1,6 +1,7 @@
 // src/components/JoinRoomModal.jsx
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
+import { useSelector } from "react-redux";
 
   // 토큰 발급 서버
   let APP_SERVER = "https://api.studylink.store/";
@@ -17,7 +18,9 @@ import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
     }
 
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
-  const [name, setName] = useState("");
+  // 리덕스에서 유저 정보 가져오기
+  const user = useSelector(state => state.auth.user);
+  const participantName = user?.userName || `Guest_${Math.random().toString(36).slice(2,6)}`;
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +28,6 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   // 모달 열 때마다 초기화
   useEffect(() => {
     if (isOpen) {
-      setName("");
       setPassword("");
       setShowPwd(false);
       setError("");
@@ -44,14 +46,14 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roomName: String(room.id), // "0"도 허용되도록 String
-          participantName: name || `Guest_${Math.random().toString(36).slice(2,6)}`,
+          participantName,
         }),
       });
       if (!res.ok) throw new Error("토큰 서버 오류");
       const { token } = await res.json();
 
       // 2) 발급된 토큰과 닉네임을 부모로 전달
-      onEnter(String(room.id), token, name);
+      onEnter(String(room.id), token, participantName);
       onClose();
     } catch (err) {
       setError(err.message);
@@ -84,43 +86,32 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         <p className="text-gray-300 mb-6">{room.subtitle}</p>
 
         <form onSubmit={handleEnter}>
-          {/* 닉네임 입력 */}
-          <div className="mb-4">
-            <label className="block text-sm text-gray-400 mb-1">닉네임</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="이름을 입력하세요"
-              className="w-full bg-transparent border-b border-gray-600 py-2 outline-none placeholder-gray-500 text-white"
-              required
-            />
-          </div>
 
-          {/* 비밀번호 입력 (잠긴 방만) */}
-          {room.isLocked && (
-            <div className="mb-4">
-              <label className="flex items-center text-sm mb-1 text-gray-400">
-                <Lock className="w-4 h-4 mr-1" /> 비밀번호
-              </label>
-              <div className="flex items-center border-b border-gray-600">
-                <input
-                  type={showPwd ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="비밀번호를 입력하세요"
-                  className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd((v) => !v)}
-                  className="text-gray-500"
-                >
-                  {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+        {/* 비밀번호 입력 (잠긴 방만) */}
+        {room.isLocked && (
+          <div className="mb-4">
+            <label className="flex items-center text-sm mb-1 text-gray-400">
+              <Lock className="w-4 h-4 mr-1" /> 비밀번호
+            </label>
+            <div className="flex items-center border-b border-gray-600">
+              <input
+                type={showPwd ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd((v) => !v)}
+                className="text-gray-500"
+              >
+                {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
-          )}
+          </div>
+        )}
 
           {error && <p className="text-red-400 mb-2">{error}</p>}
 
