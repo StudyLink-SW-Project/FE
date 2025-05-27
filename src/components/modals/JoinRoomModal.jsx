@@ -5,17 +5,6 @@ import { useSelector } from "react-redux";
 
   // 토큰 발급 서버
   let APP_SERVER = "https://api.studylink.store/";
-  // LiveKit WebSocket URL
-  let LIVEKIT_URL = ""; 
-
-    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
-    if (!LIVEKIT_URL) {
-        if (window.location.hostname === "localhost") {
-            LIVEKIT_URL = "ws://localhost:7880/";
-        } else {
-            LIVEKIT_URL = "wss://api.studylink.store:443";
-        }
-    }
 
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   // 리덕스에서 유저 정보 가져오기
