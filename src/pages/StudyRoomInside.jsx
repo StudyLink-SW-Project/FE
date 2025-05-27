@@ -246,7 +246,6 @@ export default function StudyRoomInside() {
   const [room, setRoom] = useState(null);
   const [localTrack, setLocalTrack] = useState(null);
   const [remoteTracks, setRemoteTracks] = useState([]);
-  const [participants, setParticipants] = useState([participantName]);
   const [chatLog, setChatLog] = useState([]);
   const [camEnabled, setCamEnabled] = useState(true);
 
@@ -255,21 +254,16 @@ export default function StudyRoomInside() {
     const r = new Room();
     setRoom(r);
 
-    // 참가자 연결/해제 이벤트 등록
-    r.on(RoomEvent.ParticipantConnected, (p) =>
-      setParticipants((prev) => (prev.includes(p.identity) ? prev : [...prev, p.identity]))
-    );
-    r.on(RoomEvent.ParticipantDisconnected, (p) =>
-      setParticipants((prev) => prev.filter((id) => id !== p.identity))
-    );
-
-    // 트랙 구독 이벤트 등록
-    r.on(RoomEvent.TrackSubscribed, (_t, pub, participant) =>
-      setRemoteTracks((prev) => [...prev, { pub, id: participant.identity }])
-    );
-    r.on(RoomEvent.TrackUnsubscribed, (_t, pub) =>
-      setRemoteTracks((prev) => prev.filter((t) => t.pub.trackSid !== pub.trackSid))
-    );
+    // 비디오 트랙만 구독하여 저장
+    r.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
+      if (publication.kind === "video" &&
+          !remoteTracks.some(r => r.pub.trackSid === publication.trackSid)) {
+        setRemoteTracks(prev => [...prev, { pub: publication, id: participant.identity }]);
+      }
+    });
+    r.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+      setRemoteTracks(prev => prev.filter(t => t.pub.trackSid !== publication.trackSid));
+    });
 
     (async () => {
       try {
@@ -287,29 +281,21 @@ export default function StudyRoomInside() {
           })());
 
         await r.connect(LIVEKIT_URL, livekitToken);
-
-        // 방 입장 후 기존 참가자 초기화
-        const existing = Array.from(r.participants.values()).map((p) => p.identity);
-        setParticipants([participantName, ...existing]);
-
         await r.localParticipant.enableCameraAndMicrophone();
 
         const camPub = Array.from(
           r.localParticipant.videoTrackPublications.values()
-        ).find((p) => p.track instanceof LocalVideoTrack);
+        ).find(p => p.track instanceof LocalVideoTrack);
         if (camPub) {
           setLocalTrack(camPub.track);
           setCamEnabled(true);
         }
 
-        const handleLocalPub = (pub) => {
-          if (pub.track instanceof LocalVideoTrack) {
-            setLocalTrack(pub.track);
+        const handleLocalPub = (publication) => {
+          if (publication.track instanceof LocalVideoTrack) {
+            setLocalTrack(publication.track);
             setCamEnabled(true);
-            r.localParticipant.off(
-              RoomEvent.LocalTrackPublished,
-              handleLocalPub
-            );
+            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalPub);
           }
         };
         r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalPub);
@@ -319,24 +305,25 @@ export default function StudyRoomInside() {
     })();
 
     return () => {
-      r.off(RoomEvent.ParticipantConnected);
-      r.off(RoomEvent.ParticipantDisconnected);
       r.off(RoomEvent.TrackSubscribed);
       r.off(RoomEvent.TrackUnsubscribed);
       r.disconnect();
       setLocalTrack(null);
       setRemoteTracks([]);
     };
-  }, [id, tokenFromModal, participantName]);
+  }, [id, tokenFromModal, participantName, remoteTracks]);
 
   const toggleCamera = useCallback(() => {
     if (!room) return;
-    room.localParticipant.setCameraEnabled(!camEnabled);
-    setCamEnabled((prev) => !prev);
-  }, [room, camEnabled]);
+    setCamEnabled(prev => {
+      room.localParticipant.setCameraEnabled(!prev);
+      return !prev;
+    });
+  }, [room]);
 
   const roomTitle = `공부합시다! (${id})`;
-  const participantCount = participants.length;
+  const uniqueIds = [...new Set(remoteTracks.map(t => t.id))];
+  const participantCount = 1 + uniqueIds.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
@@ -346,7 +333,6 @@ export default function StudyRoomInside() {
           <Users className="w-4 h-4" /> {participantCount}
         </span>
       </header>
-
       <div className="flex flex-1 overflow-hidden">
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localTrack && (
@@ -356,17 +342,14 @@ export default function StudyRoomInside() {
               local
             />
           )}
-          {remoteTracks
-            .filter((t) => t.pub.kind === "video")
-            .map((t) => (
-              <VideoComponent
-                key={t.pub.trackSid}
-                track={t.pub.videoTrack}
-                participantIdentity={t.id}
-              />
-            ))}
+          {remoteTracks.filter(t => t.pub.kind === "video").map(t => (
+            <VideoComponent
+              key={t.pub.trackSid}
+              track={t.pub.videoTrack}
+              participantIdentity={t.id}
+            />
+          ))}
         </div>
-
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
           <div className="bg-white text-black rounded-xl p-4 shadow">
             <h3 className="text-center font-medium mb-2">
@@ -374,16 +357,18 @@ export default function StudyRoomInside() {
             </h3>
             <hr className="border-gray-300 mb-3" />
             <ul className="space-y-2">
-              {participants.map((id) => (
+              <li className="flex items-center gap-3">
+                <span className="text-sm">{participantName} (나)</span>
+              </li>
+              {uniqueIds.map(id => (
                 <li key={id} className="flex items-center gap-3">
-                  <span className="text-sm">
-                    {id}{id === participantName ? " (나)" : ""}
-                  </span>
+                  <span className="text-sm">{id}</span>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* 메시지 카드 */}
           <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
             <h3 className="text-center font-medium mb-2">메시지</h3>
             <hr className="border-gray-300 mb-3" />
@@ -401,12 +386,15 @@ export default function StudyRoomInside() {
             </div>
             <form
               className="flex gap-1"
-              onSubmit={(e) => {
+              onSubmit={e => {
                 e.preventDefault();
                 const txt = e.target.elements.msg.value.trim();
                 if (!txt || !room) return;
-                room.localParticipant.publishData(new TextEncoder().encode(txt), 0);
-                setChatLog((prev) => [...prev, { author: "나", text: txt }]);
+                room.localParticipant.publishData(
+                  new TextEncoder().encode(txt),
+                  0
+                );
+                setChatLog(prev => [...prev, { author: "나", text: txt }]);
                 e.target.reset();
               }}
             >
@@ -425,6 +413,7 @@ export default function StudyRoomInside() {
             </form>
           </div>
 
+          {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
             <button
               onClick={toggleCamera}
