@@ -7,20 +7,20 @@ import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 import { useSelector } from "react-redux";
 
-  // 토큰 발급 서버
-  let APP_SERVER = "https://api.studylink.store/";
-  // LiveKit WebSocket URL
-  let LIVEKIT_URL = ""; 
+// 토큰 발급 서버
+let APP_SERVER = "https://api.studylink.store/";
+// LiveKit WebSocket URL
+let LIVEKIT_URL = "";
 
-    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
-    if (!LIVEKIT_URL) {
-        if (window.location.hostname === "localhost") {
-            LIVEKIT_URL = "ws://localhost:7880/";
-        } else {
-            LIVEKIT_URL = "wss://api.studylink.store:443";
-        }
-    }
-    
+// If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
+if (!LIVEKIT_URL) {
+  if (window.location.hostname === "localhost") {
+    LIVEKIT_URL = "ws://localhost:7880/";
+  } else {
+    LIVEKIT_URL = "wss://api.studylink.store:443";
+  }
+}
+
 export default function StudyRoomInside() {
   const { id } = useParams();
   const { state } = useLocation();
@@ -43,14 +43,11 @@ export default function StudyRoomInside() {
       setRemoteTracks(prev => [...prev, { pub, id: participant.identity }])
     );
     r.on(RoomEvent.TrackUnsubscribed, (_t, pub) =>
-      setRemoteTracks(prev =>
-        prev.filter(t => t.pub.trackSid !== pub.trackSid)
-      )
+      setRemoteTracks(prev => prev.filter(t => t.pub.trackSid !== pub.trackSid))
     );
 
     (async () => {
       try {
-        // 1) 모달에서 넘어온 토큰을 우선 사용, 없으면 백엔드 호출
         const livekitToken = tokenFromModal ?? await (async () => {
           const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
             method: "POST",
@@ -62,12 +59,12 @@ export default function StudyRoomInside() {
           return token;
         })();
 
-        // 2) LiveKit 서버 연결
+        // LiveKit 서버 연결
         await r.connect(LIVEKIT_URL, livekitToken);
-        // 3) 카메라·마이크 퍼블리시
+        // 카메라·마이크 퍼블리시
         await r.localParticipant.enableCameraAndMicrophone();
 
-        // 4) 퍼블리시된 로컬 비디오 트랙 획득
+        // 퍼블리시된 로컬 비디오 트랙 획득
         const camPub = Array.from(
           r.localParticipant.videoTrackPublications.values()
         ).find(p => p.track instanceof LocalVideoTrack);
@@ -76,7 +73,7 @@ export default function StudyRoomInside() {
           setCamEnabled(true);
         }
 
-        // 5) 이후 퍼블리시되는 트랙도 동일하게 처리
+        // 이후 퍼블리시되는 로컬 트랙 처리
         const handleLocalPub = pub => {
           if (pub.track instanceof LocalVideoTrack) {
             setLocalTrack(pub.track);
@@ -207,9 +204,7 @@ export default function StudyRoomInside() {
           <div className="flex justify-center gap-4">
             <button
               onClick={toggleCamera}
-              className={`p-3 rounded-full ${
-                camEnabled ? "bg-purple-500" : "bg-gray-500"
-              }`}
+              className={`p-3 rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
             >
               📹
             </button>
