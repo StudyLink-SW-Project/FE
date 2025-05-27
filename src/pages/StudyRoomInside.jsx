@@ -7,23 +7,24 @@ import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 import { useSelector } from "react-redux";
 
-// 토큰 발급 서버
-const APP_SERVER = "https://api.studylink.store/";
-// LiveKit WebSocket URL
-let LIVEKIT_URL = "";
+  // 토큰 발급 서버
+  let APP_SERVER = "https://api.studylink.store/";
+  // LiveKit WebSocket URL
+  let LIVEKIT_URL = ""; 
 
-if (!LIVEKIT_URL) {
-  if (window.location.hostname === "localhost") {
-    LIVEKIT_URL = "ws://localhost:7880/";
-  } else {
-    LIVEKIT_URL = "wss://api.studylink.store:443";
-  }
-}
-
+    // If LIVEKIT_URL is not configured, use default value from OpenVidu Local deployment
+    if (!LIVEKIT_URL) {
+        if (window.location.hostname === "localhost") {
+            LIVEKIT_URL = "ws://localhost:7880/";
+        } else {
+            LIVEKIT_URL = "wss://api.studylink.store:443";
+        }
+    }
+    
 export default function StudyRoomInside() {
   const { id } = useParams();
   const { state } = useLocation();
-  const tokenFromModal = state?.token;
+  const tokenFromModal = state?.token;  // 모달에서 넘어온 토큰
   const reduxUser = useSelector(state => state.auth.user);
   const participantName = state?.participantName || reduxUser?.userName || 'Guest';
 
@@ -32,48 +33,24 @@ export default function StudyRoomInside() {
   const [remoteTracks, setRemoteTracks] = useState([]);
   const [chatLog, setChatLog] = useState([]);
   const [camEnabled, setCamEnabled] = useState(true);
-  const [participants, setParticipants] = useState([participantName]);
 
   useEffect(() => {
-    if (!tokenFromModal && !id) return;
-
+    if (!tokenFromModal) return;
     const r = new Room();
     setRoom(r);
 
-    const handleTrackSubscribed = (_track, pub, participant) => {
-      setRemoteTracks(prev => {
-        const exists = prev.some(t => t.pub.trackSid === pub.trackSid);
-        if (exists) return prev;
-        return [...prev, { pub, id: participant.identity }];
-      });
-    };
-
-    const handleTrackUnsubscribed = (_track, pub) => {
+    r.on(RoomEvent.TrackSubscribed, (_t, pub, participant) =>
+      setRemoteTracks(prev => [...prev, { pub, id: participant.identity }])
+    );
+    r.on(RoomEvent.TrackUnsubscribed, (_t, pub) =>
       setRemoteTracks(prev =>
         prev.filter(t => t.pub.trackSid !== pub.trackSid)
-      );
-    };
+      )
+    );
 
-    const handleParticipantConnected = p => {
-      setParticipants(prev =>
-        prev.includes(p.identity) ? prev : [...prev, p.identity]
-      );
-    };
-
-    const handleParticipantDisconnected = p => {
-      setParticipants(prev =>
-        prev.filter(identity => identity !== p.identity)
-      );
-    };
-
-    r.on(RoomEvent.TrackSubscribed, handleTrackSubscribed);
-    r.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
-    r.on(RoomEvent.ParticipantConnected, handleParticipantConnected);
-    r.on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
-
-    const setupConnection = async () => {
+    (async () => {
       try {
-        // 1) 토큰 획득
+        // 1) 모달에서 넘어온 토큰을 우선 사용, 없으면 백엔드 호출
         const livekitToken = tokenFromModal ?? await (async () => {
           const res = await fetch(`${APP_SERVER}/api/v1/video/token`, {
             method: "POST",
@@ -81,75 +58,67 @@ export default function StudyRoomInside() {
             body: JSON.stringify({ roomName: id, participantName }),
           });
           if (!res.ok) throw new Error("토큰 서버 오류");
-          const json = await res.json();
-          return json.token;
+          const { token } = await res.json();
+          return token;
         })();
 
         // 2) LiveKit 서버 연결
         await r.connect(LIVEKIT_URL, livekitToken);
-
-        // 초기 참가자 목록 설정 (로컬 + 이미 연결된 참가자)
-        setParticipants([
-          r.localParticipant.identity,
-          ...Array.from(r.participants.values()).map(p => p.identity),
-        ]);
-
         // 3) 카메라·마이크 퍼블리시
         await r.localParticipant.enableCameraAndMicrophone();
 
-        // 4) 로컬 비디오 트랙 설정
-        const camPub = Array.from(r.localParticipant.videoTrackPublications.values())
-          .find(p => p.track instanceof LocalVideoTrack);
+        // 4) 퍼블리시된 로컬 비디오 트랙 획득
+        const camPub = Array.from(
+          r.localParticipant.videoTrackPublications.values()
+        ).find(p => p.track instanceof LocalVideoTrack);
         if (camPub) {
           setLocalTrack(camPub.track);
           setCamEnabled(true);
         }
 
-        // 5) 이후 퍼블리시되는 로컬 트랙 처리
-        const handleLocalTrackPublished = pub => {
+        // 5) 이후 퍼블리시되는 트랙도 동일하게 처리
+        const handleLocalPub = pub => {
           if (pub.track instanceof LocalVideoTrack) {
             setLocalTrack(pub.track);
             setCamEnabled(true);
-            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
+            r.localParticipant.off(RoomEvent.LocalTrackPublished, handleLocalPub);
           }
         };
-        r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
+        r.localParticipant.on(RoomEvent.LocalTrackPublished, handleLocalPub);
       } catch (err) {
         console.error("LiveKit 연결 오류:", err);
       }
-    };
-
-    setupConnection();
+    })();
 
     return () => {
-      r.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
-      r.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
-      r.off(RoomEvent.ParticipantConnected, handleParticipantConnected);
-      r.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
       r.disconnect();
+      setLocalTrack(null);
+      setRemoteTracks([]);
     };
   }, [id, tokenFromModal, participantName]);
 
   const toggleCamera = useCallback(() => {
     if (!room) return;
-    setCamEnabled(prev => {
-      room.localParticipant.setCameraEnabled(!prev);
-      return !prev;
-    });
-  }, [room]);
+    room.localParticipant.setCameraEnabled(!camEnabled);
+    setCamEnabled(prev => !prev);
+  }, [room, camEnabled]);
 
   const roomTitle = `공부합시다! (${id})`;
-  const participantCount = participants.length;
+  const participantCount = 1 + remoteTracks.length;
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
+      {/* 상단 방 정보 */}
       <header className="px-8 py-3 flex items-center border-b border-[#616680] gap-4">
         <h2 className="text-xl font-semibold">{roomTitle}</h2>
         <span className="flex items-center gap-1 text-sm">
           <Users className="w-4 h-4" /> {participantCount}
         </span>
       </header>
+
+      {/* 본문: 비디오 그리드 + 우측 사이드바 */}
       <div className="flex flex-1 overflow-hidden">
+        {/* 비디오 그리드 */}
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localTrack && (
             <VideoComponent
@@ -168,19 +137,28 @@ export default function StudyRoomInside() {
               />
             ))}
         </div>
+
+        {/* 우측 사이드바 */}
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
+          {/* 참가자 카드 */}
           <div className="bg-white text-black rounded-xl p-4 shadow">
-            <h3>참가자 수: {participantCount}</h3>
-            <ul>
-              {participants.map(identity => (
-                <li key={identity} className="flex items-center gap-3">
-                  <span className="text-sm">
-                    {identity === participantName ? `${identity} (나)` : identity}
-                  </span>
+            <h3 className="text-center font-medium mb-2">
+              참가자 수: {participantCount}
+            </h3>
+            <hr className="border-gray-300 mb-3" />
+            <ul className="space-y-2">
+              <li className="flex items-center gap-3">
+                <span className="text-sm">{participantName} (나)</span>
+              </li>
+              {remoteTracks.map(t => (
+                <li key={t.id} className="flex items-center gap-3">
+                  <span className="text-sm">{t.id}</span>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* 메시지 카드 */}
           <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
             <h3 className="text-center font-medium mb-2">메시지</h3>
             <hr className="border-gray-300 mb-3" />
@@ -224,10 +202,14 @@ export default function StudyRoomInside() {
               </button>
             </form>
           </div>
+
+          {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
             <button
               onClick={toggleCamera}
-              className={`p-3 rounded-full ${camEnabled ? "bg-purple-500" : "bg-gray-500"}`}
+              className={`p-3 rounded-full ${
+                camEnabled ? "bg-purple-500" : "bg-gray-500"
+              }`}
             >
               📹
             </button>
