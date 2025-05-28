@@ -11,8 +11,10 @@ const LIVEKIT_URL =
 export default function StudyRoomEntry() {
   const { state } = useLocation();
   const token = state?.token;
+  console.log("LIVEKIT_URL", LIVEKIT_URL, "token", token);
   if (!token) {
-    // 토큰 없으면 목록 페이지로 리다이렉트
+    // 토큰 없으면 목록 페이지로 리다이렉트]
+    console.log('토큰없음');
     return <Navigate to="/study-room" replace />;
   }
   return (
