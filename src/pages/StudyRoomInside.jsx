@@ -269,6 +269,10 @@ export default function StudyRoomInside() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
+        <VideoConference
+          participants={participants}
+          localParticipant={localParticipant}
+          />
         {/* 비디오 그리드
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localParticipant.videoTrack && (
@@ -285,10 +289,10 @@ export default function StudyRoomInside() {
             ))}
         </div> */}
         {/* 비디오 컨퍼런스 그리드 */}
-        <div className="flex-1 p-4 overflow-auto">
-          <VideoTrack
+        {/* <div className="flex-1 p-4 overflow-auto">
+          <VideoConference
           />
-        </div>
+        </div> */}
 
         {/* 사이드바 */}
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
@@ -312,13 +316,7 @@ export default function StudyRoomInside() {
 
           {/* 채팅 */}
           <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
-            <Chat
-              height="100%"
-              placeholder="메시지를 입력하세요"
-              showHeader
-              headerTitle="채팅"
-              showInput
-              theme="dark"
+            <Chat           
             />
           </div>
 
