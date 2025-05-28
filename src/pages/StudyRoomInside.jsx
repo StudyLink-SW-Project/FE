@@ -273,14 +273,14 @@ export default function StudyRoomInside() {
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localParticipant.videoTrack && (
             <VideoTrack
-              trackRef={localParticipant.videoTrack}
+              
             />
           )}
           {participants
             .filter(p => p.videoTrack)
             .map(p => (
               <VideoTrack
-                trackRef={p.videoTrack}
+                
               />
             ))}
         </div>
