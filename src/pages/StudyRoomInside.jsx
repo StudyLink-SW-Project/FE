@@ -6,7 +6,7 @@
 // import VideoComponent from "../components/VideoComponent";
 // import AudioComponent from "../components/AudioComponent";
 // import { useSelector } from "react-redux";
-// import { Chat } from "@livekit/components-react";
+// import { Chat, RoomContextProvider } from "@livekit/components-react";
 
 // // 토큰 발급 서버
 // const APP_SERVER = "https://api.studylink.store/";
@@ -201,22 +201,21 @@
 //             </form>
 //           </div> */}
 
-//           {/* 기존 메시지 카드 대신 Chat 컴포넌트 */}
-//           <div className="flex-1">
-//             <Chat
-//               // 높이 조절
-//               height="100%"
-//               // placeholder 텍스트
-//               placeholder="메시지를 입력하세요"
-//               // header 보이기/숨기기
-//               showHeader={true}
-//               headerTitle="채팅"
-//               // 입력창 보이기/숨기기
-//               showInput={true}
-//               // 테마(dark 또는 light)
-//               theme="dark"
-//             />
-//           </div>
+//           {/* Chat 컴포넌트만 RoomContextProvider로 래핑 */}
+//            {room && (
+//              <RoomContextProvider room={room}>
+//                <div className="flex-1">
+//                   <Chat
+//                     height="100%"
+//                     placeholder="메시지를 입력하세요"
+//                     showHeader={true}
+//                     headerTitle="채팅"
+//                     showInput={true}
+//                     theme="dark"
+//                   />
+//                </div>
+//              </RoomContextProvider>
+//            )}
 
 //           {/* 컨트롤 버튼 */}
 //           <div className="flex justify-center gap-4">
@@ -254,11 +253,11 @@ export default function StudyRoomInside() {
   const reduxUser = useSelector((state) => state.auth.user);
   const participantName = reduxUser?.userName || "Guest";
 
-  // LiveKit React 훅으로 참여자 가져오기
-  const participants = useParticipants(); // 원격 참가자
-  const localParticipant = useLocalParticipant(); // 로컬 참가자
+  // LiveKit React Hooks
+  const participants = useParticipants();
+  const localParticipant = useLocalParticipant();
 
-  const roomTitle = `${id}`;
+  const roomTitle = id;
   const participantCount = 1 + participants.length;
 
   return (
@@ -269,7 +268,9 @@ export default function StudyRoomInside() {
           <Users className="w-4 h-4" /> {participantCount}
         </span>
       </header>
+
       <div className="flex flex-1 overflow-hidden">
+        {/* 비디오 그리드 */}
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localParticipant.videoTrack && (
             <VideoComponent
@@ -278,15 +279,20 @@ export default function StudyRoomInside() {
               local
             />
           )}
-          {participants.map((p) => (
-            <VideoComponent
-              key={p.identity}
-              track={p.videoTrack}
-              participantIdentity={p.identity}
-            />
-          ))}
+          {participants
+            .filter(p => p.videoTrack)
+            .map(p => (
+              <VideoComponent
+                key={p.identity}
+                track={p.videoTrack}
+                participantIdentity={p.identity}
+              />
+            ))}
         </div>
+
+        {/* 사이드바 */}
         <aside className="w-80 p-4 flex flex-col h-full space-y-4">
+          {/* 참가자 카드 */}
           <div className="bg-white text-black rounded-xl p-4 shadow">
             <h3 className="text-center font-medium mb-2">
               참가자 수: {participantCount}
@@ -296,13 +302,15 @@ export default function StudyRoomInside() {
               <li className="flex items-center gap-3">
                 <span className="text-sm">{participantName} (나)</span>
               </li>
-              {participants.map((p) => (
+              {participants.map(p => (
                 <li key={p.identity} className="flex items-center gap-3">
                   <span className="text-sm">{p.identity}</span>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* 채팅 */}
           <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
             <Chat
               height="100%"
@@ -313,10 +321,16 @@ export default function StudyRoomInside() {
               theme="dark"
             />
           </div>
+
+          {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
-            <button className="p-3 rounded-full bg-purple-500 cursor-pointer">📹</button>
+            <button className="p-3 cursor-pointer rounded-full bg-purple-500">
+              📹
+            </button>
             <Link to="/study-room">
-              <button className="bg-red-500 p-3 rounded-full cursor-pointer">🚪</button>
+              <button className="bg-red-500 p-3 rounded-full cursor-pointer">
+                🚪
+              </button>
             </Link>
           </div>
         </aside>
