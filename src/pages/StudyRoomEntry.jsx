@@ -17,7 +17,7 @@ export default function StudyRoomEntry() {
     return <Navigate to="/study-room" replace />;
   }
   return (
-    <LiveKitRoom token="token" serverUrl="LIVEKIT_URL" connect={true}>
+    <LiveKitRoom token={token} serverUrl={LIVEKIT_URL} connect={true}>
       <StudyRoomInside/>
     </LiveKitRoom>
   );
