@@ -376,7 +376,7 @@ export default function StudyRoomInside() {
               ))}
             </ul>
           </div>
-          {/* 메시지 카드 */}
+          {/* 메시지 카드
           <div className="bg-white text-black rounded-xl p-4 flex flex-col shadow overflow-hidden">
             <h3 className="text-center font-medium mb-2">메시지</h3>
             <hr className="border-gray-300 mb-3" />
@@ -419,6 +419,23 @@ export default function StudyRoomInside() {
                 전송
               </button>
             </form>
+          </div> */}
+
+          {/* 기존 메시지 카드 대신 Chat 컴포넌트 */}
+          <div className="flex-1">
+            <Chat
+              // 높이 조절
+              height="100%"
+              // placeholder 텍스트
+              placeholder="메시지를 입력하세요"
+              // header 보이기/숨기기
+              showHeader={true}
+              headerTitle="채팅"
+              // 입력창 보이기/숨기기
+              showInput={true}
+              // 테마(dark 또는 light)
+              theme="dark"
+            />
           </div>
 
           {/* 컨트롤 버튼 */}

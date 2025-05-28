@@ -9,9 +9,8 @@ import StudyRoom from "./pages/StudyRoom";
 import Questions from "./pages/Questions";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import StudyRoomInside from "./pages/StudyRoomInside";
+import StudyRoomEntry from "./pages/StudyRoomEntry";
 import QuestionDetail from "./pages/QuestionDetail";
-import VideoRoom from "./pages/VideoRoom";
 import OAuth2Callback from "./pages/OAuth2Callback";
 
 export default function App() {
@@ -33,16 +32,19 @@ export default function App() {
         <Route path="/questions/:id" element={<QuestionDetail />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/study-room/:id" element={
+        {/* <Route path="/study-room/:id" element={
           <ProtectedRoute>
             <StudyRoomInside />
           </ProtectedRoute>
-        } />
-        <Route path="/video-room" element={
-          <ProtectedRoute>
-            <VideoRoom />
-          </ProtectedRoute>
-        } />
+        } /> */}
+        <Route
+          path="/study-room/:id"
+          element={
+            <ProtectedRoute>
+              <StudyRoomEntry />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />      
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
