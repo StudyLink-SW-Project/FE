@@ -27,9 +27,7 @@ export default function StudyRoom() {
   const [rooms, setRooms] = useState([]);
 
   // API 기본 URL
-  const API = import.meta.env.DEV
-    ? "/"
-    : import.meta.env.VITE_APP_SERVER;
+  const API = import.meta.env.VITE_APP_SERVER;
   // 마운트 시 방 목록 조회
   useEffect(() => {
     (async () => {

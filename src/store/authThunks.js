@@ -2,7 +2,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { loginSuccess, logout as logoutAction } from './authSlice';
 
-const API = import.meta.env.DEV ? '/' : import.meta.env.VITE_APP_SERVER;
+const API = import.meta.env.VITE_APP_SERVER;
 
 // 로그인
 export const loginThunk = createAsyncThunk(
