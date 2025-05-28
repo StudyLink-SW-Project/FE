@@ -4,9 +4,7 @@ import { LiveKitRoom } from "@livekit/components-react";
 import StudyRoomInside from "./StudyRoomInside";
 
 const LIVEKIT_URL =
-  window.location.hostname === "localhost"
-    ? "ws://localhost:7880/"
-    : "wss://api.studylink.store:443";
+    "wss://api.studylink.store:443";
 
 export default function StudyRoomEntry() {
   const { state } = useLocation();
