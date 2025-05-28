@@ -273,18 +273,14 @@ export default function StudyRoomInside() {
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localParticipant.videoTrack && (
             <VideoTrack
-              track={localParticipant.videoTrack}
-              isLocal={true}
-              style={{ width: '100%', height: '100%' }}
+              trackRef={localParticipant.videoTrack}
             />
           )}
           {participants
             .filter(p => p.videoTrack)
             .map(p => (
               <VideoTrack
-                key={p.identity}
-                track={p.videoTrack}
-                style={{ width: '100%', height: '100%' }}
+                trackRef={p.videoTrack}
               />
             ))}
         </div>
