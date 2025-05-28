@@ -239,8 +239,7 @@
 import { useParams, useLocation, Link, Navigate } from "react-router-dom";
 import { Users } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useParticipants, useLocalParticipant, Chat } from "@livekit/components-react";
-import VideoComponent from "../components/VideoComponent";
+import { useParticipants, useLocalParticipant, Chat, VideoTrack } from "@livekit/components-react";
 
 export default function StudyRoomInside() {
   const { id } = useParams();
@@ -273,19 +272,19 @@ export default function StudyRoomInside() {
         {/* 비디오 그리드 */}
         <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
           {localParticipant.videoTrack && (
-            <VideoComponent
+            <VideoTrack
               track={localParticipant.videoTrack}
-              participantIdentity={participantName}
-              local
+              isLocal={true}
+              style={{ width: '100%', height: '100%' }}
             />
           )}
           {participants
             .filter(p => p.videoTrack)
             .map(p => (
-              <VideoComponent
+              <VideoTrack
                 key={p.identity}
                 track={p.videoTrack}
-                participantIdentity={p.identity}
+                style={{ width: '100%', height: '100%' }}
               />
             ))}
         </div>
