@@ -227,7 +227,7 @@ import { Room, RoomEvent, LocalVideoTrack } from "livekit-client";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 import { useSelector } from "react-redux";
-import { Chat } from "@livekit/components-react";
+import { Chat, LiveKitRoom } from "@livekit/components-react";
 
 // 토큰 발급 서버
 const APP_SERVER = "https://api.studylink.store/";
@@ -422,7 +422,7 @@ export default function StudyRoomInside() {
             </form>
           </div> */}
 
-          {/* 기존 메시지 카드 대신 Chat 컴포넌트 */}
+          {/* 기존 메시지 카드 대신 Chat 컴포넌트
           <div className="flex-1">
             <Chat
               // 높이 조절
@@ -437,7 +437,11 @@ export default function StudyRoomInside() {
               // 테마(dark 또는 light)
               theme="dark"
             />
-          </div>
+          </div> */}
+          <LiveKitRoom data-lk-theme="default">
+            <Chat />
+          </LiveKitRoom>
+
 
           {/* 컨트롤 버튼 */}
           <div className="flex justify-center gap-4">
