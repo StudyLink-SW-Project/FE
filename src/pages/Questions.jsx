@@ -12,7 +12,7 @@ export default function Questions() {
   const [showModal, setShowModal] = useState(false);
 
   // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
-  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
+  const API = import.meta.env.VITE_APP_SERVER;
 
   // 페이징 및 질문 목록 상태
   const [questions, setQuestions] = useState([]);
