@@ -227,6 +227,7 @@ import { Room, RoomEvent, LocalVideoTrack } from "livekit-client";
 import VideoComponent from "../components/VideoComponent";
 import AudioComponent from "../components/AudioComponent";
 import { useSelector } from "react-redux";
+import { Chat } from "@livekit/components-react";
 
 // 토큰 발급 서버
 const APP_SERVER = "https://api.studylink.store/";
