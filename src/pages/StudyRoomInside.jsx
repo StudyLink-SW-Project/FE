@@ -116,7 +116,7 @@ export default function StudyRoomInside() {
           {/* 채팅 */}
           <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
             <Chat
-              style={{ width: '300px', maxWidth: '100%', height: '500px', maxHeight:'100%' }}
+              style={{ width: '300px', maxWidth: '100%', height: '400px', maxHeight:'100%' }}
               className="lk-chat custom-chat"
             />
           </div>
