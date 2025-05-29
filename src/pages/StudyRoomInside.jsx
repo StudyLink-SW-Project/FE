@@ -1,9 +1,9 @@
 // src/pages/StudyRoomInside.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, Navigate, Link } from 'react-router-dom';
-import { Users } from 'lucide-react';
+import { Users, LogOut } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { useTracks, Chat, VideoTrack, useRoomContext, TrackToggle, DisconnectButton } from '@livekit/components-react';
+import { useTracks, Chat, VideoTrack, useRoomContext, TrackToggle, DisconnectButton, useParticipants, useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 
 export default function StudyRoomInside() {
@@ -27,7 +27,14 @@ export default function StudyRoomInside() {
   );
 
   const { room } = useRoomContext();
-  const localParticipant = room?.localParticipant;
+  const { localParticipant } = useLocalParticipant();
+  const participants = useParticipants();
+
+  // room.participants는 Map<participantSid, RemoteParticipant> 형태
+  const remoteParticipants = Array.from(participants.values());
+  const otherParticipants = remoteParticipants.filter(
+    p => p.identity !== localParticipant.identity
+  );
 
   // 카메라 on/off 상태
   const [camEnabled, setCamEnabled] = useState(true);
@@ -37,7 +44,7 @@ export default function StudyRoomInside() {
   useEffect(() => {
     if (localParticipant) {
       setCamEnabled(localParticipant.isCameraEnabled);
-      setScreenEnabled(room.localParticipant.isScreenShareEnabled);
+      setScreenEnabled(localParticipant.isScreenShareEnabled);
     }
   }, [room?.localParticipant]);
 
@@ -52,7 +59,7 @@ export default function StudyRoomInside() {
   const gridTracks = screenEnabled ? screenTracks : cameraTracks;
 
   const roomTitle = id;
-  const participantCount = tracks.length;
+  const participantCount = otherParticipants.length + 1;
 
   const controlsConfig = {
     camera: true,
@@ -93,54 +100,62 @@ export default function StudyRoomInside() {
               참가자 수: {participantCount}
             </h3>
             <hr className="border-gray-300 mb-3" />
-            <p className="text-sm">{participantName} (나)</p>
+            <ul className="space-y-2">
+              {/* “나” */}
+              <li className="flex items-center gap-3">
+                <span className="text-sm">{participantName} (나)</span>
+              </li>
+              {/* 나를 제외한 참가자들 */}
+              {otherParticipants.map(p => (
+                <li key={p.identity} className="flex items-center gap-3">
+                  <span className="text-sm">{p.identity}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* 채팅 */}
           <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
-            <Chat />
+            <Chat
+              style={{ width: '300px', maxWidth: '100%', height: '500px', maxHeight:'100%' }}
+              className="lk-chat custom-chat"
+            />
           </div>
 
           {/* 컨트롤 버튼 */}
-          <div className="flex justify-center gap-4">
-            {/* <button
-              type="button"
-              onClick={() => {
-                // LiveKit LocalParticipant API 호출로 카메라 토글
-                const newState = !camEnabled;
-                room.localParticipant.setCameraEnabled(newState);
-                setCamEnabled(newState);
-              }}
-              className={`p-3 cursor-pointer rounded-full ${camEnabled ? 'bg-purple-500' : 'bg-gray-500'}`}
-            >
-              📹
-            </button> */}
+          <div className="flex justify-center gap-3 ml-5">
             <TrackToggle
               source={Track.Source.Camera}
               showIcon
-              onChange={(enabled, isUser) => {
+              onChange={(enabled) => {
                 setCamEnabled(enabled);
-                // 만약 직접 로컬 스토리지 등에 저장할 필요가 있다면 isUser 확인 후 처리
               }}
-            >
-              {camEnabled ? 'off' : 'on'}
+              className="cursor-pointer"
+            >   
+              {camEnabled ? 'On' : 'Off'}
             </TrackToggle>
-             {/* 화면 공유 토글 */}
-               <TrackToggle
-                 source={Track.Source.ScreenShare}
-                 captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
-                 showIcon
-                 onChange={(enabled) => {
-                   setScreenEnabled(enabled);
-                 }}
-               >
-                 {screenEnabled ? '공유 중지' : '화면 공유'}
-               </TrackToggle>
+
+            {/* 화면 공유 토글 */}
+            <TrackToggle
+              source={Track.Source.ScreenShare}
+              captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
+              showIcon
+              onChange={(enabled) => {
+                setScreenEnabled(enabled);
+              }}
+              className="cursor-pointer"
+            >
+              {screenEnabled ? 'Stop' : 'Share'}
+            </TrackToggle>
+
+            {/* 나가기 버튼 */}
             <Link to="/study-room">
-              {/* <button className="bg-red-500 p-3 rounded-full cursor-pointer">🚪</button> */}
-              <DisconnectButton               
+              <DisconnectButton                   
               >
-                Leave room
+              <LogOut className="w-5 h-5" />
+              <span className="font-normal">
+                Leave
+              </span>
               </DisconnectButton>
             </Link>
           </div>

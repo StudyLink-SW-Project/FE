@@ -14,3 +14,62 @@
   }
   /* 필요하다면 300,700 등 추가로 정의 */
 @import "tailwindcss";
+
+/* 라이브킷 컴포넌트 디자인 수정 */
+
+/* Chat 전체 wrapper */
+.custom-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;       /* 부모 높이에 맞춰 채워요 */
+}
+
+/* 메시지 리스트 높이 고정 + 스크롤 */
+.custom-chat .lk-list.lk-chat-messages {
+  max-height: 500px;   /* 원하는 높이로 조정 */
+  overflow-y: auto;    
+  padding-right: 0.5rem;
+  flex: 1 1 auto;      /* 남은 높이 모두 차지 */
+}
+
+/* 입력 폼은 항상 하단에 고정 */
+.custom-chat .lk-chat-form {
+  flex: 0 0 auto;
+  padding: 0.5rem;     /* 필요에 따라 조정 */
+}
+
+.lk-chat-header {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff; /* 헤더 뒤 배경색 (필요에 따라 조정) */
+  z-index: 10;               /* 리스트보다 위에 표시되도록 */
+  /* 기존 스타일 유지 */
+  color: transparent;
+  padding: 1rem 1rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 텍스트 대체 */
+.lk-chat-header::before {
+  content: "스터디 채팅";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* 밑줄 */
+.lk-chat-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 15rem;
+  height: 1px;
+  background-color: #D1D5DB;
+}
