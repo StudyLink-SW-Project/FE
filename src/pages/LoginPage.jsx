@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { loading, error } = useSelector(state => state.auth);
-  const getSocialLoginUrl = provider => `/oauth2/authorization/${provider}`;
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
