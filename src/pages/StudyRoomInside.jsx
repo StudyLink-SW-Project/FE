@@ -30,12 +30,11 @@ export default function StudyRoomInside() {
   const { localParticipant } = useLocalParticipant();
   const participants = useParticipants();
 
-  // room.participants는 Map<participantSid, RemoteParticipant> 형태
-  const remoteParticipants = Array.from(participants.values());
-  const otherParticipants = remoteParticipants.filter(
-    p => p.identity !== localParticipant.identity
+  // “나”를 제외한 참가자만
+  const otherParticipants = participants.filter(
+    p => p.identity !== localParticipant?.identity
   );
-
+  
   // 카메라 on/off 상태
   const [camEnabled, setCamEnabled] = useState(true);
   const [screenEnabled, setScreenEnabled] = useState(false);
