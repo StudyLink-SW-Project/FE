@@ -201,7 +201,7 @@ export default function QuestionDetail() {
         <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="w-6 h-6 mt-0.5 text-purple-400" />
+              <FileText className="w-6 h-6 mt-0.5 text-blue-400" />
               <h1 className="text-2xl font-semibold">{titleToShow}</h1>
             </div>
             <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>

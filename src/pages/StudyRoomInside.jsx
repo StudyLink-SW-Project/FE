@@ -5,6 +5,7 @@ import { Users, LogOut } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useTracks, Chat, VideoTrack, useRoomContext, TrackToggle, DisconnectButton, useParticipants, useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
+import { VideoConference } from '../components/livekit_components/VideoConference';
 
 export default function StudyRoomInside() {
   const { id } = useParams();
@@ -68,98 +69,97 @@ export default function StudyRoomInside() {
     settings: false,
   };
   return (
-    <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
-      <header className="px-8 py-3 flex items-center border-b border-[#616680] gap-4">
-        <h2 className="text-xl font-semibold">{roomTitle}</h2>
-        <span className="flex items-center gap-1 text-sm">
-          <Users className="w-4 h-4" /> {participantCount}
-        </span>
-      </header>
+    <VideoConference
+      roomTitle={roomTitle}
+    />
+    // <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
+    //   <header className="px-8 py-3 flex items-center justify-between border-b border-[#616680]">
+    //     <h2 className="text-xl font-semibold">{roomTitle}</h2>
+    //     {/* 컨트롤 버튼 */}
+    //     <div className="flex justify-center gap-1 -mr-5">
+    //       <TrackToggle
+    //         source={Track.Source.Camera}
+    //         showIcon
+    //         onChange={(enabled) => {
+    //           setCamEnabled(enabled);
+    //         }}
+    //         className="cursor-pointer"
+    //       >   
+    //         {camEnabled ? '켜기' : '끄기'}
+    //       </TrackToggle>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* 비디오 그리드 */}
-        <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
-          {gridTracks.map((trackRef) => (
-            <div
-              key={trackRef.publication.trackSid}
-              className="bg-black rounded overflow-hidden aspect-video"
-            >
-              <VideoTrack
-                trackRef={trackRef}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-          ))}
-        </div>
+    //       {/* 화면 공유 토글 */}
+    //       <TrackToggle
+    //         source={Track.Source.ScreenShare}
+    //         captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
+    //         showIcon
+    //         onChange={(enabled) => {
+    //           setScreenEnabled(enabled);
+    //         }}
+    //         className="cursor-pointer"
+    //       >
+    //         {screenEnabled ? '중지' : '공유'}
+    //       </TrackToggle>
 
-        {/* 사이드바 */}
-        <aside className="w-80 p-4 flex flex-col h-full space-y-4">
-          <div className="bg-white text-black rounded-xl p-4 shadow">
-            <h3 className="text-center font-medium mb-2">
-              참가자 수: {participantCount}
-            </h3>
-            <hr className="border-gray-300 mb-3" />
-            <ul className="space-y-2">
-              {/* “나” */}
-              <li className="flex items-center gap-3">
-                <span className="text-sm">{participantName} (나)</span>
-              </li>
-              {/* 나를 제외한 참가자들 */}
-              {otherParticipants.map(p => (
-                <li key={p.identity} className="flex items-center gap-3">
-                  <span className="text-sm">{p.identity}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+    //       {/* 나가기 버튼 */}
+    //       <Link to="/study-room" className="text-red-400">
+    //         <DisconnectButton                   
+    //         >
+    //         <LogOut className="w-5 h-5" />
+    //         <span className="font-normal">
+    //           나가기
+    //         </span>
+    //         </DisconnectButton>
+    //       </Link>
+    //     </div>
+    //   </header>
 
-          {/* 채팅 */}
-          <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
-            <Chat
-              style={{ width: '300px', maxWidth: '100%', height: '400px', maxHeight:'100%' }}
-              className="lk-chat custom-chat"
-            />
-          </div>
+    //   <div className="flex flex-1 overflow-hidden">
+    //     {/* 비디오 그리드 */}
+    //     <div className="grid grid-cols-2 gap-4 p-4 flex-1 overflow-auto">
+    //       {gridTracks.map((trackRef) => (
+    //         <div
+    //           key={trackRef.publication.trackSid}
+    //           className="bg-black rounded overflow-hidden aspect-video"
+    //         >
+    //           <VideoTrack
+    //             trackRef={trackRef}
+    //             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    //           />
+    //         </div>
+    //       ))}
+    //     </div>
 
-          {/* 컨트롤 버튼 */}
-          <div className="flex justify-center gap-3 ml-5">
-            <TrackToggle
-              source={Track.Source.Camera}
-              showIcon
-              onChange={(enabled) => {
-                setCamEnabled(enabled);
-              }}
-              className="cursor-pointer"
-            >   
-              {camEnabled ? 'On' : 'Off'}
-            </TrackToggle>
+    //     {/* 사이드바 */}
+    //     <aside className="w-80 p-4 flex flex-col h-full space-y-4">
+    //       <div className="bg-white text-black rounded-xl p-4 shadow">
+    //         <h3 className="text-center font-medium mb-2">
+    //           참가자 수: {participantCount}
+    //         </h3>
+    //         <hr className="border-gray-300 mb-3" />
+    //         <ul className="space-y-2">
+    //           {/* “나” */}
+    //           <li className="flex items-center gap-3">
+    //             <span className="text-sm">{participantName} (나)</span>
+    //           </li>
+    //           {/* 나를 제외한 참가자들 */}
+    //           {otherParticipants.map(p => (
+    //             <li key={p.identity} className="flex items-center gap-3">
+    //               <span className="text-sm">{p.identity}</span>
+    //             </li>
+    //           ))}
+    //         </ul>
+    //       </div>
 
-            {/* 화면 공유 토글 */}
-            <TrackToggle
-              source={Track.Source.ScreenShare}
-              captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
-              showIcon
-              onChange={(enabled) => {
-                setScreenEnabled(enabled);
-              }}
-              className="cursor-pointer"
-            >
-              {screenEnabled ? 'Stop' : 'Share'}
-            </TrackToggle>
-
-            {/* 나가기 버튼 */}
-            <Link to="/study-room">
-              <DisconnectButton                   
-              >
-              <LogOut className="w-5 h-5" />
-              <span className="font-normal">
-                Leave
-              </span>
-              </DisconnectButton>
-            </Link>
-          </div>
-        </aside>
-      </div>
-    </div>
+    //       {/* 채팅 */}
+    //       <div className="flex-1 bg-white text-black rounded-xl shadow overflow-hidden">
+    //         <Chat
+    //           style={{ width: '300px', maxWidth: '100%', height: '600px', maxHeight:'100%' }}
+    //           className="lk-chat custom-chat"
+    //         />
+    //       </div>
+    //     </aside>
+    //   </div>
+    // </div>
   );
 }
