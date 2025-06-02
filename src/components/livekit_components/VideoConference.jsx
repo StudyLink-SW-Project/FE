@@ -16,12 +16,12 @@ import {
   ParticipantTile,
   RoomAudioRenderer,
   ControlBar,
+  Chat,
   useCreateLayoutContext,
   usePinnedTracks,
   useTracks,
   // useWarnAboutMissingStyles,
 } from '@livekit/components-react';
-import { chat } from './Chat';
 
 export function VideoConference({
   roomTitle,
