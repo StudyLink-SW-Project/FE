@@ -53,7 +53,7 @@ export default function Header() {
 
   // 로그아웃 최종 실행
   const handleConfirmLogout = () => {
-    logoutUser(); // 실제 로그아웃 처리 로직
+    handleLogout(); // 실제 로그아웃 처리 로직
     setShowLogoutModal(false);
   };
 
@@ -112,7 +112,7 @@ export default function Header() {
 
                     {/* 로그아웃 확인 모달 */}
                     {showLogoutModal && (
-                      <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+                      <div className="fixed inset-0 bg-black bg-opacity-40 z-[9999] flex items-center justify-center">
                         <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80">
                           <p className="text-lg text-black font-semibold mb-6">로그아웃 하시겠습니까?</p>
                           <div className="flex justify-center gap-4">
