@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../store/authThunks';
 import { toast } from 'react-toastify';
 import { User as UserIcon, FileText, LogOut } from 'lucide-react';
-import userIcon from '../assets/user_icon.png';
+import userIcon from '../assets/default.png';
 
 export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
   };
 
   return (
-    <div className="absolute -right-10 w-64 max-h-[calc(100vh-4rem)] overflow-auto bg-gray-200 text-black rounded shadow-md z-50">
+    <div className="absolute -right-21 w-64 max-h-[calc(100vh-4rem)] overflow-auto bg-gray-200 text-black rounded shadow-md z-50">
       <div className="p-3 border-b border-stone-100">
         <div className="flex items-center">
           {/* 클릭 가능한 아바타로 감싸기 */}

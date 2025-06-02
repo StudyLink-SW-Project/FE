@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutThunk } from '../store/authThunks';
 import { LogOut } from 'lucide-react';
-import userIcon from '../assets/user_icon.png';
+import userIcon from '../assets/default.png';
 import UserMenu from './UserMenu';
 import ProfileModal from './modals/ProfileModal';
 
@@ -44,6 +44,24 @@ export default function Header() {
     }
   };
 
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // 로그아웃 버튼 클릭 시 모달 표시
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  // 로그아웃 최종 실행
+  const handleConfirmLogout = () => {
+    logoutUser(); // 실제 로그아웃 처리 로직
+    setShowLogoutModal(false);
+  };
+
+  // 모달 닫기
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+  
   return (
     <>
       {showProfileModal && (
@@ -82,13 +100,39 @@ export default function Header() {
                   <span className="text-base font-medium tracking-wide">
                     <span className="font-light text-xl">{user.userName}님</span>
                   </span>
-                  <button
-                    onClick={handleLogout}
-                    className="p-2 hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer group"
-                    title="로그아웃"
-                  >
-                    <LogOut className="w-7 h-7 text-gray-300 group-hover:text-white transition-colors" />
-                  </button>
+                  <div>
+                    {/* 로그아웃 버튼 */}
+                    <button
+                      onClick={handleLogoutClick}
+                      className="p-2 hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer group"
+                      title="로그아웃"
+                    >
+                      <LogOut className="w-7 h-7 text-gray-300 group-hover:text-white transition-colors" />
+                    </button>
+
+                    {/* 로그아웃 확인 모달 */}
+                    {showLogoutModal && (
+                      <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+                        <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80">
+                          <p className="text-lg text-black font-semibold mb-6">로그아웃 하시겠습니까?</p>
+                          <div className="flex justify-center gap-4">
+                            <button
+                              onClick={handleConfirmLogout}
+                              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                            >
+                              예
+                            </button>
+                            <button
+                              onClick={handleCancelLogout}
+                              className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 cursor-pointer"
+                            >
+                              아니오
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
