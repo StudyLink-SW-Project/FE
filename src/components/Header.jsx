@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutThunk } from '../store/authThunks';
+import { LogOut } from 'lucide-react';
 import userIcon from '../assets/user_icon.png';
 import UserMenu from './UserMenu';
 import ProfileModal from './modals/ProfileModal';
@@ -54,10 +55,11 @@ export default function Header() {
           <Link to="/">
             <img src="/logo_white.png" alt="Study Link Logo" className="h-20" />
           </Link>
-          <nav className="flex gap-6">
-            <Link to="/" className="hover:text-gray-300 font-semibold px-10 py-1">홈</Link>
-            <Link to="/study-room" className="hover:text-gray-300 font-semibold px-10 py-1">스터디 룸</Link>
-            <Link to="/questions" className="hover:text-gray-300 font-semibold px-10 py-1">질문 게시판</Link>
+          <nav className="flex gap-8">
+            {/* 네비게이션 메뉴 글씨 개선 */}
+            <Link to="/" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">홈</Link>
+            <Link to="/study-room" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">스터디 룸</Link>
+            <Link to="/questions" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">질문 게시판</Link>
           </nav>
         </div>
 
@@ -73,17 +75,21 @@ export default function Header() {
                 />
               </button>
 
-              {/* 우측: 환영 메시지와 로그아웃 버튼 */}
+              {/* 우측: 환영 메시지와 로그아웃 아이콘 */}
               <div className="flex flex-col mt-3">
-                <span className="text-sm font-semibold">
-                  {user.userName}님 환영합니다
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="mt-1 w-14 py-0.5 bg-red-500 rounded text-xs font-medium hover:bg-red-600 cursor-pointer transition"
-                >
-                  로그아웃
-                </button>
+                {/* 환영 메시지와 로그아웃 아이콘을 같은 줄에 배치 */}
+                <div className="flex items-center gap-3">
+                  <span className="text-base font-medium tracking-wide">
+                    <span className="font-light">{user.userName}님</span> 환영합니다
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="p-2 hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer group"
+                    title="로그아웃"
+                  >
+                    <LogOut className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
+                  </button>
+                </div>
               </div>
 
               {/* 드롭다운 메뉴 */}
@@ -99,15 +105,16 @@ export default function Header() {
             </div>
           ) : (
             <>
+              {/* 로그인/회원가입 버튼 글씨 개선 */}
               <Link
                 to="/login"
-                className="bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-300"
+                className="bg-white text-black px-8 py-3 rounded-full font-medium text-lg tracking-wide hover:bg-gray-100 transition-all duration-200 hover:scale-105"
               >
                 로그인
               </Link>
               <Link
                 to="/signup"
-                className="border border-white px-5 py-3 rounded-full font-semibold hover:bg-gray-700"
+                className="border border-white px-7 py-3 rounded-full font-medium text-lg tracking-wide hover:bg-white/10 transition-all duration-200 hover:scale-105"
               >
                 회원가입
               </Link>
