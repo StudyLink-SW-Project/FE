@@ -103,7 +103,7 @@ export default function StudyRoom() {
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3">
             <PlusCircle
-              className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
+               className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
               onClick={() => setShowCreateModal(true)}
             />
             <input
@@ -136,7 +136,7 @@ export default function StudyRoom() {
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-colors cursor-pointer"
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors cursor-pointer"
               >
                 스터디 룸 생성하기
               </button>

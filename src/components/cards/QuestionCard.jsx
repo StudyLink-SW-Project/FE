@@ -35,7 +35,7 @@ export default function QuestionCard({
       {/* 왼쪽: 태그 + 제목/요약 */}
       <div className="flex-1">
         <div className="flex items-center mb-1 gap-2">
-          <FileText className="w-5 h-5 text-purple-400" />
+          <FileText className="w-5 h-5 text-blue-400" />
           <h3 className="text-lg font-semibold text-white">{title}</h3>
         </div>
         <p className="text-sm text-gray-400 mt-1 mb-6">{displayExcerpt}</p>

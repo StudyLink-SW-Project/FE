@@ -87,7 +87,7 @@ export default function Header() {
                     className="p-2 hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer group"
                     title="로그아웃"
                   >
-                    <LogOut className="w-7 h-7 text-gray-300 group-hover:text-white transition-colors" />
+                    <LogOut className="w-7 h-7 text-red-400 group-hover:text-white transition-colors" />
                   </button>
                 </div>
               </div>
