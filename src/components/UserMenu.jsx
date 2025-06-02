@@ -55,7 +55,7 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
             <img
               src={avatar}
               alt="User"
-              className="cursor-pointer w-16 h-16 rounded-full border-2 border-gray-500 bg-gray-400"
+              className="cursor-pointer min-w-16 max-w-16 w-16 h-16 rounded-full border-2 border-gray-500 bg-gray-400"
             />
             <input
               type="file"
