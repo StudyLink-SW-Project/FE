@@ -303,19 +303,25 @@ export default function QuestionDetail() {
                   </div>
 
                   {/* 답글 입력창 */}
-                  {replyTo === parent.id && (
-                    <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="답글을 입력하세요..."
-                        className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
-                        value={replyText} onChange={e => setReplyText(e.target.value)}
-                      />
-                      <button type="submit" className="px-3 py-1 -ml-2 bg-blue-600 rounded-r text-xs hover:bg-blue-500 cursor-pointer">
-                        등록
-                      </button>
-                    </form>
-                  )}
+                  <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="답글을 입력하세요..."
+                      className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
+                      value={replyTo === parent.id ? replyText : ""}
+                      onChange={e => {
+                        if (replyTo !== parent.id) return;
+                        setReplyText(e.target.value);
+                      }}
+                      onFocus={() => setReplyTo(parent.id)} // 입력 시작 시 해당 댓글에 연결
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1 -ml-2 bg-blue-600 rounded-r text-xs hover:bg-blue-500 cursor-pointer"
+                    >
+                      등록
+                    </button>
+                  </form>
                 </div>
 
                 {/* — 분리된 답글 컨테이너 (접혀있으면 숨김) */}
