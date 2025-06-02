@@ -15,7 +15,7 @@ export default function StudyRoomCard({
         <img
           src={imageSrc}
           alt={title}
-          className="w-full h-35 object-cover bg-[#1D1F2C]"
+          className="w-full h-50 object-cover bg-[#1D1F2C]"
         />
         {/* 참여 인원 표시 */}
         <div className="absolute top-1 left-1 flex items-center bg-black bg-opacity-50 text-white text-xs rounded-md px-2 py-1">

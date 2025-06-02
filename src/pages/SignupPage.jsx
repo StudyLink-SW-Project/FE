@@ -49,7 +49,7 @@ export default function SignupPage() {
           </div>
           <p className="text-sm text-gray-500 mb-15">
             이미 계정이 있으신가요?{' '}
-            <Link to="/login" className="text-purple-600 underline">여기</Link>를 클릭해 로그인하세요!
+            <Link to="/login" className="text-blue-600 underline">여기</Link>를 클릭해 로그인하세요!
           </p>
 
           {error && (

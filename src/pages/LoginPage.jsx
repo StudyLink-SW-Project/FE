@@ -54,7 +54,7 @@ export default function LoginPage() {
           </div>
           <p className="text-sm text-gray-500 mb-15">
             계정이 없으신가요?{' '}
-            <Link to="/signup" className="text-purple-600 underline">여기</Link>를 클릭해 회원가입하세요!
+            <Link to="/signup" className="text-blue-600 underline">여기</Link>를 클릭해 회원가입하세요!
           </p>
 
           {error && (
