@@ -275,13 +275,12 @@ export default function QuestionDetail() {
 
                   {/* 답글 토글 버튼 */}
                   <div className="mt-2 flex gap-1">
-                    {/* <button
+                    <button
                       className="text-blue-400 text-xs hover:underline cursor-pointer"
-                      onClick={() => setReplyTo(prev => prev === parent.id ? null : parent.id)}
+                      onClick={() => setReplyTo(prev => prev === parent.id)}
                     >
                       답글
-                    </button> */}
-                    <ReplyInput parentId={parent.id} />
+                    </button>
                     
                     {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
                     {comments.filter(c => c.topParentId === parent.id).length > 0 && (
