@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Header from "../components/Header";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
@@ -191,6 +192,7 @@ export default function QuestionDetail() {
 
   return (
     <div className="min-h-screen bg-[#282A36] text-white p-8">
+      <Header/>
       <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
         <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
       </Link>
@@ -273,12 +275,13 @@ export default function QuestionDetail() {
 
                   {/* 답글 토글 버튼 */}
                   <div className="mt-2 flex gap-1">
-                    <button
+                    {/* <button
                       className="text-blue-400 text-xs hover:underline cursor-pointer"
                       onClick={() => setReplyTo(prev => prev === parent.id ? null : parent.id)}
                     >
                       답글
-                    </button>
+                    </button> */}
+                    <ReplyInput parentId={parent.id} />
                     
                     {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
                     {comments.filter(c => c.topParentId === parent.id).length > 0 && (
