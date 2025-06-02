@@ -45,8 +45,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-gray-200 leading-relaxed">
-                언제 어디서든 친구들과 함께<br />
-                효율적인 스터디를 시작해보세요
+                지금 바로 스터디를 시작해보세요
               </p>
             </div>
 

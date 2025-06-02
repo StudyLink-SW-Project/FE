@@ -57,9 +57,9 @@ export default function Header() {
           </Link>
           <nav className="flex gap-8">
             {/* 네비게이션 메뉴 글씨 개선 */}
-            <Link to="/" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">홈</Link>
-            <Link to="/study-room" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">스터디 룸</Link>
-            <Link to="/questions" className="hover:text-gray-300 font-medium text-lg px-4 py-2 transition-all duration-200 hover:scale-105">질문 게시판</Link>
+            <Link to="/" className="hover:text-gray-300 font-medium text-xl px-4 py-2 transition-all duration-200 hover:scale-105">홈</Link>
+            <Link to="/study-room" className="hover:text-gray-300 font-medium text-xl px-4 py-2 transition-all duration-200 hover:scale-105">스터디 룸</Link>
+            <Link to="/questions" className="hover:text-gray-300 font-medium text-xl px-4 py-2 transition-all duration-200 hover:scale-105">질문 게시판</Link>
           </nav>
         </div>
 
@@ -80,14 +80,14 @@ export default function Header() {
                 {/* 환영 메시지와 로그아웃 아이콘을 같은 줄에 배치 */}
                 <div className="flex items-center gap-3">
                   <span className="text-base font-medium tracking-wide">
-                    <span className="font-light">{user.userName}님</span> 환영합니다
+                    <span className="font-light text-xl">{user.userName}님</span>
                   </span>
                   <button
                     onClick={handleLogout}
                     className="p-2 hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer group"
                     title="로그아웃"
                   >
-                    <LogOut className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
+                    <LogOut className="w-7 h-7 text-gray-300 group-hover:text-white transition-colors" />
                   </button>
                 </div>
               </div>
