@@ -275,14 +275,7 @@ export default function QuestionDetail() {
                     </div>
 
                     {/* 답글 토글 버튼 */}
-                    <div className="mt-2 flex gap-1">
-                      <button
-                        className="text-blue-400 text-xs hover:underline cursor-pointer"
-                        onClick={() => setReplyTo(prev => prev === parent.id ? parent.id : parent.id)}
-                      >
-                        답글
-                      </button>
-                      
+                    <div className="mt-2 flex gap-1">                      
                       {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
                       {comments.filter(c => c.topParentId === parent.id).length > 0 && (
                         <button
@@ -292,7 +285,7 @@ export default function QuestionDetail() {
                             [parent.id]: !prev[parent.id]
                           }))}
                         >
-                          {comments.filter(c => c.topParentId === parent.id).length}개
+                          답글 {comments.filter(c => c.topParentId === parent.id).length}개
                           <span className="mt-0.5">
                             {collapsedReplies[parent.id]
                             ? <ChevronUp className="w-4 h-4" />
