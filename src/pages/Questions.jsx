@@ -127,7 +127,7 @@ export default function Questions() {
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
             <PlusCircle
-              className="w-10 h-10 mt-1 text-purple-400 hover:text-purple-600 cursor-pointer"
+              className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
               onClick={() => setShowModal(true)}
             />
             <input
@@ -138,7 +138,7 @@ export default function Questions() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
