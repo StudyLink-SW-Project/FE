@@ -1,6 +1,6 @@
 // src/pages/QuestionDetail.jsx
-import { useLocation, Link } from "react-router-dom";
-import { ArrowLeft, FileText, MessageCircle, ThumbsUp, User } from "lucide-react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, FileText, MessageCircle, ThumbsUp, User, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -9,7 +9,7 @@ import Header from "../components/Header";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
-  if (!state) return <Link to="/questions">목록으로 돌아가기</Link>;
+  const navigate = useNavigate();
 
   const {
     title: initTitle,
@@ -41,6 +41,11 @@ export default function QuestionDetail() {
 
   // ★ 답글 접기/펼치기 상태 관리
   const [collapsedReplies, setCollapsedReplies] = useState({});
+
+  // 삭제 확인 모달 상태
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  
 
   useEffect(() => {
     (async () => {
@@ -77,6 +82,18 @@ export default function QuestionDetail() {
     })();
   }, [API, id]);
 
+    if (!state) {
+    return (
+      <div className="min-h-screen bg-[#282A36] text-white p-8">
+        <Header/>
+        <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
+          <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
+        </Link>
+      </div>
+    );
+  }
+
+
   const handleQuestionLike = async () => {
     try {
       const resp = await fetch(`${API}post/${id}/like`, {
@@ -88,6 +105,23 @@ export default function QuestionDetail() {
 
       setQLiked(json.result.liked);
       setQLikes(json.result.likeCount);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      const resp = await fetch(`${API}post/${id}/delete`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) throw new Error(json.message || "게시글 삭제에 실패했습니다.");
+
+      toast.success("게시글이 삭제되었습니다.");
+      navigate("/questions"); // 삭제 후 목록 페이지로 이동
     } catch (err) {
       console.error(err);
       toast.error(err.message);
@@ -190,174 +224,223 @@ export default function QuestionDetail() {
   const authorToShow   = postDetail?.userName || initAuthor;
   const dateTimeToShow = postDetail?.createDate || initDateTime;
 
+  // 현재 로그인한 사용자가 작성자인지 확인
+  const isAuthor = user && user.userName === authorToShow;
+
   return (
-    <>
+    <div className="min-h-screen bg-[#282A36] text-white p-8">
       <Header/>
-      <div className="min-h-screen bg-[#282A36] text-white p-8">
-        <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
-          <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
-        </Link>
+      <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
+        <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
+      </Link>
 
-        <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="w-6 h-6 mt-0.5 text-purple-400" />
-              <h1 className="text-2xl font-semibold">{titleToShow}</h1>
-            </div>
-            <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
-          </div>
-          <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
-            <div className="flex items-center gap-4">
-              <User className="w-4 h-4 -mr-2 text-gray-400" />
-              <span className="font-medium text-white mr-5">{authorToShow}</span>
-              <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4 text-gray-400" />
-                {comments.length}
-              </span>
+      <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="w-6 h-6 mt-0.5 text-purple-400" />
+            <h1 className="text-2xl font-semibold flex-1">{titleToShow}</h1>
+            {/* 작성자인 경우에만 삭제 버튼 표시 */}
+            {isAuthor && (
               <button
-                onClick={handleQuestionLike}
-                className={`flex cursor-pointer items-center gap-1 text-sm ${
-                  qLiked ? "text-blue-400" : "text-gray-400 hover:text-white"
-                }`}
+                onClick={() => setShowDeleteModal(true)}
+                className="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors cursor-pointer"
+                title="게시글 삭제"
               >
-                <ThumbsUp className="cursor-pointer w-4 h-4" /> {qLikes}
+                <Trash2 className="w-5 h-5" />
               </button>
-            </div>
+            )}
           </div>
+          <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
         </div>
-
-        <form onSubmit={handleCommentSubmit} className="mb-5 flex gap-2">
-          <input
-            type="text"
-            placeholder="댓글을 입력하세요..."
-            className="flex-1 px-4 py-2 rounded-l bg-[#1D1F2C] text-white outline-none"
-            value={newComment} onChange={e => setNewComment(e.target.value)}
-          />
-          <button type="submit" className="cursor-pointer -ml-2 px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition">
-            등록
-          </button>
-        </form>
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-4">
-            댓글 ({comments.filter(c => c.topParentId == null).length})
-          </h2>
-
-          {comments
-            .filter(c => c.topParentId == null)
-            .map(parent => {
-              return (
-                <div key={parent.id} className="space-y-4">
-                  {/* — 부모 댓글 카드 */}
-                  <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
-                    <p className="text-white mb-6">{parent.text}</p>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-4 text-sm">
-                        <User className="w-4 h-4 -mr-2 text-gray-400" />
-                        <span className="font-medium text-white mr-3">{parent.author}</span>
-                        <span className="text-gray-400 text-sm">
-                          {new Date(parent.dateTime).toLocaleString()}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleCommentLike(parent.id)}
-                        className={`flex cursor-pointer items-center gap-1 text-sm ${
-                          likedComments.includes(parent.id)
-                            ? "text-blue-400"
-                            : "text-gray-400 hover:text-white"
-                        }`}
-                      >
-                        <ThumbsUp className="w-4 h-4" /> {parent.likes}
-                      </button>
-                    </div>
-
-                    {/* 답글 토글 버튼 */}
-                    <div className="mt-2 flex gap-1">                      
-                      {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
-                      {comments.filter(c => c.topParentId === parent.id).length > 0 && (
-                        <button
-                          className="self-start text-blue-400 text-xs flex items-center gap-0.5 hover:underline cursor-pointer"
-                          onClick={() => setCollapsedReplies(prev => ({
-                            ...prev,
-                            [parent.id]: !prev[parent.id]
-                          }))}
-                        >
-                          답글 {comments.filter(c => c.topParentId === parent.id).length}개
-                          <span className="mt-0.5">
-                            {collapsedReplies[parent.id]
-                            ? <ChevronUp className="w-4 h-4" />
-                            : <ChevronDown className="w-4 h-4" />
-                          }
-                          </span>
-                        </button>
-                      )}
-                    </div>
-
-                    {/* 답글 입력창 */}
-                    <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="답글을 입력하세요..."
-                        className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
-                        value={replyTo === parent.id ? replyText : ""}
-                        onChange={e => {
-                          if (replyTo !== parent.id) return;
-                          setReplyText(e.target.value);
-                        }}
-                        onFocus={() => setReplyTo(parent.id)} // 입력 시작 시 해당 댓글에 연결
-                      />
-                      <button
-                        type="submit"
-                        className="px-3 py-1 -ml-2 bg-blue-600 rounded-r text-xs hover:bg-blue-500 cursor-pointer"
-                      >
-                        등록
-                      </button>
-                    </form>
-                  </div>
-
-                  {/* — 분리된 답글 컨테이너 (접혀있으면 숨김) */}
-                  {!collapsedReplies[parent.id] && (
-                    <div className="ml-12 -mt-2 space-y-2">
-                      {comments
-                        .filter(c => c.topParentId === parent.id)
-                        .map(reply => (
-                          <div
-                            key={reply.id}
-                            className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
-                          >
-                            <p className="text-white mb-6">{reply.text}</p>
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-4 text-sm">
-                                <User className="w-4 h-4 -mr-2 text-gray-400" />
-                                <span className="font-medium text-white mr-3">{reply.author}</span>
-                                <span className="text-gray-400 text-sm">
-                                  {new Date(reply.dateTime).toLocaleString()}
-                                </span>
-                              </div>
-                              <button
-                                onClick={() => handleCommentLike(reply.id)}
-                                className={`flex cursor-pointer items-center gap-1 text-sm ${
-                                  likedComments.includes(reply.id)
-                                    ? "text-blue-400"
-                                    : "text-gray-400 hover:text-white"
-                                }`}
-                              >
-                                <ThumbsUp className="w-4 h-4" /> {reply.likes}
-                              </button>
-                            </div>
-                          </div>
-                        ))
-                      }
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
+          <div className="flex items-center gap-4">
+            <User className="w-4 h-4 -mr-2 text-gray-400" />
+            <span className="font-medium text-white mr-5">{authorToShow}</span>
+            <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <MessageCircle className="w-4 h-4 text-gray-400" />
+              {comments.length}
+            </span>
+            <button
+              onClick={handleQuestionLike}
+              className={`flex cursor-pointer items-center gap-1 text-sm ${
+                qLiked ? "text-blue-400" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <ThumbsUp className="cursor-pointer w-4 h-4" /> {qLikes}
+            </button>
+          </div>
         </div>
       </div>
-    </>
+
+      <form onSubmit={handleCommentSubmit} className="mb-5 flex gap-2">
+        <input
+          type="text"
+          placeholder="댓글을 입력하세요..."
+          className="flex-1 px-4 py-2 rounded-l bg-[#1D1F2C] text-white outline-none"
+          value={newComment} onChange={e => setNewComment(e.target.value)}
+        />
+        <button type="submit" className="cursor-pointer -ml-2 px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition">
+          등록
+        </button>
+      </form>
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold mb-4">
+          댓글 ({comments.filter(c => c.topParentId == null).length})
+        </h2>
+
+        {comments
+          .filter(c => c.topParentId == null)
+          .map(parent => {
+            return (
+              <div key={parent.id} className="space-y-4">
+                {/* — 부모 댓글 카드 */}
+                <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
+                  <p className="text-white mb-6">{parent.text}</p>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4 text-sm">
+                      <User className="w-4 h-4 -mr-2 text-gray-400" />
+                      <span className="font-medium text-white mr-3">{parent.author}</span>
+                      <span className="text-gray-400 text-sm">
+                        {new Date(parent.dateTime).toLocaleString()}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleCommentLike(parent.id)}
+                      className={`flex cursor-pointer items-center gap-1 text-sm ${
+                        likedComments.includes(parent.id)
+                          ? "text-blue-400"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      <ThumbsUp className="w-4 h-4" /> {parent.likes}
+                    </button>
+                  </div>
+
+                  {/* 답글 토글 버튼 */}
+                  <div className="mt-2 flex gap-1">
+                    <button
+                      className="text-blue-400 text-xs hover:underline cursor-pointer"
+                      onClick={() => setReplyTo(prev => prev === parent.id ? parent.id : parent.id)}
+                    >
+                      답글
+                    </button>
+                    
+                    {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
+                    {comments.filter(c => c.topParentId === parent.id).length > 0 && (
+                      <button
+                        className="self-start text-blue-400 text-xs flex items-center gap-0.5 hover:underline cursor-pointer"
+                        onClick={() => setCollapsedReplies(prev => ({
+                          ...prev,
+                          [parent.id]: !prev[parent.id]
+                        }))}
+                      >
+                        {comments.filter(c => c.topParentId === parent.id).length}개
+                        <span className="mt-0.5">
+                          {collapsedReplies[parent.id]
+                          ? <ChevronUp className="w-4 h-4" />
+                          : <ChevronDown className="w-4 h-4" />
+                        }
+                        </span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 답글 입력창 */}
+                  <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="답글을 입력하세요..."
+                      className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
+                      value={replyTo === parent.id ? replyText : ""}
+                      onChange={e => {
+                        if (replyTo !== parent.id) return;
+                        setReplyText(e.target.value);
+                      }}
+                      onFocus={() => setReplyTo(parent.id)} // 입력 시작 시 해당 댓글에 연결
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1 -ml-2 bg-blue-600 rounded-r text-xs hover:bg-blue-500 cursor-pointer"
+                    >
+                      등록
+                    </button>
+                  </form>
+                </div>
+
+                {/* — 분리된 답글 컨테이너 (접혀있으면 숨김) */}
+                {!collapsedReplies[parent.id] && (
+                  <div className="ml-12 -mt-2 space-y-2">
+                    {comments
+                      .filter(c => c.topParentId === parent.id)
+                      .map(reply => (
+                        <div
+                          key={reply.id}
+                          className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
+                        >
+                          <p className="text-white mb-6">{reply.text}</p>
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-4 text-sm">
+                              <User className="w-4 h-4 -mr-2 text-gray-400" />
+                              <span className="font-medium text-white mr-3">{reply.author}</span>
+                              <span className="text-gray-400 text-sm">
+                                {new Date(reply.dateTime).toLocaleString()}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => handleCommentLike(reply.id)}
+                              className={`flex cursor-pointer items-center gap-1 text-sm ${
+                                likedComments.includes(reply.id)
+                                  ? "text-blue-400"
+                                  : "text-gray-400 hover:text-white"
+                              }`}
+                            >
+                              <ThumbsUp className="w-4 h-4" /> {reply.likes}
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </div>
+
+      {/* 삭제 확인 모달 */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
+            <div className="text-center">
+              <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
+              <p className="text-gray-400 mb-6">정말로 이 게시글을 삭제하시겠습니까?<br />삭제된 게시글은 복구할 수 없습니다.</p>
+              <div className="flex gap-3">
+                 <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    handleDeletePost();
+                  }}
+                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                >
+                  삭제
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                >
+                  취소
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
