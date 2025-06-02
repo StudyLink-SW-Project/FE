@@ -277,7 +277,7 @@ export default function QuestionDetail() {
                   <div className="mt-2 flex gap-1">
                     <button
                       className="text-blue-400 text-xs hover:underline cursor-pointer"
-                      onClick={() => setReplyTo(prev => prev === parent.id)}
+                      onClick={() => setReplyTo(prev => prev === parent.id ? parent.id : parent.id)}
                     >
                       답글
                     </button>
