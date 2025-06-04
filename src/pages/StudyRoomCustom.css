@@ -94,7 +94,6 @@
 
 .custom-participant-container:hover {
   border-color: var(--study-primary);
-  transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
 }
 
@@ -238,10 +237,6 @@
   transition: all 0.3s ease !important;
 }
 
-.lk-button:hover {
-  transform: translateY(-2px) !important;
-}
-
 .lk-participant-tile {
   border-radius: var(--lk-border-radius) !important;
   overflow: hidden !important;
@@ -333,4 +328,369 @@
 
 .study-sidebar::-webkit-scrollbar-thumb:hover {
   background: #047857;
+}
+
+
+
+
+
+
+/* 카메라 버튼 (TrackToggle source="camera") 가운데 정렬 */
+button.lk-button[data-lk-source="camera" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;        /* 원래 텍스트 숨기기 */
+
+  /* 버튼 패딩 및 너비 유지 */
+  padding: 0.75rem 1rem !important;
+  min-width: 3.5rem !important;
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* 원래 렌더된 SVG 아이콘 숨기기 */
+button.lk-button[data-lk-source="camera" i] > svg {
+  display: none !important;
+}
+
+/* 커스텀 카메라 아이콘 */
+button.lk-button[data-lk-source="camera" i]::before {
+  content: "";
+  display: inline-block !important;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS12aWRlby1pY29uIGx1Y2lkZS12aWRlbyI+PHBhdGggZD0ibTE2IDEzIDUuMjIzIDMuNDgyYS41LjUgMCAwIDAgLjc3Ny0uNDE2VjcuODdhLjUuNSAwIDAgMC0uNzUyLS40MzJMMTYgMTAuNSIvPjxyZWN0IHg9IjIiIHk9IjYiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxMiIgcng9IjIiLz48L3N2Zz4=");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0 !important;
+}
+
+/* “카메라” 텍스트 */
+button.lk-button[data-lk-source="camera" i]::after {
+  content: "카메라" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+/* ── 마이크 버튼 (TrackToggle source="microphone") 가운데 정렬 ── */
+button.lk-button[data-lk-source="microphone" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;
+
+  padding: 0.75rem 1rem !important;
+  min-width: 3.5rem !important;
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* 원래 렌더된 SVG 아이콘 숨기기 */
+button.lk-button[data-lk-source="microphone" i] > svg {
+  display: none !important;
+}
+
+/* 커스텀 마이크 아이콘 */
+button.lk-button[data-lk-source="microphone" i]::before {
+  content: "";
+  display: inline-block !important;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1taWMtaWNvbiBsdWNpZGUtbWljIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTNaIi8+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjE5IiB5Mj0iMjIiLz48L3N2Zz4=");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0 !important;
+}
+
+/* “마이크” 텍스트 */
+button.lk-button[data-lk-source="microphone" i]::after {
+  content: "마이크" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+
+/* 화면 공유 버튼 (TrackToggle source="screen_share") 가운데 정렬 */
+button.lk-button[data-lk-source="screen_share" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;         /* 아이콘과 텍스트 사이 간격 */
+  font-size: 0 !important;          /* 원래 텍스트 숨김 */
+
+  padding: 0.75rem 1rem !important; /* 버튼 패딩 */
+  min-width: 4.5rem !important;     /* "화면 공유하기" 텍스트가 잘리지 않도록 */
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* 원래 렌더된 SVG 아이콘 숨기기 */
+button.lk-button[data-lk-source="screen_share" i] > svg {
+  display: none !important;
+}
+
+/* 커스텀 화면 공유 아이콘 */
+button.lk-button[data-lk-source="screen_share" i]::before {
+  content: "";
+  display: inline-block !important;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY3JlZW4tc2hhcmUtaWNvbiBsdWNpZGUtc2NyZWVuLXNoYXJlIj48cGF0aCBkPSJNMTMgM0g0YTIgMiAwIDAgMC0yIDJ2MTBhMiAyIDAgMCAwIDIgMmgxNmEyIDIgMCAwIDAgMi0ydi0zIi8+PHBhdGggZD0iTTggMjFoOCIvPjxwYXRoIGQ9Ik0xMiAxN3Y0Ii8+PHBhdGggZD0ibTE3IDggNS01Ii8+PHBhdGggZD0iTTE3IDNoNXY1Ii8+PC9zdmc+");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0 !important;
+}
+
+/* “화면 공유하기” 텍스트 */
+button.lk-button[data-lk-source="screen_share" i]::after {
+  content: "화면 공유" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+
+/* 채팅 버튼 (ChatToggle) 가운데 정렬 */
+button.lk-chat-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;        /* 아이콘과 텍스트 사이 간격 */
+  font-size: 0 !important;        /* 기본 텍스트 숨기기 */
+
+  padding: 0.75rem 1rem !important;/* 버튼 패딩 */
+  min-width: 4rem !important;      /* 아이콘 + "채팅" 텍스트 공간 확보 */
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* 원래 렌더된 SVG 아이콘 숨기기 */
+button.lk-chat-toggle > svg {
+  display: none !important;
+}
+
+/* 커스텀 MessageSquare 아이콘 */
+button.lk-chat-toggle::before {
+  content: "";
+  display: inline-block !important;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-message-square' viewBox='0 0 24 24'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0 !important;
+}
+
+/* “채팅” 텍스트 */
+button.lk-chat-toggle::after {
+  content: "채팅" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+
+/* ─── StudyRoomCustom.css 파일 맨 아래에 추가 혹은 교체 ─── */
+
+/* 나가기 버튼 (DisconnectButton) */
+button.lk-disconnect-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;
+
+  padding: 0.75rem 1rem !important;
+  min-width: 4rem !important;
+  background-color: var(--lk-control-bg) !important;
+
+  /* 보더 색상을 직접 지정하려면 아래처럼 작성하세요 */
+  border: 1px solid #ef4444 !important;  /* 예: 빨간색 보더 */
+
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+
+/* 원래 렌더된 SVG 아이콘 숨기기 */
+button.lk-disconnect-button > svg {
+  display: none !important;
+}
+
+/* 커스텀 로그아웃 아이콘 */
+button.lk-disconnect-button::before {
+  content: "";
+  display: inline-block !important;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNlZjQ0NDQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1sb2ctb3V0LWljb24gbHVjaWRlLWxvZy1vdXQiPjxwYXRoIGQ9Im0xNiAxNyA1LTUtNS01Ii8+PHBhdGggZD0iTTIxIDEySDkiLz48cGF0aCBkPSJNOSAyMUg1YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDQiLz48L3N2Zz4=");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0 !important;
+}
+
+/* “나가기” 텍스트 */
+button.lk-disconnect-button::after {
+  content: "나가기" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;      /* 텍스트가 보이도록 폰트 크기 재설정 */
+  color: #ef4444 !important;       /* 빨간색 텍스트 */
+  white-space: nowrap !important;
+}
+
+/* ── 카메라 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="camera" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important; /* 호버 시 배경색 변경 */
+}
+
+/* ── 마이크 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="microphone" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* ── 화면 공유 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="screen_share" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* ── 채팅 버튼 호버 효과 ── */
+button.lk-chat-toggle:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* 나가기 버튼 호버 시 아이콘도 하얗게 변경 */
+button.lk-disconnect-button:hover::before {
+  /* 흰색 LogOut 아이콘 SVG 데이터 URI */
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1sb2ctb3V0LWljb24gbHVjaWRlLWxvZy1vdXQiPjxwYXRoIGQ9Im0xNiAxNyA1LTUtNS01Ii8+PHBhdGggZD0iTTIxIDEySDkiLz48cGF0aCBkPSJNOSAyMUg1YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDQiLz48L3N2Zz4=");
+}
+/* ── 나가기 버튼 호버 효과 ── */
+button.lk-disconnect-button:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+/* 나가기 버튼 호버 시 텍스트를 하얀색으로 변경 */
+button.lk-disconnect-button:hover::after {
+  color: #fff !important;
+}
+
+/* ── 카메라 버튼 아이콘만 상태별 교체 ── */
+/* 비활성(꺼짐): 일반 카메라 아이콘 */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="false"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS12aWRlby1pY29uIGx1Y2lkZS12aWRlbyI+PHBhdGggZD0ibTE2IDEzIDUuMjIzIDMuNDgyYS41LjUgMCAwIDAgLjc3Ny0uNDE2VjcuODdhLjUuNSAwIDAgMC0uNzUyLS40MzJMMTYgMTAuNSIvPjxyZWN0IHg9IjIiIHk9IjYiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxMiIgcng9IjIiLz48L3N2Zz4=");
+}
+
+/* 활성(켜짐): 카메라 끄기 아이콘 */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="true"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS12aWRlby1vZmYtaWNvbiBsdWNpZGUtdmlkZW8tb2ZmIj48cGF0aCBkPSJNMTAuNjYgNkgxNGEyIDIgMCAwIDEgMiAydjIuNWw1LjI0OC0zLjA2MkEuNS41IDAgMCAxIDIyIDcuODd2OC4xOTYiLz48cGF0aCBkPSJNMTYgMTZhMiAyIDAgMCAxLTIgMkg0YTIgMiAwIDAgMS0yLTJWOGEyIDIgMCAwIDEgMi0yaDIiLz48cGF0aCBkPSJtMiAyIDIwIDIwIi8+PC9zdmc+");
+}
+
+/* ── 마이크 버튼 아이콘만 상태별 교체 ── */
+/* 비활성(꺼짐): 일반 마이크 아이콘 */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="false"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1taWMtaWNvbiBsdWNpZGUtbWljIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTNaIi8+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjE5IiB5Mj0iMjIiLz48L3N2Zz4=");
+}
+
+/* 활성(켜짐): 마이크 끄기 아이콘 */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="true"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1taWMtb2ZmLWljb24gbHVjaWRlLW1pYy1vZmYiPjxsaW5lIHgxPSIyIiB4Mj0iMjIiIHkxPSIyIiB5Mj0iMjIiLz48cGF0aCBkPSJNMTguODkgMTMuMjNBNy4xMiA3LjEyIDAgMCAwIDE5IDEydi0yIi8+PHBhdGggZD0iTTUgMTB2MmE3IDcgMCAwIDAgMTIgNSIvPjxwYXRoIGQ9Ik0xNSA5LjM0VjVhMyAzIDAgMCAwLTUuNjgtMS4zMyIvPjxwYXRoIGQ9Ik05IDl2M2EzIDMgMCAwIDAgNS4xMiAyLjEyIi8+PGxpbmUgeDE9IjEyIiB4Mj0iMTIiIHkxPSIxOSIgeTI9IjIyIi8+PC9zdmc+");
+}
+
+/* ── 화면 공유 버튼 아이콘만 상태별 교체 ── */
+/* 비활성(꺼짐): 화면 공유 아이콘 */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="false"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY3JlZW4tc2hhcmUtaWNvbiBsdWNpZGUtc2NyZWVuLXNoYXJlIj48cGF0aCBkPSJNMTMgM0g0YTIgMiAwIDAgMC0yIDJ2MTBhMiAyIDAgMCAwIDIgMmgxNmEyIDIgMCAwIDAgMi0ydi0zIi8+PHBhdGggZD0iTTggMjFoOCIvPjxwYXRoIGQ9Ik0xMiAxN3Y0Ii8+PHBhdGggZD0ibTE3IDggNS01Ii8+PHBhdGggZD0iTTE3IDNoNXY1Ii8+PC9zdmc+");
+}
+
+/* 활성(켜짐): 화면 공유 중지 아이콘 */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="true"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY3JlZW4tc2hhcmUtb2ZmLWljb24gbHVjaWRlLXNjcmVlbi1zaGFyZS1vZmYiPjxwYXRoIGQ9Ik0xMyAzSDRhMiAyIDAgMCAwLTIgMnYxMGEyIDIgMCAwIDAgMiAyaDE2YTIgMiAwIDAgMCAyLTJ2LTMiLz48cGF0aCBkPSJNOCAyMWg4Ii8+PHBhdGggZD0iTTEyIDE3djQiLz48cGF0aCBkPSJtMjIgMy01IDUiLz48cGF0aCBkPSJtMTcgMyA1IDUiLz48L3N2Zz4=");
+}
+
+/* ── 채팅 버튼 아이콘만 상태별 교체 ── */
+/* 비활성(꺼짐): 채팅 열기 아이콘 */
+button.lk-chat-toggle[data-lk-enabled="false"]::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-message-circle' viewBox='0 0 24 24'%3E%3Cpath d='M21 11.5a8.38 8.38 0 0 1-1.45 4.7 8.5 8.5 0 0 1-13.63.3L3 21l4.8-2.13a8.5 8.5 0 0 1 4.7 1.45A8.38 8.38 0 0 1 21 11.5z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* 활성(켜짐): 채팅 닫기 아이콘 */
+button.lk-chat-toggle[data-lk-enabled="true"]::before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1tZXNzYWdlLXNxdWFyZS1vZmYtaWNvbiBsdWNpZGUtbWVzc2FnZS1zcXVhcmUtb2ZmIj48cGF0aCBkPSJNMjEgMTVWNWEyIDIgMCAwIDAtMi0ySDkiLz48cGF0aCBkPSJtMiAyIDIwIDIwIi8+PHBhdGggZD0iTTMuNiAzLjZjLS40LjMtLjYuOC0uNiAxLjR2MTZsNC00aDEwIi8+PC9zdmc+");
+}
+
+/* ── 카메라 버튼 ── */
+/* 비활성(꺼짐): “카메라 켜기” */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="false"]::after {
+  content: "카메라 켜기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “카메라 끄기” */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="true"]::after {
+  content: "카메라 끄기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* ── 마이크 버튼 ── */
+/* 비활성(꺼짐): “마이크 켜기” */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="false"]::after {
+  content: "마이크 켜기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “마이크 끄기” */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="true"]::after {
+  content: "마이크 끄기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* ── 화면 공유 버튼 ── */
+/* 비활성(꺼짐): “화면 공유하기” */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="false"]::after {
+  content: "화면 공유하기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “화면 공유 중지” */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="true"]::after {
+  content: "화면 공유 중지" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* ── 채팅 버튼 ── */
+/* 비활성(꺼짐): “채팅 열기” */
+button.lk-chat-toggle[data-lk-enabled="false"]::after {
+  content: "채팅 열기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “채팅 닫기” */
+button.lk-chat-toggle[data-lk-enabled="true"]::after {
+  content: "채팅 닫기" !important;
+  color: var(--lk-fg) !important;
 }

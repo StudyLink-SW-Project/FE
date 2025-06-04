@@ -25,6 +25,7 @@ const LIVEKIT_URL = "wss://api.studylink.store:443";
 
 // 커스텀 컨트롤 바 컴포넌트
 function CustomControlBar() {
+  
   return (
     <div className="custom-control-bar">
       <ControlBar 
@@ -56,7 +57,7 @@ function CustomParticipantTile({ trackRef, ...props }) {
 }
 
 // 메인 화상회의 컴포넌트 (VideoConference 대신 커스텀)
-function CustomVideoConference() {
+function CustomVideoConference({ roomTitle }) {
   const [showChat, setShowChat] = useState(false);
   const [widgetState, setWidgetState] = useState({
     showChat: false,
@@ -78,6 +79,7 @@ function CustomVideoConference() {
       {/* 헤더 */}
       <div className="study-room-header">
         <h2>Study Link</h2>
+        <h2>{roomTitle}</h2>
         <div className="room-info">
           <span>참가자: {tracks.length}명</span>
         </div>
@@ -152,7 +154,8 @@ function CustomVideoConference() {
 export default function StudyRoomEntry() {
   const { state } = useLocation();
   const token = state?.token;
-  
+
+  const roomName = state?.roomName ?? "기본 방 제목";
   console.log("LIVEKIT_URL", LIVEKIT_URL, "token", token);
   
   if (!token) {
@@ -178,7 +181,7 @@ export default function StudyRoomEntry() {
         }}
       >
         <LayoutContextProvider>
-          <CustomVideoConference />
+          <CustomVideoConference roomTitle={roomName} />
         </LayoutContextProvider>
       </LiveKitRoom>
     </div>

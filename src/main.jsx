@@ -2,8 +2,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-import '@livekit/components-styles';
 import "./index.css";
+import '@livekit/components-styles';
 
 import { BrowserRouter } from "react-router-dom";
 // Redux 관련 import

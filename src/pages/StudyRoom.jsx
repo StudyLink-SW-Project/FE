@@ -61,7 +61,7 @@ export default function StudyRoom() {
   // 모달에서 "입장" 눌렀을 때
   const handleEnter = (roomId, token) => {
     // token, participantName 은 필요하시면 state로 넘기세요
-    navigate(`/study-room/${roomId}`, { state: { token } });
+    navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId } });
   };
 
   // 검색 필터링
