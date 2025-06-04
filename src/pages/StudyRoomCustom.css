@@ -1,0 +1,336 @@
+/* src/pages/StudyRoomCustom.css */
+
+/* 전체 테마 커스터마이징 */
+[data-lk-theme="default"] {
+  /* 메인 색상 팔레트 */
+  --lk-bg: #0f172a;
+  --lk-bg2: #1e293b;
+  --lk-bg3: #334155;
+  --lk-fg: #f8fafc;
+  --lk-accent-bg: #3b82f6;
+  --lk-accent-fg: #ffffff;
+  
+  /* 스터디룸 전용 색상 */
+  --study-primary: #059669;
+  --study-secondary: #fbbf24;
+  --study-danger: #ef4444;
+  
+  /* 폰트 및 간격 */
+  --lk-font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --lk-border-radius: 16px;
+  --lk-grid-gap: 1rem;
+  --lk-control-bar-height: 90px;
+}
+
+/* 스터디룸 래퍼 */
+.study-room-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  overflow: hidden;
+}
+
+/* 커스텀 비디오 컨퍼런스 레이아웃 */
+.custom-video-conference {
+  display: grid;
+  grid-template-areas: 
+    "header header header"
+    "video video sidebar"
+    "controls controls controls";
+  grid-template-rows: 60px 1fr 90px;
+  grid-template-columns: 1fr 1fr 300px;
+  height: 100vh;
+  gap: 0;
+  background: var(--lk-bg);
+}
+
+/* 헤더 */
+.study-room-header {
+  grid-area: header;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--lk-bg2);
+  border-bottom: 1px solid var(--lk-bg3);
+}
+
+.study-room-header h2 {
+  color: var(--study-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.room-info {
+  display: flex;
+  gap: 2rem;
+  color: var(--lk-fg);
+  font-size: 0.9rem;
+}
+
+/* 비디오 영역 */
+.video-area {
+  grid-area: video;
+  position: relative;
+  overflow: hidden;
+}
+
+.grid-container,
+.focus-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 커스텀 참가자 컨테이너 */
+.custom-participant-container {
+  position: relative;
+  border-radius: var(--lk-border-radius);
+  overflow: hidden;
+  background: var(--lk-bg2);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.custom-participant-container:hover {
+  border-color: var(--study-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+}
+
+.study-status {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+}
+
+.status-indicator {
+  font-size: 1rem;
+}
+
+.study-time {
+  font-weight: 600;
+  color: var(--study-primary);
+}
+
+/* 사이드바 */
+.study-sidebar {
+  grid-area: sidebar;
+  background: var(--lk-bg2);
+  border-left: 1px solid var(--lk-bg3);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.study-tools,
+.participants-list {
+  margin-bottom: 2rem;
+}
+
+.study-tools h3,
+.participants-list h3 {
+  color: var(--lk-fg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--study-primary);
+  padding-bottom: 0.5rem;
+}
+
+.tool-btn {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--lk-bg3);
+  color: var(--lk-fg);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.tool-btn:hover {
+  background: var(--study-primary);
+  transform: translateX(4px);
+}
+
+/* 참가자 목록 */
+.participant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--lk-bg3);
+  border-radius: 8px;
+  color: var(--lk-fg);
+  font-size: 0.9rem;
+}
+
+.participant-name {
+  font-weight: 500;
+}
+
+.participant-status {
+  font-size: 1.2rem;
+}
+
+/* 커스텀 컨트롤 바 */
+.custom-control-bar {
+  grid-area: controls;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: var(--lk-bg2);
+  border-top: 1px solid var(--lk-bg3);
+}
+
+.study-timer-btn,
+.break-time-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.study-timer-btn {
+  background: var(--study-primary);
+  color: white;
+}
+
+.study-timer-btn:hover {
+  background: #047857;
+  transform: translateY(-2px);
+}
+
+.break-time-btn {
+  background: var(--study-secondary);
+  color: var(--lk-bg);
+}
+
+.break-time-btn:hover {
+  background: #f59e0b;
+  transform: translateY(-2px);
+}
+
+/* LiveKit 컴포넌트 오버라이드 */
+.lk-button {
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.lk-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+.lk-participant-tile {
+  border-radius: var(--lk-border-radius) !important;
+  overflow: hidden !important;
+}
+
+.lk-participant-tile[data-speaking="true"] {
+  border: 3px solid var(--study-primary) !important;
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.5) !important;
+}
+
+/* 채팅 컨테이너 */
+.chat-container {
+  position: fixed;
+  right: 0;
+  top: 60px;
+  bottom: 90px;
+  width: 350px;
+  background: var(--lk-bg2);
+  border-left: 1px solid var(--lk-bg3);
+  z-index: 1000;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .custom-video-conference {
+    grid-template-areas: 
+      "header"
+      "video"
+      "controls";
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr 90px;
+  }
+  
+  .study-sidebar {
+    display: none;
+  }
+  
+  .chat-container {
+    width: 100%;
+    position: relative;
+    top: 0;
+    bottom: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-control-bar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .study-timer-btn,
+  .break-time-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .room-info {
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-participant-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* 스크롤바 커스터마이징 */
+.study-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.study-sidebar::-webkit-scrollbar-track {
+  background: var(--lk-bg3);
+  border-radius: 3px;
+}
+
+.study-sidebar::-webkit-scrollbar-thumb {
+  background: var(--study-primary);
+  border-radius: 3px;
+}
+
+.study-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #047857;
+}
