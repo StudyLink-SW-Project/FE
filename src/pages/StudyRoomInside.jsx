@@ -3,14 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, Navigate, Link } from 'react-router-dom';
 import { Users, LogOut } from 'lucide-react';
 import { useSelector } from 'react-redux';
-// import { useTracks, Chat, VideoTrack, useRoomContext, TrackToggle, DisconnectButton, useParticipants, useLocalParticipant } from '@livekit/components-react';
-import { useTracks } from '../livekit-src/hooks/useTracks'
-import { useRoomContext } from '../livekit-src/context/room-context'
-import { useParticipants } from '../livekit-src/hooks/useParticipants'
-import { useLocalParticipant } from '../livekit-src/hooks/useLocalParticipant'
+import { useTracks, Chat, VideoTrack, useRoomContext, TrackToggle, DisconnectButton, useParticipants, useLocalParticipant } from '@livekit/components-react';
 
 import { Track } from 'livekit-client';
-import { VideoConference } from '../livekit-src/prefabs/VideoConference';
+import { VideoConference } from "@livekit/components-react";
 
 export default function StudyRoomInside() {
   const { id } = useParams();
@@ -75,7 +71,6 @@ export default function StudyRoomInside() {
   };
   return (
     <VideoConference
-      roomTitle={roomTitle}
     />
     // <div className="min-h-screen bg-[#282A36] text-white flex flex-col">
     //   <header className="px-8 py-3 flex items-center justify-between border-b border-[#616680]">
