@@ -2,6 +2,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { LiveKitRoom } from "../livekit-src/components/LiveKitRoom";
 import StudyRoomInside from "./StudyRoomInside";
+import '@livekit/components-styles';
 
 const LIVEKIT_URL =
     "wss://api.studylink.store:443";
@@ -15,7 +16,7 @@ export default function StudyRoomEntry() {
     return <Navigate to="/study-room" replace />;
   }
   return (
-    <LiveKitRoom 
+    <LiveKitRoom data-lk-theme="default"
       token={token} 
       serverUrl={LIVEKIT_URL} 
       connect={true}
