@@ -1,6 +1,6 @@
 // src/pages/StudyRoomEntry.jsx
 import { Navigate, useLocation } from "react-router-dom";
-import { LiveKitRoom } from "@livekit/components-react";
+import { LiveKitRoom } from "../livekit-src/components/LiveKitRoom";
 import StudyRoomInside from "./StudyRoomInside";
 
 const LIVEKIT_URL =

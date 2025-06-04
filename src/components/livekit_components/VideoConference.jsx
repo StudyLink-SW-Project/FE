@@ -15,13 +15,13 @@ import {
   LayoutContextProvider,
   ParticipantTile,
   RoomAudioRenderer,
-  ControlBar,
-  Chat,
   useCreateLayoutContext,
   usePinnedTracks,
   useTracks,
   // useWarnAboutMissingStyles,
-} from '@livekit/components-react';
+} from '../../livekit-src/components';
+import { ControlBar } from '../../livekit-src/prefabs'
+import { Chat } from '../../livekit-src/prefabs/Chat';
 
 export function VideoConference({
   roomTitle,
