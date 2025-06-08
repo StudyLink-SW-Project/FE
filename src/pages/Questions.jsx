@@ -239,7 +239,7 @@ export default function Questions() {
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
-              <p className="text-gray-400 mb-4">정말로 이 게시글을 삭제하시겠습니까?</p>
+              <p className="text-gray-400 mb-4">해당 게시글을 삭제하시겠습니까?</p>
               <p className="text-gray-500 text-sm mb-6">삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
               <div className="flex gap-3">
                 <button
