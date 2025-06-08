@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import StudyRoom from "./pages/StudyRoom";
 import Questions from "./pages/Questions";
+import MyQuestions from "./pages/MyQuestions";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import StudyRoomEntry from "./pages/StudyRoomEntry";
@@ -29,14 +30,14 @@ export default function App() {
             <Questions />
           </ProtectedRoute>
         } />
+        <Route path="/my-questions" element={
+          <ProtectedRoute>
+            <MyQuestions />
+          </ProtectedRoute>
+        } />
         <Route path="/questions/:id" element={<QuestionDetail />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        {/* <Route path="/study-room/:id" element={
-          <ProtectedRoute>
-            <StudyRoomInside />
-          </ProtectedRoute>
-        } /> */}
         <Route
           path="/study-room/:id"
           element={

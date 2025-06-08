@@ -1,35 +1,18 @@
 // src/components/UserMenu.jsx
-import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { logoutThunk } from '../store/authThunks';
 import { toast } from 'react-toastify';
 import { User as UserIcon, FileText, LogOut } from 'lucide-react';
 import userIcon from '../assets/default.png';
 
-export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
+export default function UserMenu({ onClose, onOpenProfile }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector(state => state.auth.user);
 
   // 아바타 상태: 로컬Storage 우선, 없으면 user.avatarUrl, 없으면 기본 아이콘
-  const [avatar, setAvatar] = useState(
-    localStorage.getItem('avatar') ||
-    user?.avatarUrl ||
-    userIcon
-  );
-
-  // 사진 변경 핸들러
-  const handleAvatarChange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      setAvatar(dataUrl);
-      localStorage.setItem('avatar', dataUrl);
-      onAvatarChange?.(dataUrl);
-    };
-    reader.readAsDataURL(file);
-  };
+  const avatar = userIcon;
 
   const handleLogout = async () => {
     try {
@@ -43,6 +26,12 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
 
   const handleProfileClick = () => {
     onOpenProfile();
+    onClose();
+  };
+
+  // ★ 내 질문 페이지로 이동하는 핸들러 추가
+  const handleMyQuestionsClick = () => {
+    navigate('/my-questions');
     onClose();
   };
 
@@ -60,7 +49,6 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
             <input
               type="file"
               accept="image/*"
-              onChange={handleAvatarChange}
               className="absolute inset-0 opacity-0 cursor-pointer"
             />
           </label>
@@ -78,7 +66,10 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
           <UserIcon className="w-5 h-5 text-gray-600" />
           내 프로필
         </li>
-        <li className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2">
+        <li 
+          className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2"
+          onClick={handleMyQuestionsClick}
+        >
           <FileText className="w-5 h-5 text-gray-600" />
           내 질문
         </li>
