@@ -1,7 +1,6 @@
 // src/components/modals/ProfileModal.jsx
-import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import userIcon from '../../assets/user_icon.png';
+import userIcon from '../../assets/default.png';
 
 /**
  * ProfileModal
@@ -12,22 +11,7 @@ import userIcon from '../../assets/user_icon.png';
 export default function ProfileModal({ onClose }) {
   const { user } = useSelector(state => state.auth);
 
-  const [avatar, setAvatar] = useState(
-    localStorage.getItem('avatar') ||
-    user?.avatarUrl ||
-    userIcon
-  );
-
-  const handleAvatarChange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setAvatar(reader.result);
-      localStorage.setItem('avatar', reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
+const avatar = userIcon;
 
   const handleClose = () => {
     onClose();
@@ -54,19 +38,6 @@ export default function ProfileModal({ onClose }) {
               backgroundPosition: 'center',
             }}
           />
-        </div>
-
-        {/* 사진 변경 버튼 */}
-        <div className="text-center mb-6">
-          <label className="cursor-pointer inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded">
-            사진 변경
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
-          </label>
         </div>
 
         {/* 사용자 정보 */}
