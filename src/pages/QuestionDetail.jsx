@@ -16,7 +16,6 @@ export default function QuestionDetail() {
     excerpt: initExcerpt,
     author: initAuthor,
     dateTime: initDateTime,
-    answers,
     likes,
     id
   } = state;
@@ -44,8 +43,10 @@ export default function QuestionDetail() {
 
   // 삭제 확인 모달 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   
+  // ★ 댓글 삭제 모달 상태 추가
+  const [showCommentDeleteModal, setShowCommentDeleteModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -82,7 +83,7 @@ export default function QuestionDetail() {
     })();
   }, [API, id]);
 
-    if (!state) {
+  if (!state) {
     return (
       <div className="min-h-screen bg-[#282A36] text-white p-8">
         <Header/>
@@ -92,7 +93,6 @@ export default function QuestionDetail() {
       </div>
     );
   }
-
 
   const handleQuestionLike = async () => {
     try {
@@ -125,6 +125,45 @@ export default function QuestionDetail() {
     } catch (err) {
       console.error(err);
       toast.error(err.message);
+    }
+  };
+
+  // ★ 댓글 삭제 핸들러 추가
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const resp = await fetch(`${API}comment/${commentId}/delete`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) throw new Error(json.message || "댓글 삭제에 실패했습니다.");
+
+      toast.success("댓글이 삭제되었습니다.");
+      // 댓글 목록 새로고침
+      await reloadComments();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  // ★ 댓글 삭제 확인 모달 열기
+  const openCommentDeleteModal = (comment) => {
+    setCommentToDelete(comment);
+    setShowCommentDeleteModal(true);
+  };
+
+  // ★ 댓글 삭제 확인 모달 닫기
+  const closeCommentDeleteModal = () => {
+    setCommentToDelete(null);
+    setShowCommentDeleteModal(false);
+  };
+
+  // ★ 댓글 삭제 실행
+  const confirmDeleteComment = async () => {
+    if (commentToDelete) {
+      await handleDeleteComment(commentToDelete.id);
+      closeCommentDeleteModal();
     }
   };
 
@@ -227,6 +266,11 @@ export default function QuestionDetail() {
   // 현재 로그인한 사용자가 작성자인지 확인
   const isAuthor = user && user.userName === authorToShow;
 
+  // ★ 댓글 작성자 확인 함수 추가
+  const isCommentAuthor = (commentAuthor) => {
+    return user && user.userName === commentAuthor;
+  };
+
   return (
     <>
       <Header/>
@@ -235,36 +279,48 @@ export default function QuestionDetail() {
           <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
         </Link>
 
-          <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
+        <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
                 <FileText className="w-6 h-6 mt-0.5 text-blue-400" />
                 <h1 className="text-2xl font-semibold">{titleToShow}</h1>
               </div>
-              <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
-            </div>
-            <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
-              <div className="flex items-center gap-4">
-                <User className="w-4 h-4 -mr-2 text-gray-400" />
-                <span className="font-medium text-white mr-5">{authorToShow}</span>
-                <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <MessageCircle className="w-4 h-4 text-gray-400" />
-                  {comments.length}
-                </span>
+              {/* ★ 게시글 삭제 버튼 (작성자만 보임) */}
+              {isAuthor && (
                 <button
-                  onClick={handleQuestionLike}
-                  className={`flex cursor-pointer items-center gap-1 text-sm ${
-                    qLiked ? "text-blue-400" : "text-gray-400 hover:text-white"
-                  }`}
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
+                  title="게시글 삭제"
                 >
-                  <ThumbsUp className="cursor-pointer w-4 h-4" /> {qLikes}
+                  <Trash2 className="w-5 h-5" />
                 </button>
-              </div>
+              )}
+            </div>
+            <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
+          </div>
+          <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
+            <div className="flex items-center gap-4">
+              <User className="w-4 h-4 -mr-2 text-gray-400" />
+              <span className="font-medium text-white mr-5">{authorToShow}</span>
+              <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <MessageCircle className="w-4 h-4 text-gray-400" />
+                {comments.length}
+              </span>
+              <button
+                onClick={handleQuestionLike}
+                className={`flex cursor-pointer items-center gap-1 text-sm ${
+                  qLiked ? "text-blue-400" : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <ThumbsUp className="cursor-pointer w-4 h-4" /> {qLikes}
+              </button>
             </div>
           </div>
+        </div>
 
         <form onSubmit={handleCommentSubmit} className="mb-5 flex gap-2">
           <input
@@ -290,7 +346,19 @@ export default function QuestionDetail() {
                 <div key={parent.id} className="space-y-4">
                   {/* — 부모 댓글 카드 */}
                   <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
-                    <p className="text-white mb-6">{parent.text}</p>
+                    <div className="flex justify-between items-start mb-6">
+                      <p className="text-white flex-1 pr-4">{parent.text}</p>
+                      {/* ★ 댓글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
+                      {isCommentAuthor(parent.author) && (
+                        <button
+                          onClick={() => openCommentDeleteModal(parent)}
+                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors flex-shrink-0"
+                          title="댓글 삭제"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-4 text-sm">
                         <User className="w-4 h-4 -mr-2 text-gray-400" />
@@ -372,7 +440,19 @@ export default function QuestionDetail() {
                             key={reply.id}
                             className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
                           >
-                            <p className="text-white mb-6">{reply.text}</p>
+                            <div className="flex justify-between items-start mb-6">
+                              <p className="text-white flex-1 pr-4">{reply.text}</p>
+                              {/* ★ 답글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
+                              {isCommentAuthor(reply.author) && (
+                                <button
+                                  onClick={() => openCommentDeleteModal(reply)}
+                                  className="p-1 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors flex-shrink-0"
+                                  title="댓글 삭제"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
                             <div className="flex justify-between items-center">
                               <div className="flex items-center gap-4 text-sm">
                                 <User className="w-4 h-4 -mr-2 text-gray-400" />
@@ -402,9 +482,9 @@ export default function QuestionDetail() {
             })}
         </div>
 
-        {/* 삭제 확인 모달 */}
+        {/* 게시글 삭제 확인 모달 */}
         {showDeleteModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
             <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
               <div className="text-center">
                 <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
@@ -426,7 +506,37 @@ export default function QuestionDetail() {
                   >
                     취소
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
+        {/* ★ 댓글 삭제 확인 모달 */}
+        {showCommentDeleteModal && commentToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
+              <div className="text-center">
+                <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">댓글 삭제</h3>
+                <p className="text-gray-400 mb-4">정말로 이 댓글을 삭제하시겠습니까?</p>
+                <div className="bg-[#2A2D3F] rounded-lg p-3 mb-6 text-left">
+                  <p className="text-sm text-gray-300 line-clamp-3">"{commentToDelete.text}"</p>
+                </div>
+                <p className="text-gray-500 text-sm mb-6">삭제된 댓글은 복구할 수 없습니다.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={confirmDeleteComment}
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                  >
+                    삭제
+                  </button>
+                  <button
+                    onClick={closeCommentDeleteModal}
+                    className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                  >
+                    취소
+                  </button>
                 </div>
               </div>
             </div>
