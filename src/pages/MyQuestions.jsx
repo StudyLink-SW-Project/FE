@@ -5,6 +5,7 @@ import QuestionCard from "../components/cards/QuestionCard";
 import Pagination from "../components/Pagination";
 import { FileText, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function MyQuestions() {
   const [search, setSearch] = useState("");
@@ -22,17 +23,33 @@ export default function MyQuestions() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState(null);
 
+  // 현재 로그인한 사용자 정보
+  const user = useSelector(state => state.auth.user);
+
   // 내 게시글 목록 조회 함수
   async function loadMyPosts(page) {
     setLoading(true);
     try {
+      // ★ 페이지 파라미터를 정확히 전달 (page 대신 0부터 시작)
       const resp = await fetch(`${API}post/mypost?page=${page}`, {
+        method: 'GET',
         credentials: "include",
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
+      
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      }
+      
       const json = await resp.json();
+      console.log('API 응답:', json); // 디버깅용
+      
       if (!json.isSuccess) {
         throw new Error(json.message || "내 게시글 목록 조회에 실패했습니다.");
       }
+      
       const { posts, totalPages: tp } = json.result;
       setQuestions(
         posts.map((p) => ({
@@ -50,7 +67,7 @@ export default function MyQuestions() {
       );
       setTotalPages(tp);
     } catch (err) {
-      console.error(err);
+      console.error('API 에러:', err);
       toast.error(err.message);
     } finally {
       setLoading(false);
@@ -59,8 +76,13 @@ export default function MyQuestions() {
 
   // 페이지가 바뀔 때마다 목록 조회
   useEffect(() => {
+    // ★ 사용자가 로그인되어 있는지 확인
+    if (!user) {
+      toast.error('로그인이 필요합니다.');
+      return;
+    }
     loadMyPosts(currentPage - 1);
-  }, [currentPage]);
+  }, [currentPage, user]);
 
   // 게시글 좋아요 토글 핸들러
   const handleQuestionLike = async (postId) => {
@@ -138,12 +160,13 @@ export default function MyQuestions() {
       <div className="p-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
           <h1 className="text-4xl font-bold flex items-center gap-3">
-            나의 질문
+            <FileText className="w-10 h-10 text-blue-400" />
+            내가 작성한 질문
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
             <input
               type="text"
-              placeholder="검색"
+              placeholder="제목으로 검색"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -220,7 +243,23 @@ export default function MyQuestions() {
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
-              <p className="text-gray-400 mb-4">해당 게시글을 삭제하시겠습니까?</p>
+              <p className="text-gray-400 mb-4">정말로 이 게시글을 삭제하시겠습니까?</p>
+              
+              {/* 삭제할 게시글 미리보기 */}
+              <div className="bg-[#2A2D3F] rounded-lg p-4 mb-6 text-left">
+                <h4 className="text-white font-semibold mb-2 line-clamp-2">{questionToDelete.title}</h4>
+                <p className="text-sm text-gray-300 line-clamp-3">
+                  {questionToDelete.excerpt.length > 100 
+                    ? questionToDelete.excerpt.slice(0, 100) + "..." 
+                    : questionToDelete.excerpt
+                  }
+                </p>
+                <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+                  <span>작성일: {new Date(questionToDelete.dateTime).toLocaleDateString()}</span>
+                  <span>댓글 {questionToDelete.answers}개 • 좋아요 {questionToDelete.likes}개</span>
+                </div>
+              </div>
+              
               <p className="text-gray-500 text-sm mb-6">삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
               <div className="flex gap-3">
                 <button
