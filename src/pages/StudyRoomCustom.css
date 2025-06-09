@@ -127,14 +127,48 @@ button.lk-chat-toggle {
   overflow: visible !important;
 }
 
+/* ——— “채팅” 텍스트만 ——— */
 button.lk-chat-toggle::after {
   content: "채팅" !important;
   display: inline-block !important;
+  /* 배경·테두리·패딩 전부 제거 */
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+
+  /* 위치도 버튼 흐름에 맞게 static */
+  position: static !important;
   font-size: 1rem !important;
   color: var(--lk-fg) !important;
   white-space: nowrap !important;
+  margin: 0 !important;            /* gap으로 이미 간격 조절 */
 }
 
+/* ——— 파란 뱃지 숫자만 ——— */
+button.lk-chat-toggle::before {
+  content: attr(data-lk-unread-msgs) !important;
+  position: absolute !important;
+  top: -0.2rem !important;
+  right: -0.2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1.25rem !important;
+  height: 1.25rem !important;
+  padding: 0 0.25rem !important;
+  background-color: var(--lk-accent-bg) !important;
+  color: var(--lk-accent-fg) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  border-radius: 9999px !important;
+  white-space: nowrap !important;
+}
+
+/* 언리드가 0일 때 뱃지 숨기기 */
+button.lk-chat-toggle[data-lk-unread-msgs="0"]::before {
+  display: none !important;
+}
 
 /* ─── StudyRoomCustom.css 파일 맨 아래에 추가 혹은 교체 ─── */
 
@@ -236,15 +270,146 @@ button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="true"]::after
   color: var(--lk-fg) !important;
 }
 
-/* ── 채팅 버튼 ── */
-/* 비활성(꺼짐): “채팅 열기” */
-button.lk-chat-toggle[data-lk-enabled="false"]::after {
-  content: "채팅 열기" !important;
-  color: var(--lk-fg) !important;
+/* 원본 텍스트 숨기기 */
+.lk-chat .lk-chat-header {
+  font-size: 0;              /* 헤더 내부 글자 크기를 0으로 */
+  position: relative;        /* ::after 위치 기준 */
 }
 
-/* 활성(켜짐): “채팅 닫기” */
-button.lk-chat-toggle[data-lk-enabled="true"]::after {
-  content: "채팅 닫기" !important;
+/* 원하는 문구를 ::after 로 추가 */
+.lk-chat .lk-chat-header::after {
+  content: "채팅";      /* 원하는 문구로 교체 */
+  font-size: 1.5rem;           /* 보통 크기로 재설정 */
+  color: var(--lk-fg);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 1) 원래 placeholder 감추기 */
+.lk-chat-form-input::placeholder {
+  color: transparent !important;
+}
+
+/* 버튼 내부 텍스트 숨기기 */
+.lk-chat-form-button {
+  font-size: 0 !important;
+  position: relative;
+}
+
+/* 원하는 문구를 ::after 로 삽입 */
+.lk-chat-form-button::after {
+  content: "전송";          /* 원하는 버튼 텍스트 */
+  font-size: 1rem !important;
   color: var(--lk-fg) !important;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+button.lk-close-button {
+  /* 기존 텍스트 숨기기 */
+  text-indent: -9999px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+
+  /* 아이콘 중앙 배치 */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* 크기 조절 (예시값) */
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  min-height: auto !important;
+
+  border: none !important;
+
+  line-height: 0 !important;
+}
+button.lk-close-button > svg {
+  /* 2) SVG를 block으로 바꿔서 baseline 정렬 효과 제거 */
+  display: block !important;
+}
+
+/* ── 남이 보낸 메시지(왼쪽) 버블 좌측 하단 */  
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-message-body {
+  border-bottom-left-radius: 0 !important;
+}
+
+/* ── 내가 보낸 메시지(오른쪽) 버블 우측 하단 */  
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-message-body {
+  border-bottom-right-radius: 0 !important;
+}
+
+/* ── 채팅 리스트 항목을 flex 컨테이너로 강제 ── */
+.lk-chat-messages .lk-chat-entry {
+  display: flex !important;
+}
+
+/* ── 남이 보낸 메시지(리모트)는 오른쪽 정렬 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] {
+  justify-content: flex-start !important;
+}
+
+/* ── 내가 보낸 메시지(로컬)는 왼쪽 정렬 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] {
+  justify-content: flex-end !important;
+}
+
+/* ── 말풍선(.lk-message-body)도 왼쪽/오른쪽 여백 조정 ── */
+/* 내가 보낸 메시지 */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-message-body {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+/* 남이 보낸 메시지 */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-message-body {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* 0) 기존에 삽입해둔 .lk-meta-data 절대포지션 해제 */
+.lk-chat-entry .lk-meta-data {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 1) 메타데이터 flex 컨테이너 + full-width 확보 */
+.lk-chat-messages .lk-chat-entry .lk-meta-data {
+  display: flex !important;
+  width: 100% !important;            /* 양 끝 정렬을 위해 필요 */
+  align-items: center !important;
+}
+
+/* ── 남이 보낸 메시지(remote): 왼쪽 정렬, 이름→시간 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-meta-data {
+  justify-content: flex-start !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-participant-name {
+  order: 1 !important;
+  margin-right: 0.5rem !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-timestamp {
+  order: 2 !important;
+  margin-left: 0 !important;
+}
+
+/* ── 내가 보낸 메시지(local): 오른쪽 정렬, 시간→이름 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-meta-data {
+  justify-content: flex-end !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-timestamp {
+  order: 1 !important;
+  margin-right: 0.5rem !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-participant-name {
+  order: 2 !important;
+  margin-left: 0 !important;
 }
