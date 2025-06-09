@@ -92,18 +92,18 @@ export default function StudyRoom() {
   };
 
   return (
-    <div className="min-h-screen bg-[#282A36] text-white">
+    <div className="h-screen bg-[#282A36] text-white flex flex-col">
       <Header />
 
       {/* 상단 타이틀/검색 */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold flex items-center mb-5 gap-2 mt-1">
+      <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h1 className="text-3xl md:text-4xl font-bold flex items-center mb-2 sm:mb-0 gap-2 mt-1">
             스터디 룸
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-3">
+          <div className="flex items-center w-full sm:w-64 space-x-3">
             <PlusCircle
-               className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
+               className="w-8 h-8 md:w-10 md:h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer flex-shrink-0"
               onClick={() => setShowCreateModal(true)}
             />
             <input
@@ -120,15 +120,15 @@ export default function StudyRoom() {
         </div>
 
         {/* 컨텐츠 영역 */}
-        <div className="container mx-auto mt-10 px-2 sm:px-4 lg:px-6">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6">
           {/* 방이 없을 때 표시할 메시지 */}
           {currentRooms.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32">
-              <Users className="w-24 h-24 text-gray-500 mb-6" />
-              <h2 className="text-2xl font-bold text-gray-400 mb-4">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20 md:py-32">
+              <Users className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-gray-500 mb-4 sm:mb-6" />
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-400 mb-3 sm:mb-4 text-center">
                 {search ? '검색 결과가 없습니다' : '현재 생성된 스터디 룸이 없습니다'}
               </h2>
-              <p className="text-gray-500 text-center mb-8">
+              <p className="text-gray-500 text-center mb-6 sm:mb-8 text-sm sm:text-base px-4">
                 {search 
                   ? '다른 검색어로 시도하거나 새로운 스터디 룸을 생성해보세요'
                   : '새로운 스터디 룸을 생성하여 함께 공부해보세요'
@@ -136,7 +136,7 @@ export default function StudyRoom() {
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors cursor-pointer"
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors cursor-pointer text-sm sm:text-base"
               >
                 스터디 룸 생성하기
               </button>
@@ -144,11 +144,11 @@ export default function StudyRoom() {
           ) : (
             <>
               {/* 카드 그리드 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-40 justify-items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-items-center">
                 {currentRooms.map((room) => (
                   <div
                     key={room.id}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full max-w-[200px]"
                     onClick={() => {
                       setSelectedRoom(room);
                       setShowJoinModal(true);

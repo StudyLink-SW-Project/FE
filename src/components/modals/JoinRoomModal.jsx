@@ -50,64 +50,67 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-[#1D1F2C] rounded-xl w-full max-w-sm p-6 relative text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="bg-[#1D1F2C] rounded-xl w-full max-w-sm mx-4 p-4 sm:p-6 relative text-white">
         {/* 닫기 */}
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-200">
+        <button 
+          onClick={onClose} 
+          className="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
+        >
           <X className="w-5 h-5" />
         </button>
 
         {/* 제목/인원 */}
-        <h2 className="text-xl font-semibold mb-2">{room.title}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-2 pr-10">{room.title}</h2>
         <div className="flex items-center mb-4 text-sm">
-          <Users className="w-5 h-5 mr-1" />
-          {room.participants}/{room.maxParticipants}
+          <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <span className="text-sm sm:text-base">{room.participants}/{room.maxParticipants}</span>
         </div>
 
         {/* 이미지 */}
         <img
           src={room.imageSrc}
           alt={room.title}
-          className="w-full h-32 object-cover rounded-md mb-4"
+          className="w-full h-60 sm:h-70 object-cover rounded-md mb-4"
         />
 
         {/* 설명 */}
-        <p className="text-gray-300 mb-6">{room.subtitle}</p>
+        <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">{room.subtitle}</p>
 
         <form onSubmit={handleEnter}>
 
         {/* 비밀번호 입력 (잠긴 방만) */}
         {room.isLocked && (
-          <div className="mb-4">
-            <label className="flex items-center text-sm mb-1 text-gray-400">
-              <Lock className="w-4 h-4 mr-1" /> 비밀번호
+          <div className="mb-4 sm:mb-6">
+            <label className="flex items-center text-sm mb-2 text-gray-400">
+              <Lock className="w-4 h-4 mr-2" /> 비밀번호
             </label>
-            <div className="flex items-center border-b border-gray-600">
+            <div className="flex items-center border-b border-gray-600 pb-2">
               <input
                 type={showPwd ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
-                className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white"
+                className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white text-sm sm:text-base"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPwd((v) => !v)}
-                className="text-gray-500"
+                className="text-gray-500 ml-2"
               >
-                {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPwd ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
               </button>
             </div>
           </div>
         )}
 
-          {error && <p className="text-red-400 mb-2">{error}</p>}
+          {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
 
           {/* 입장 버튼 */}
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition cursor-pointer"
+            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition cursor-pointer text-sm sm:text-base"
           >
             입장
           </button>

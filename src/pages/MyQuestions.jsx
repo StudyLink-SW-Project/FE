@@ -154,13 +154,12 @@ export default function MyQuestions() {
   );
 
   return (
-    <div className="min-h-screen bg-[#282A36] text-white">
+    <div className="h-screen bg-[#282A36] text-white flex flex-col">
       <Header />
 
-      <div className="p-8">
+      <div className="flex-1 p-4 md:p-8 overflow-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
-          <h1 className="text-4xl font-bold flex items-center gap-3">
-            <FileText className="w-10 h-10 text-blue-400" />
+          <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
             내가 작성한 질문
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
@@ -186,12 +185,12 @@ export default function MyQuestions() {
 
         {/* 게시글이 없는 경우 */}
         {!loading && filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <FileText className="w-24 h-24 text-gray-500 mb-6" />
-            <h2 className="text-2xl font-bold text-gray-400 mb-4">
+          <div className="flex flex-col items-center justify-center py-12 sm:py-20">
+            <FileText className="w-16 h-16 sm:w-24 sm:h-24 text-gray-500 mb-4 sm:mb-6" />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-400 mb-3 sm:mb-4 text-center">
               {search ? '검색 결과가 없습니다' : '작성한 질문이 없습니다'}
             </h2>
-            <p className="text-gray-500 text-center">
+            <p className="text-gray-500 text-center text-sm sm:text-base px-4">
               {search 
                 ? '다른 검색어로 시도해보세요'
                 : '질문 게시판에서 새로운 질문을 작성해보세요'
@@ -238,7 +237,7 @@ export default function MyQuestions() {
 
       {/* 게시글 삭제 확인 모달 */}
       {showDeleteModal && questionToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
           <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-md w-full mx-4">
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
