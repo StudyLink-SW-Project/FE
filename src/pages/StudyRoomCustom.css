@@ -333,6 +333,7 @@ button.lk-close-button {
 button.lk-close-button > svg {
   /* 2) SVG를 block으로 바꿔서 baseline 정렬 효과 제거 */
   display: block !important;
+  transform: translateX(2px) !important;
 }
 
 /* ── 남이 보낸 메시지(왼쪽) 버블 좌측 하단 */  
