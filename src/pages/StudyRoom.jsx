@@ -47,7 +47,7 @@ export default function StudyRoom() {
             maxParticipants: 4,
             title: r.name,
             subtitle: r.metadata || "",
-            imageSrc: "/study-room.png",
+            imageSrc: "/bg-0.png",
             isLocked: false,
           }))
         );
