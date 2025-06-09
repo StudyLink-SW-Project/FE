@@ -237,7 +237,7 @@ export default function MyQuestions() {
 
       {/* 게시글 삭제 확인 모달 */}
       {showDeleteModal && questionToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
           <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-md w-full mx-4">
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />

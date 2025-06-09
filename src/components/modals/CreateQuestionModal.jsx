@@ -30,7 +30,7 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
       <div className="bg-[#1D1F2C] rounded-xl w-full max-w-4xl max-h-[90vh] p-6 sm:p-8 md:p-10 text-white relative flex flex-col">
         <button
           onClick={onClose}

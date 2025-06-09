@@ -31,7 +31,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
       <div className="bg-[#1D1F2C] rounded-2xl w-full max-w-md mx-4 p-6 sm:p-8 relative text-white">
         <button 
           onClick={onClose} 

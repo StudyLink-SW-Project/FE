@@ -23,7 +23,7 @@ const avatar = userIcon;
       className="
         fixed inset-0
         w-full h-full
-        bg-black bg-opacity-75
+        backdrop-blur-xs
         flex items-center justify-center
         z-[9999]
         p-4
