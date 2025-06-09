@@ -34,25 +34,30 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* 왼쪽: 로그인 폼 */}
-      <div className="w-1/2 flex flex-col justify-center items-center px-16 relative">
+      <div className="w-full lg:w-1/2 flex flex-col px-4 sm:px-8 lg:px-16 py-8 lg:py-0 relative">
+        
+        {/* 상단 헤더: 로고 + 뒤로가기 */}
+        <div className="flex items-center justify-between mb-8 lg:mb-12">
+          <button
+            onClick={() => navigate("/")}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="cursor-pointer w-5 h-5 sm:w-6 sm:h-6 text-gray-600 hover:text-gray-800" />
+          </button>
+          <Link to="/">
+            <img src="/logo_black.png" alt="logo" className="w-20 sm:w-24" />
+          </Link>
+        </div>
 
-        <Link to="/">
-          <img src="/logo_black.png" alt="logo" className="absolute top-2 left-2 w-24" />
-        </Link>
+      <div className="flex-1 flex flex-col justify-center items-center">
         <div className="w-full max-w-sm">
-        {/* 버튼과 제목을 같은 줄에 배치 */}
+          {/* 버튼과 제목을 같은 줄에 배치 */}
           <div className="flex items-center mb-2">
-            <button
-              onClick={() => navigate("/")}
-              className="p-2 focus:outline-none"
-            >
-              <ArrowLeft className="cursor-pointer w-6 h-6 text-gray-600 hover:text-gray-800 -ml-20" />
-            </button>
-            <h1 className="text-3xl font-bold -ml-4">로그인</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold ml-2">로그인</h1>
           </div>
-          <p className="text-sm text-gray-500 mb-15">
+          <p className="text-sm text-gray-500 mb-8 sm:mb-15">
             계정이 없으신가요?{' '}
             <Link to="/signup" className="text-blue-600 underline">여기</Link>를 클릭해 회원가입하세요!
           </p>
@@ -63,70 +68,74 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleLogin}>
-            <label className="text-sm text-gray-600 mb-1">이메일</label>
-            <div className="flex items-center border-b border-gray-400 mb-7">
-              <Mail className="w-4 h-4 text-gray-400 mr-2" />
-              <input
-                type="email"
-                placeholder="이메일 주소를 입력하세요.."
-                className="w-full py-2 outline-none"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-              />
+          <form onSubmit={handleLogin} className="space-y-6 sm:space-y-7">
+            <div>
+              <label className="text-sm text-gray-600 mb-1">이메일</label>
+              <div className="flex items-center border-b border-gray-400 pb-1">
+                <Mail className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type="email"
+                  placeholder="이메일 주소를 입력하세요.."
+                  className="w-full py-2 outline-none text-sm sm:text-base"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
-            <label className="text-sm text-gray-600 mb-1">비밀번호</label>
-            <div className="flex items-center border-b border-gray-400 mb-7">
-              <Lock className="w-4 h-4 text-gray-400 mr-2" />
-              <input
-                type={showPwd ? 'text' : 'password'}
-                placeholder="비밀번호를 입력하세요.."
-                className="w-full py-2 outline-none"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-              <button type="button" onClick={() => setShowPwd(prev => !prev)}>
-                {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="cursor-pointer w-4 h-4 text-gray-400" />}
-              </button>
+            <div>
+              <label className="text-sm text-gray-600 mb-1">비밀번호</label>
+              <div className="flex items-center border-b border-gray-400 pb-1">
+                <Lock className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type={showPwd ? 'text' : 'password'}
+                  placeholder="비밀번호를 입력하세요.."
+                  className="w-full py-2 outline-none text-sm sm:text-base"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+                <button type="button" onClick={() => setShowPwd(prev => !prev)}>
+                  {showPwd ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="cursor-pointer w-4 h-4 text-gray-400" />}
+                </button>
+              </div>
             </div>
 
-            <div className="flex justify-between text-xs text-gray-500 mb-15">
-              {/* <label className="flex items-center gap-1">
-                <input type="checkbox" /> 유지하기
-              </label> */}
+            <div className="flex justify-end text-xs text-gray-500 mb-8 sm:mb-15">
               <span>비밀번호를 잊으셨나요?</span>
             </div>
 
             <button
               type="submit"
-              className="cursor-pointer w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition"
+              className="cursor-pointer w-full bg-[#1D1F2C] text-white py-3 rounded-full hover:bg-gray-800 transition text-sm sm:text-base"
               disabled={loading}
             >
               {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
 
-          <p className="text-center text-gray-400 text-sm mt-8">또는 다음으로 진행하기</p>
-          <div className="flex justify-center gap-7 mt-8">
+          <p className="text-center text-gray-400 text-sm mt-6 sm:mt-8">또는 다음으로 진행하기</p>
+          <div className="flex justify-center gap-6 sm:gap-7 mt-6 sm:mt-8">
             <button onClick={() => handleSocialLogin('google')}>
-              <img src="/google_icon.png" alt="Google 로그인" className="cursor-pointer w-10 h-10" />
+              <img src="/google_icon.png" alt="Google 로그인" className="cursor-pointer w-9 h-9 sm:w-10 sm:h-10" />
             </button>
             <button onClick={() => handleSocialLogin('kakao')}>
-              <img src="/kakaotalk_icon.png" alt="카카오 로그인" className="cursor-pointer w-10 h-10" />
+              <img src="/kakaotalk_icon.png" alt="카카오 로그인" className="cursor-pointer w-9 h-9 sm:w-10 sm:h-10" />
             </button>
             <button onClick={() => handleSocialLogin('naver')}>
-              <img src="/naver_icon.png" alt="네이버 로그인" className="cursor-pointer w-10 h-10" />
+              <img src="/naver_icon.png" alt="네이버 로그인" className="cursor-pointer w-9 h-9 sm:w-10 sm:h-10" />
             </button>
           </div>
         </div>
       </div>
-      <div className="w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex flex-col items-center justify-center">
-        <img src="/Saly.png" alt="illustration" className="w-[60%]" />
-        <h2 className="text-4xl mt-8 font-semibold">Study Link에 로그인하세요</h2>
-        <p className="text-sm mt-2">쉽고 빠르게, 스터디를 연결해보세요</p>
+    </div>
+
+      {/* 오른쪽: 일러스트 (데스크탑만 표시) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex-col items-center justify-center">
+        <img src="/Saly.png" alt="illustration" className="w-[60%] max-w-sm" />
+        <h2 className="text-4xl mt-8 font-semibold text-center px-4">Study Link에 로그인하세요</h2>
+        <p className="text-base mt-2 text-center px-4">쉽고 빠르게, 스터디를 연결해보세요</p>
       </div>
     </div>
   );

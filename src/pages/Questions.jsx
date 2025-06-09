@@ -171,10 +171,10 @@ export default function Questions() {
   );
 
   return (
-    <div className="min-h-screen bg-[#282A36] text-white">
+    <div className="h-screen bg-[#282A36] text-white flex flex-col">
       <Header />
 
-      <div className="p-8">
+      <div className="flex-1 p-8 overflow-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
           <h1 className="text-4xl font-bold flex items-center">
             질문 게시판
@@ -234,7 +234,7 @@ export default function Questions() {
 
       {/* ★ 게시글 삭제 확인 모달 */}
       {showDeleteModal && questionToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4">
           <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-md w-full mx-4">
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />

@@ -85,7 +85,7 @@ export default function QuestionDetail() {
 
   if (!state) {
     return (
-      <div className="min-h-screen bg-[#282A36] text-white p-8">
+      <div className="min-h-screen bg-[#282A36] text-white p-4 sm:p-6 md:p-8">
         <Header/>
         <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
           <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
@@ -274,23 +274,23 @@ export default function QuestionDetail() {
   return (
     <>
       <Header/>
-      <div className="min-h-screen bg-[#282A36] text-white p-8">
+      <div className="min-h-screen bg-[#282A36] text-white p-4 sm:p-6 md:p-8">
         <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
           <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
         </Link>
 
-        <div className="bg-[#1D1F2C] rounded-xl p-6 mb-2 flex flex-col justify-between">
+        <div className="bg-[#1D1F2C] rounded-xl p-4 md:p-6 mb-2 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <FileText className="w-6 h-6 mt-0.5 text-blue-400" />
-                <h1 className="text-2xl font-semibold">{titleToShow}</h1>
+              <div className="flex items-start gap-2 flex-1 pr-4">
+                <FileText className="w-6 h-6 mt-0.5 text-blue-400 flex-shrink-0" />
+                <h1 className="text-xl md:text-2xl font-semibold break-words">{titleToShow}</h1>
               </div>
               {/* ★ 게시글 삭제 버튼 (작성자만 보임) */}
               {isAuthor && (
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
+                  className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors flex-shrink-0"
                   title="게시글 삭제"
                 >
                   <Trash2 className="w-5 h-5" />
@@ -299,7 +299,7 @@ export default function QuestionDetail() {
             </div>
             <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
           </div>
-          <div className="flex justify-between items-center text-gray-400 text-sm mt-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center text-gray-400 text-sm mt-6 md:mt-8 gap-4 md:gap-0">
             <div className="flex items-center gap-4">
               <User className="w-4 h-4 -mr-2 text-gray-400" />
               <span className="font-medium text-white mr-5">{authorToShow}</span>
@@ -322,14 +322,14 @@ export default function QuestionDetail() {
           </div>
         </div>
 
-        <form onSubmit={handleCommentSubmit} className="mb-5 flex gap-2">
+        <form onSubmit={handleCommentSubmit} className="mb-5 flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="댓글을 입력하세요..."
-            className="flex-1 px-4 py-2 rounded-l bg-[#1D1F2C] text-white outline-none"
+            className="flex-1 px-4 py-2 sm:rounded-l rounded bg-[#1D1F2C] text-white outline-none"
             value={newComment} onChange={e => setNewComment(e.target.value)}
           />
-          <button type="submit" className="cursor-pointer -ml-2 px-6 bg-blue-600 rounded-r hover:bg-blue-500 transition">
+          <button type="submit" className="sm:-ml-2 px-6 py-2 bg-blue-600 sm:rounded-r rounded hover:bg-blue-500 transition cursor-pointer">
             등록
           </button>
         </form>
@@ -347,7 +347,7 @@ export default function QuestionDetail() {
                   {/* — 부모 댓글 카드 */}
                   <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-6">
-                      <p className="text-white flex-1 pr-4">{parent.text}</p>
+                      <p className="text-white flex-1 pr-4 break-words">{parent.text}</p>
                       {/* ★ 댓글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
                       {isCommentAuthor(parent.author) && (
                         <button
@@ -359,7 +359,7 @@ export default function QuestionDetail() {
                         </button>
                       )}
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0">
                       <div className="flex items-center gap-4 text-sm">
                         <User className="w-4 h-4 -mr-2 text-gray-400" />
                         <span className="font-medium text-white mr-3">{parent.author}</span>
@@ -400,8 +400,8 @@ export default function QuestionDetail() {
                           {comments.filter(c => c.topParentId === parent.id).length}개
                           <span className="mt-0.5">
                             {collapsedReplies[parent.id]
-                            ? <ChevronUp className="w-4 h-4" />
-                            : <ChevronDown className="w-4 h-4" />
+                            ? <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                            : <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                           }
                           </span>
                         </button>
@@ -409,11 +409,11 @@ export default function QuestionDetail() {
                     </div>
 
                     {/* 답글 입력창 */}
-                    <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex gap-2">
+                    <form onSubmit={e => handleReplySubmit(e, parent.id)} className="mt-2 flex flex-col sm:flex-row gap-2">
                       <input
                         type="text"
                         placeholder="답글을 입력하세요..."
-                        className="flex-1 px-3 py-1 rounded-l bg-[#2A2D3F] text-white outline-none text-sm"
+                        className="flex-1 px-3 py-1 sm:rounded-l rounded bg-[#2A2D3F] text-white outline-none text-xs sm:text-sm"
                         value={replyTo === parent.id ? replyText : ""}
                         onChange={e => {
                           if (replyTo !== parent.id) return;
@@ -423,7 +423,7 @@ export default function QuestionDetail() {
                       />
                       <button
                         type="submit"
-                        className="px-3 py-1 -ml-2 bg-blue-600 rounded-r text-xs hover:bg-blue-500 cursor-pointer"
+                        className="sm:-ml-2 px-3 py-1 bg-blue-600 sm:rounded-r rounded text-xs hover:bg-blue-500 cursor-pointer"
                       >
                         등록
                       </button>
@@ -432,7 +432,7 @@ export default function QuestionDetail() {
 
                   {/* — 분리된 답글 컨테이너 (접혀있으면 숨김) */}
                   {!collapsedReplies[parent.id] && (
-                    <div className="ml-12 -mt-2 space-y-2">
+                    <div className="ml-6 sm:ml-12 -mt-2 space-y-2">
                       {comments
                         .filter(c => c.topParentId === parent.id)
                         .map(reply => (
@@ -441,7 +441,7 @@ export default function QuestionDetail() {
                             className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
                           >
                             <div className="flex justify-between items-start mb-6">
-                              <p className="text-white flex-1 pr-4">{reply.text}</p>
+                              <p className="text-white flex-1 pr-4 break-words">{reply.text}</p>
                               {/* ★ 답글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
                               {isCommentAuthor(reply.author) && (
                                 <button
@@ -453,7 +453,7 @@ export default function QuestionDetail() {
                                 </button>
                               )}
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0">
                               <div className="flex items-center gap-4 text-sm">
                                 <User className="w-4 h-4 -mr-2 text-gray-400" />
                                 <span className="font-medium text-white mr-3">{reply.author}</span>
@@ -484,7 +484,7 @@ export default function QuestionDetail() {
 
         {/* 게시글 삭제 확인 모달 */}
         {showDeleteModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4">
             <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
               <div className="text-center">
                 <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
@@ -516,7 +516,7 @@ export default function QuestionDetail() {
 
         {/* ★ 댓글 삭제 확인 모달 */}
         {showCommentDeleteModal && commentToDelete && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
               <div className="text-center">
                 <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
