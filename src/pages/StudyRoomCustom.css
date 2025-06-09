@@ -440,3 +440,22 @@ button.lk-close-button > svg {
   order: 2 !important;
   margin-left: 0 !important;
 }
+
+@media only screen and (max-width: 600px) {
+  /* 카메라/마이크/화면공유 토글, 채팅 토글, 나가기 버튼 */
+  button.lk-button[data-lk-source],
+  button.lk-chat-toggle,
+  button.lk-disconnect-button {
+    font-size: 0 !important;
+    padding: 0.5rem !important;
+    min-width: auto !important;
+  }
+
+  /* 텍스트(::after) 숨기기 */
+  button.lk-button[data-lk-source]::after,
+  button.lk-chat-toggle::after,
+  button.lk-disconnect-button::after {
+    display: none !important;
+    content: none !important;
+  }
+}
