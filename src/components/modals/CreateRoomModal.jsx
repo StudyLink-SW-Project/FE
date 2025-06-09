@@ -1,21 +1,18 @@
 // src/components/CreateRoomModal.jsx
 import { useEffect, useState } from "react";
 import { Home, FileText, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // 토큰 발급 서버
 const APP_SERVER = "https://api.studylink.store/";
 
 export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) {
-  const navigate = useNavigate();
   const user = useSelector(state => state.auth.user);
   const participantName = user?.userName || "Guest";
 
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false);
   const [maxUsers, setMaxUsers] = useState(16);
   const [bgFile, setBgFile] = useState(null);
   const [error, setError] = useState("");
@@ -25,7 +22,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setRoomName("");
       setDescription("");
       setPassword("");
-      setShowPwd(false);
       setMaxUsers(16);
       setBgFile(null);
       setError("");

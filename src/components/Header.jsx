@@ -171,7 +171,6 @@
 // }
 
 
-// 반응형
 // src/components/Header.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -187,7 +186,6 @@ export default function Header() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
@@ -201,7 +199,6 @@ export default function Header() {
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
       // 데스크탑으로 전환 시 모바일 메뉴 닫기
       if (!mobile && mobileMenuOpen) {
         setMobileMenuOpen(false);

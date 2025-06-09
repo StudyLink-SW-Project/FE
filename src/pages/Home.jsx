@@ -36,7 +36,7 @@ export default function Home() {
           "
         >
           {/* 왼쪽 텍스트 영역 */}
-          <div className="w-full md:w-1/2 space-y-4 sm:space-y-6 text-center md:text-left mt-8 md:mt-0 md:ml-4 md:-mt-8 md:transform md:translate-x-15 relative z-10">
+          <div className="w-full md:w-1/2 space-y-4 sm:space-y-6 text-center md:text-left mt-8 md:mt-0 md:ml-4 md:transform md:translate-x-15 relative z-10">
             <div className="space-y-3 sm:space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 온라인 스터디룸<br />
