@@ -304,7 +304,7 @@ import {
   VideoConference
 } from "@livekit/components-react";
 import '@livekit/components-styles';
-import './StudyRoomCustom.css';
+// import './StudyRoomCustom.css';
 
 const LIVEKIT_URL = "wss://api.studylink.store:443";
 
