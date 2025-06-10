@@ -84,7 +84,7 @@ export default function StudyRoom() {
         subtitle: newRoom.description,
         imageSrc: newRoom.bgFile
           ? URL.createObjectURL(newRoom.bgFile)
-          : "/study-room.png",
+          : "/bg-0.png",
         isLocked: newRoom.isLocked,
       },
     ]);
