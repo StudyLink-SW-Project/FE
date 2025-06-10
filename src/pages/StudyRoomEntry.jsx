@@ -313,6 +313,7 @@ export default function StudyRoomEntry() {
   const { state } = useLocation();
   const token = state?.token;
   const roomName = state?.roomName;
+  // const participantCount = state?.particapntCount;
   const navigate = useNavigate();
   
   if (!token) {
@@ -334,12 +335,12 @@ export default function StudyRoomEntry() {
           <h1 className="text-gray-500 text-xl flex justify-center items-center mt-4">
             |
           </h1>
-          <div className="mt-5">
+          {/* <div className="mt-5">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-icon lucide-user-round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
-          </div>
-          <h1 className="mt-6 -ml-2 text-white text-lg">
-            2
-          </h1>
+          </div> */}
+          {/* <h1 className="mt-6 -ml-2 text-white text-lg">
+            {participantCount}
+          </h1> */}
         </div>
       </div>
       

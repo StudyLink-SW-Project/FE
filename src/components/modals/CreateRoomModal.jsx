@@ -31,7 +31,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   const [password, setPassword] = useState("");
   // 3) 입력된 비밀번호 보이기/숨기기 토글
   const [showPassword, setShowPassword] = useState(false);
-
+  
   useEffect(() => {
     if (isOpen) {
       setRoomName("");
@@ -67,6 +67,19 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
           e.preventDefault();
           setError("");
           try {
+            const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ roomName: String(roomName), participantName }),
+            });
+            
+            if (!res.ok) throw new Error("토큰 서버 오류");
+            
+            const { token } = await res.json();
+          
+            onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
+            onEnter(String(roomName), token);
+
             // 2) 서버에 방 설정 정보 저장
             await fetch(`${API}room/set`, {
               method: "POST",
@@ -80,15 +93,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               if (!res.ok) throw new Error("방 설정 저장 오류");
             });
 
-            const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ roomName: String(roomName), participantName }),
-            });
-            if (!res.ok) throw new Error("토큰 서버 오류");
-            const { token } = await res.json();
-            onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
-            onEnter(String(roomName), token);
             onClose();
 
           } catch (err) {
