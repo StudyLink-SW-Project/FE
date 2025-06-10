@@ -42,11 +42,9 @@ export default function StudyRoom() {
       const roomsDto = data.result?.rooms ?? [];
       setRooms(
         roomsDto.map((r) => ({
-            id: r.sid,
-            participants: r.numParticipants,
+            participants: r.participantsCounts,
             maxParticipants: 4,
-            title: r.name,
-            subtitle: r.metadata || "",
+            title: r.roomName,
             imageSrc: "/bg-0.png",
             isLocked: false,
           }))
@@ -147,7 +145,7 @@ export default function StudyRoom() {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-items-center">
                 {currentRooms.map((room) => (
                   <div
-                    key={room.id}
+                    key={room.title}
                     className="cursor-pointer w-full max-w-[200px]"
                     onClick={() => {
                       setSelectedRoom(room);

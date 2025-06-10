@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Home, FileText, X } from "lucide-react";
+import { Home, FileText, X, Lock, Eye, EyeOff } from "lucide-react";
 import { useSelector } from "react-redux";
 
 // 토큰 발급 서버
@@ -19,10 +19,16 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  const [password, setPassword] = useState("");
   const [maxUsers, setMaxUsers] = useState(16);
   const [bgFile, setBgFile] = useState(null);
   const [error, setError] = useState("");
+
+    // 1) 비밀번호 사용 여부
+  const [usePassword, setUsePassword] = useState(false);
+  // 2) 실제 비밀번호 값
+  const [password, setPassword] = useState("");
+  // 3) 입력된 비밀번호 보이기/숨기기 토글
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -104,6 +110,53 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
                 />
               </div>
+            </div>
+
+            {/* 비밀번호 입력(선택) */}
+            <div>
+              {/* 비밀번호 설정 체크박스 */}
+              <label className="inline-flex items-center space-x-2 mb-2">
+                <span className="text-sm text-gray-300">비밀번호 설정</span>
+                <input
+                  type="checkbox"
+                  className="form-checkbox cursor-pointer"
+                  checked={usePassword}
+                  onChange={e => setUsePassword(e.target.checked)}
+                />
+              </label>
+
+              {/* 체크된 경우에만 비밀번호 입력창 표시 */}
+              {usePassword && (
+                <div className="flex items-center border-b border-gray-600 pb-2">
+                  {/* 잠금 아이콘 */}
+                  <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+
+                  {/* 비밀번호 필드 (showPassword에 따라 text/password 전환) */}
+                  <input
+                    id="pw"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="비밀번호를 입력하세요.."
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                    aria-label="비밀번호 입력"
+                  />
+
+                  {/* 가시성 토글 버튼 */}
+                  <button
+                    type="button"
+                    className="ml-2 p-1 focus:outline-none"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-gray-400" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* 버튼 (모바일) */}
