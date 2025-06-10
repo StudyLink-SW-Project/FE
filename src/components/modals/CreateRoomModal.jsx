@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 
 // 토큰 발급 서버
 const APP_SERVER = "https://api.studylink.store/";
+const API = import.meta.env.VITE_APP_SERVER;
+
 
 // 선택 가능한 배경 이미지 목록 (public/bg 폴더에 위치)
 const AVAILABLE_BACKGROUNDS = [
@@ -36,15 +38,15 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setDescription("");
       setPassword("");
       setMaxUsers(16);
-      setBgFile(null);
+      setBgFile(0);
       setError("");
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleBackgroundSelect = (url) => {
-    setBgFile(url);
+  const handleBackgroundSelect = (idx) => {
+    setBgFile(idx);
   };
 
   return (
@@ -65,7 +67,19 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
           e.preventDefault();
           setError("");
           try {
-            onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
+            // 2) 서버에 방 설정 정보 저장
+            await fetch(`${API}room/set`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                roomName: String(roomName),
+                password: String(password),
+                roomImage: String(bgFile)
+              }),
+            }).then(res => {
+              if (!res.ok) throw new Error("방 설정 저장 오류");
+            });
+
             const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -73,8 +87,10 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             });
             if (!res.ok) throw new Error("토큰 서버 오류");
             const { token } = await res.json();
+            onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
             onEnter(String(roomName), token);
             onClose();
+
           } catch (err) {
             setError(err.message);
           }
@@ -179,8 +195,8 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   key={idx}
                   src={url}
                   alt={`bg-${idx}`}
-                  className={`cursor-pointer rounded-lg border-2 ${bgFile === url ? 'border-blue-500' : 'border-transparent'} w-full h-24 object-cover`}
-                  onClick={() => handleBackgroundSelect(url)}
+                  className={`cursor-pointer rounded-lg border-2 ${bgFile === idx ? 'border-blue-500' : 'border-transparent'} w-full h-24 object-cover`}
+                  onClick={() => handleBackgroundSelect(idx)}
                 />
               ))}
             </div>
