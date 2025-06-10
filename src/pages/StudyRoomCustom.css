@@ -294,6 +294,15 @@ button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="true"]::after
   color: var(--lk-fg) !important;
 }
 
+.lk-chat{
+  margin-top: 15px;
+  border-radius: var(--lk-border-radius) !important;
+}
+
+.lk-chat-form{
+  height: 5.6rem !important;
+}
+
 /* 원본 텍스트 숨기기 */
 .lk-chat .lk-chat-header {
   font-size: 0;              /* 헤더 내부 글자 크기를 0으로 */
