@@ -1,4 +1,5 @@
 import { Users, Lock } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext"; 
 
 export default function StudyRoomCard({
   participants,
@@ -8,14 +9,16 @@ export default function StudyRoomCard({
   subtitle,
   isLocked = false,
 }) {
+  const { isDark } = useTheme();
+
   return (
     <div className="w-full">
-      <div className="relative z-0 bg-[#1D1F2C] w-full border border-[#616680] rounded-lg overflow-hidden hover:border-[#8B8FA3] transition-colors duration-200">
+      <div className={`relative z-0 w-full border rounded-lg overflow-hidden transition-colors duration-200 ${isDark ? 'bg-[#1D1F2C] border-[#616680] hover:border-[#8B8FA3]' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
         {/* 방 이미지 */}
         <img
           src={imageSrc}
           alt={title}
-          className="w-full h-32 sm:h-40 md:h-48 lg:h-50 object-cover bg-[#1D1F2C]"
+          className={`w-full h-32 sm:h-40 md:h-48 lg:h-50 object-cover ${isDark ? 'bg-[#1D1F2C]' : 'bg-gray-100'}`}
         />
         
         {/* 참여 인원 표시 */}
@@ -34,15 +37,9 @@ export default function StudyRoomCard({
       
       {/* 카드 텍스트 */}
       <div className="p-2 sm:p-3">
-        <h3 className="font-semibold text-white">{title}</h3>
-        <p className="text-xs sm:text-sm text-gray-300 mt-1 line-clamp-2" title={subtitle}></p>
+        <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
+        <p className={`text-xs sm:text-sm mt-1 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} title={subtitle}>{subtitle}</p>
       </div>
     </div>
   );
 }
-
-      //   {/* 카드 텍스트 */}
-      // <div className="p-1">
-      //   <h3 className="font-semibold text-white">{title}</h3>
-      //   <p className="text-xs text-gray-300">{subtitle}</p>
-      // </div>

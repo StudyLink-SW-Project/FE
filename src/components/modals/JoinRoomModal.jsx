@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // 토큰 발급 서버
 let APP_SERVER = "https://api.studylink.store/";
@@ -12,6 +13,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [isEntering, setIsEntering] = useState(false);
+  const { isDark } = useTheme(); 
 
   // 모달 열 때마다 초기화
   useEffect(() => {
@@ -68,11 +70,11 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-      <div className="bg-[#1D1F2C] rounded-xl w-full max-w-sm mx-4 p-4 sm:p-6 relative text-white">
+      <div className={`rounded-xl w-full max-w-sm mx-4 p-4 sm:p-6 relative ${isDark ? 'bg-[#1D1F2C] text-white' : 'bg-white text-gray-900'}`}>
         {/* 닫기 */}
         <button 
           onClick={onClose} 
-          className="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
+          className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
           <X className="w-5 h-5" />
         </button>
@@ -80,7 +82,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         {/* 제목/인원 */}
         <h2 className="text-lg sm:text-xl font-semibold mb-2 pr-10">{room.title}</h2>
         <div className="flex items-center mb-4 text-sm">
-          <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <Users className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
           <span className="text-sm sm:text-base">{room.participants}/{room.maxParticipants}</span>
         </div>
 
@@ -92,29 +94,29 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         />
 
         {/* 설명 */}
-        <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">{room.subtitle}</p>
+        <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{room.subtitle}</p>
 
         <form onSubmit={handleEnter}>
-          {/* ✅ 비밀번호 입력 (잠긴 방만) */}
+          {/* 비밀번호 입력 (잠긴 방만) */}
           {room.isLocked && (
             <div className="mb-4 sm:mb-6">
-              <label className="flex items-center text-sm mb-2 text-gray-400">
-                <Lock className="w-4 h-4 mr-2" /> 비밀번호
+              <label className={`flex items-center text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <Lock className="w-4 h-4 mr-2" /> 스터디룸 비밀번호
               </label>
-              <div className="flex items-center border-b border-gray-600 pb-2">
+              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
                 <input
                   type={showPwd ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="비밀번호를 입력하세요"
-                  className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white text-sm sm:text-base"
+                  placeholder="스터디룸 비밀번호를 입력하세요"
+                  className={`flex-1 bg-transparent py-2 outline-none text-sm sm:text-base ${isDark ? 'placeholder-gray-500 text-white' : 'placeholder-gray-400 text-gray-900'}`}
                   required
                   disabled={isEntering}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPwd((v) => !v)}
-                  className="text-gray-500 ml-2"
+                  className={`ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}
                   disabled={isEntering}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -125,7 +127,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
 
           {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
 
-          {/* ✅ 입장 버튼 */}
+          {/* 입장 버튼 */}
           <button
             type="submit"
             disabled={isEntering || (room.isLocked && !password.trim())}

@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
 import { Home, FileText, X, Lock, Eye, EyeOff } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // 토큰 발급 서버
 const APP_SERVER = "https://api.studylink.store/";
 const API = import.meta.env.VITE_APP_SERVER;
 
-// ✅ 선택 가능한 배경 이미지 목록 (1~4 번호 체계)
 const AVAILABLE_BACKGROUNDS = [
-  "/bg/bg-1.jpg",  // 인덱스 0 → 백엔드에 1로 전송
-  "/bg/bg-2.jpg",  // 인덱스 1 → 백엔드에 2로 전송
-  "/bg/bg-3.jpg",  // 인덱스 2 → 백엔드에 3로 전송
-  "/bg/bg-4.jpg",  // 인덱스 3 → 백엔드에 4로 전송
+  "/bg/bg-1.jpg",
+  "/bg/bg-2.jpg", 
+  "/bg/bg-3.jpg",  
+  "/bg/bg-4.jpg",  
 ];
 
 export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) {
   const user = useSelector(state => state.auth.user);
   const participantName = user?.userName || "Guest";
+  const { isDark } = useTheme(); 
 
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [maxUsers, setMaxUsers] = useState(16);
-  const [bgFile, setBgFile] = useState(0); // ✅ 0번 인덱스로 초기화 (bg-1.jpg)
+  const [bgFile, setBgFile] = useState(0); 
   const [error, setError] = useState("");
 
   // 비밀번호 관련 state
@@ -34,9 +35,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setRoomName("");
       setDescription("");
       setPassword("");
-      setUsePassword(false); // ✅ 비밀번호 사용 여부 초기화
+      setUsePassword(false); 
       setMaxUsers(16);
-      setBgFile(0); // ✅ 첫 번째 이미지(bg-1.jpg)로 초기화
+      setBgFile(0); 
       setError("");
     }
   }, [isOpen]);
@@ -52,7 +53,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
     setError("");
     
     try {
-      // ✅ 비밀번호 로직 개선
       const finalPassword = usePassword ? password.trim() : "";
       
       // 1) 토큰 발급
@@ -66,7 +66,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       
       const { token } = await res.json();
     
-      // ✅ onCreate 호출 - bgFile은 인덱스, 실제 이미지 경로도 함께 전달
       onCreate({ 
         roomName, 
         description, 
@@ -77,7 +76,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
         isLocked: finalPassword !== "" 
       });
       
-      // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
       onEnter(String(roomName), token, finalPassword, bgFile + 1); // bgFile+1로 1~4 번호 전달
 
       // 2) 서버에 방 설정 정보 저장
@@ -87,7 +85,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
         body: JSON.stringify({
           roomName: String(roomName),
           password: finalPassword,
-          roomImage: String(bgFile + 1) // ✅ 1~4 번호를 문자열로 전달
+          roomImage: String(bgFile + 1)
         }),
       }).then(res => {
         if (!res.ok) throw new Error("방 설정 저장 오류");
@@ -102,10 +100,10 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-      <div className="bg-[#1D1F2C] rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative text-white">
+      <div className={`rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative ${isDark ? 'bg-[#1D1F2C] text-white' : 'bg-white text-gray-900'}`}>
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
+          className={`absolute top-4 right-4 p-2 rounded-lg transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
           <X className="w-5 h-5" />
         </button>
@@ -119,15 +117,15 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* 방 이름 */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">방 이름</label>
-              <div className="flex items-center border-b border-gray-600 pb-2">
-                <Home className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+              <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 이름</label>
+              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                <Home className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 <input
                   type="text"
                   placeholder="방 이름을 입력하세요.."
                   value={roomName}
                   onChange={e => setRoomName(e.target.value)}
-                  className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                  className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
                   required
                 />
               </div>
@@ -135,20 +133,20 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
             {/* 방 소개 */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">방 소개</label>
-              <div className="flex items-center border-b border-gray-600 pb-2">
-                <FileText className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+              <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 소개</label>
+              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                <FileText className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 <input
                   type="text"
                   placeholder="방 소개 문구를 작성하세요.."
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                  className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
                 />
               </div>
             </div>
 
-            {/* ✅ 비밀번호 입력 개선 */}
+            {/* 비밀번호 입력 */}
             <div>
               <label className="inline-flex items-center space-x-2 mb-2">
                 <input
@@ -158,24 +156,24 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   onChange={e => {
                     setUsePassword(e.target.checked);
                     if (!e.target.checked) {
-                      setPassword(""); // 체크 해제 시 비밀번호 초기화
+                      setPassword("");
                     }
                   }}
                 />
-                <span className="text-sm text-gray-300">비밀번호 설정</span>
+                <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>비밀번호 설정</span>
               </label>
 
               {usePassword && (
-                <div className="flex items-center border-b border-gray-600 pb-2">
-                  <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                  <Lock className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="비밀번호를 입력하세요.."
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                    className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
                     aria-label="비밀번호 입력"
-                    required={usePassword} // ✅ 비밀번호 사용 시에만 required
+                    required={usePassword}
                   />
                   <button
                     type="button"
@@ -184,9 +182,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                     aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5 text-gray-400" />
+                      <EyeOff className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                     ) : (
-                      <Eye className="w-5 h-5 text-gray-400" />
+                      <Eye className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                     )}
                   </button>
                 </div>
@@ -204,31 +202,27 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             </div>
           </div>
 
-          {/* ✅ 오른쪽: 이미지 선택 개선 */}
+          {/* 오른쪽: 이미지 선택 */}
           <div className="w-full md:w-1/3">
-            <label className="block text-sm text-gray-300 mb-2">배경 이미지 선택</label>
+            <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>배경 이미지 선택</label>
             <div className="grid grid-cols-2 grid-rows-2 gap-2">
               {AVAILABLE_BACKGROUNDS.map((url, idx) => (
                 <img
                   key={idx}
                   src={url}
                   alt={`배경 이미지 ${idx + 1}`}
-                  className={`cursor-pointer rounded-lg border-2 transition-all duration-200 ${
-                    bgFile === idx 
-                      ? 'border-blue-500 ring-2 ring-blue-500/50' 
-                      : 'border-transparent hover:border-gray-400'
-                  } w-full h-24 object-cover`}
+                  className={`cursor-pointer rounded-lg border-2 transition-all duration-200 w-full h-24 object-cover ${bgFile === idx ? 'border-blue-500 ring-2 ring-blue-500/50' : `border-transparent ${isDark ? 'hover:border-gray-400' : 'hover:border-gray-300'}`}`}
                   onClick={() => handleBackgroundSelect(idx)}
                 />
               ))}
             </div>
 
-            {/* ✅ 선택된 이미지 표시 */}
-            <div className="mt-3 text-xs text-gray-400 text-center">
+            {/* 선택된 이미지 표시 */}
+            <div className={`mt-3 text-xs text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               선택됨: 배경 이미지 {bgFile + 1}
             </div>
 
-            {/* 버튼 (데스크톱) */}
+            {/* 버튼 (데스크탑) */}
             <div className="hidden md:block pt-6">
               <button
                 type="submit"
