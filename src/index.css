@@ -14,3 +14,14 @@
   }
   /* 필요하다면 300,700 등 추가로 정의 */
 @import "tailwindcss";
+
+/* Chrome, Safari 등 WebKit 계열 */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  cursor: pointer;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield; /* 스피너 숨김 후, 별도 버튼을 만들지 않는다면 Firefox 기본 스피너에 cursor가 적용되지 않음 */
+}

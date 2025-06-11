@@ -14,17 +14,20 @@ const LIVEKIT_URL = "wss://api.studylink.store:443";
 const API = import.meta.env.VITE_APP_SERVER;
 
 export default function StudyRoomEntry() {
-  const { state } = useLocation();
-  const token     = state?.token;
-  const roomName  = state?.roomName;
-  const password  = state?.password;
-  const img       = state?.img;
-  const navigate  = useNavigate();
+  const { state }   = useLocation();
+  const token       = state?.token;
+  const roomName    = state?.roomName;
+  const password    = state?.password;
+  const img         = state?.img;
+  const goalSeconds = state?.goalSeconds;
+  const navigate    = useNavigate();
 
   // ⏱ 타이머 상태
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isRunning,       setIsRunning]     = useState(false); // 시작 전에는 멈춰있음
-  const [started,         setStarted]       = useState(false); // 공부 시작 여부
+
+  // 목표 달성 모달
+  const [showGoalModal,    setShowGoalModal] = useState(false);
 
   const [showModal,       setShowModal]     = useState(false);
   const [resetOption,     setResetOption]   = useState("stopwatch"); // "stopwatch" | "all"
@@ -39,6 +42,14 @@ export default function StudyRoomEntry() {
     }
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // 목표 도달 체크
+  useEffect(() => {
+    if (goalSeconds != null && elapsedSeconds >= goalSeconds) {
+      setIsRunning(false);
+      setShowGoalModal(true);
+    }
+  }, [elapsedSeconds, goalSeconds]);
 
   // ⏱ 초를 시간:분:초 포맷으로 변환
   const formatTime = (seconds) => {
@@ -77,106 +88,94 @@ export default function StudyRoomEntry() {
   };
 
   const handleConfirmReset = () => {
-  if (resetOption === "stopwatch") {
-    // TODO: 공부 기록 저장 로직 추가
-    console.log("옵션1: 스톱워치 초기화 (기록 저장)");
-  } else {
-    console.log("옵션2: 공부기록까지 초기화");
-  }
-  setElapsedSeconds(0);
-  setShowModal(false);
-};
+    if (resetOption === "stopwatch") {
+      // TODO: 공부 기록 저장 로직 추가
+      console.log("옵션1: 스톱워치 초기화 (기록 저장)");
+    } else {
+      console.log("옵션2: 공부기록까지 초기화");
+    }
+    setElapsedSeconds(0);
+    setShowModal(false);
+  };
+
+  const handleCloseGoalModal = () => {
+    setShowGoalModal(false);
+    // 추가 동작 예: 기록 저장 후 초기화
+    setElapsedSeconds(0);
+  };
 
   return (
-    <div>
+    <div className="h-screen bg-[#0f172a]">
       {/* 헤더 */}
-      <div className="bg-[#0f172a]">
-        <div className="hidden sm:flex flex justify space-x-3 items-center h-22 ml-4">
+      <div>
+        <div className="hidden sm:flex flex justify space-x-3 items-center h-16 ml-4">
           <img 
             src="/logo_white.png" 
             alt="Study Link Logo" 
-            className="h-20 mt-10" 
+            className="h-20 mt-5" 
           />
-          <h1 className="text-white text-4xl flex justify-center items-center mt-13">
+          <h1 className="text-white text-4xl flex justify-center items-center mt-[30px]">
             {roomName}
           </h1>
-          <h1 className="text-gray-500 text-2xl flex justify-center items-center mt-13">
+          <h1 className="text-gray-500 text-2xl flex justify-center items-center mt-[26px]">
+            |
           </h1>
 
-          {/* 시작 전에는 버튼만 보여줌 */}
-          {!started && (
+          {/* 공부를 시작하면 타이머 + 토글 버튼 */}
+          <div className="flex items-center text-white text-4xl mt-5 ml-130">
+            {/* 초기화 버튼 */}
             <button
-              onClick={() => {
-                setStarted(true);
-                setIsRunning(true);
-              }}
+              onClick={() => setShowModal(true)}
               className="
-                ml-125 mt-8 focus:outline-none text-white text-2xl
+                mr-4 focus:outline-none text-white text-5xl 
                 hover:text-gray-300 
                 transform hover:scale-102 
                 transition duration-200
+                cursor-pointer
               "
             >
-              공부를 시작하시겠습니까?
+              <RefreshCw size={32} className="mt-2"/>
             </button>
-          )}
 
-          {/* 공부를 시작하면 타이머 + 토글 버튼 */}
-          {started && (
-            <div className="flex items-center text-white text-5xl mt-5 ml-125">
-              {/* 초기화 버튼 */}
-              <button
-                onClick={() => setShowModal(true)}
-                className="
-                  mr-4 focus:outline-none text-white text-5xl 
-                  hover:text-gray-300 
-                  transform hover:scale-102 
-                  transition duration-200
-                  cursor-pointer
-                "
-              >
-                <RefreshCw size={32} className="mt-2"/>
-              </button>
+            {/* 타이머 표시 */}
+            {formatTime(elapsedSeconds)}
 
-              {/* 타이머 표시 */}
-              {formatTime(elapsedSeconds)}
-
-              {/* 일시정지/재시작 버튼 */}
-              <button
-                onClick={() => setIsRunning(prev => !prev)}
-                className="
-                  ml-4 mt-2 focus:outline-none text-white 
-                  hover:text-gray-300 
-                  transform hover:scale-102 
-                  transition duration-200   
-                  cursor-pointer            
-                "
-              >
-                {isRunning
-                  ? <PauseCircle size={32}/>
-                  : <PlayCircle  size={32}/>
-                }
-              </button>
-              <div className="text-sm ml-10 mt-8">
-                <h1 className=" ">오늘 공부 시간</h1>
-                <h1 className="ml-6">00:00:00</h1>
-              </div>
-              <div className="text-sm ml-5 mt-8">
-                <h1 className=" ">목표 공부 시간</h1>
-                <h1 className="ml-6">00:00:00</h1>
-              </div>
-              <div className="text-sm ml-7 mt-8">
-                <h1 className=" ">D-DAY</h1>
-                <h1 className="ml-1">000일</h1>
-              </div>
+            {/* 일시정지/재시작 버튼 */}
+            <button
+              onClick={() => setIsRunning(prev => !prev)}
+              className="
+                ml-4 mt-2 focus:outline-none text-white 
+                hover:text-gray-300 
+                transform hover:scale-102 
+                transition duration-200   
+                cursor-pointer            
+              "
+            >
+              {isRunning
+                ? <PauseCircle size={32}/>
+                : <PlayCircle  size={32}/>
+              }
+            </button>
+            <div className="text-xs ml-10 mt-3">
+              <h1 className=" ">오늘 공부 시간</h1>
+              <h1 className="ml-5">00:00:00</h1>
             </div>
-          )}
+            <div className="text-xs ml-5 mt-3">
+              <h1 className=" ">목표 공부 시간</h1>
+              <h1 className="ml-5">{formatTime(goalSeconds)}</h1>
+            </div>
+            {/* <div className="text-xs ml-5 mt-3">
+              <h1 className=" ">D-DAY</h1>
+              <h1 className="ml-[8px]">000</h1>
+            </div> */}
+          </div>
+        
         </div>
       </div>
       
       {/* 라이브킷 룸 */}
       <div style={{ 
-        height: '90vh',  
+        height: '92vh',  
         width: '100vw',   
         display: 'flex',
         flexDirection: 'column'
@@ -197,6 +196,19 @@ export default function StudyRoomEntry() {
           <VideoConference />
         </LiveKitRoom>
       </div>
+
+      {/* 목표 달성 모달 */}
+      {showGoalModal && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-80">
+            <h2 className="text-xl font-semibold mb-4">축하합니다!</h2>
+            <p className="mb-6">목표 공부 시간에 도달했습니다.</p>
+            <button onClick={handleCloseGoalModal} className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 타이머 초기화 모달 */}
       {showModal && (
