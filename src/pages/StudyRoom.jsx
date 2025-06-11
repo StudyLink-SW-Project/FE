@@ -1,4 +1,4 @@
-// src/pages/StudyRoom.jsx
+// src/pages/StudyRoom.jsx - 완전한 테마 적용
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -8,9 +8,11 @@ import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle, Users } from "lucide-react";
 import { toast } from "react-toastify";
+import { useTheme } from "../contexts/ThemeContext"; 
 
 export default function StudyRoom() {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -40,37 +42,37 @@ export default function StudyRoom() {
   };
 
   // ✅ 마운트 시 방 목록 조회 - 백엔드 응답에 맞춰 이미지 매핑
-useEffect(() => {
-  (async () => {
-    try {
-      const resp = await fetch(`${API}room/rooms`);
-      if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
-      const data = await resp.json();
-      console.log("room/rooms 응답:", data);
-      
-      const roomsArray = data.rooms || data.result?.rooms; 
-      if (!Array.isArray(roomsArray)) {
-        throw new Error("rooms 배열을 찾을 수 없습니다");
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API}room/rooms`);
+        if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
+        const data = await resp.json();
+        console.log("room/rooms 응답:", data);
+        
+        const roomsArray = data.rooms || data.result?.rooms; 
+        if (!Array.isArray(roomsArray)) {
+          throw new Error("rooms 배열을 찾을 수 없습니다");
+        }
+        
+        const roomsDto = data.result?.rooms ?? [];
+        setRooms(
+          roomsDto.map((r) => ({
+            participants: r.participantsCounts,
+            maxParticipants: r.maxParticipants || 4,
+            title: r.roomName,
+            subtitle: "", 
+            imageSrc: getImagePath(r.roomImage), 
+            isLocked: r.password && r.password.trim() !== "", 
+            password: r.password || "", 
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+        toast.error(err.message);
       }
-      
-      const roomsDto = data.result?.rooms ?? [];
-      setRooms(
-        roomsDto.map((r) => ({
-          participants: r.participantsCounts,
-          maxParticipants: r.maxParticipants || 4,
-          title: r.roomName,
-          subtitle: "",
-          imageSrc: getImagePath(r.roomImage),
-          isLocked: r.password && r.password.trim() !== "",
-          password: r.password || "", // ✅ 실제 비밀번호도 저장 (검증용)
-        }))
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message);
-    }
-  })();
-}, [API]);
+    })();
+  }, [API]);
 
 
   // 모달에서 "입장" 눌렀을 때
@@ -79,15 +81,13 @@ useEffect(() => {
     navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId, password, img, goalSeconds} });
   };
 
-  // 검색 필터링
   const filtered = rooms.filter((r) => r.title.includes(search));
 
-  // 페이지네이션 계산
   const totalPages = Math.ceil(filtered.length / roomsPerPage);
   const startIdx = (currentPage - 1) * roomsPerPage;
   const currentRooms = filtered.slice(startIdx, startIdx + roomsPerPage);
 
-  // ✅ 새 방 생성 핸들러 - CreateRoomModal에서 전달받은 데이터로 방 생성
+  // 새 방 생성 핸들러 - CreateRoomModal에서 전달받은 데이터로 방 생성
   const handleCreate = (newRoom) => {
     setRooms((prev) => [
       ...prev,
@@ -97,15 +97,16 @@ useEffect(() => {
         maxParticipants: newRoom.maxUsers || 4,
         title: newRoom.roomName,
         subtitle: newRoom.description,
-        imageSrc: newRoom.bgImagePath, // ✅ CreateRoomModal에서 전달받은 실제 이미지 경로 사용
+        imageSrc: newRoom.bgImagePath, 
         isLocked: newRoom.isLocked,
+        password: newRoom.password || "", 
       },
     ]);
     setShowCreateModal(false);
   };
 
   return (
-    <div className="h-screen bg-[#282A36] text-white flex flex-col">
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-whit text-gray-900'}`}>
       <Header />
 
       {/* 상단 타이틀/검색 */}
@@ -116,7 +117,7 @@ useEffect(() => {
           </h1>
           <div className="flex items-center w-full sm:w-64 space-x-3">
             <PlusCircle
-               className="w-8 h-8 md:w-10 md:h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer flex-shrink-0"
+               className={`w-8 h-8 md:w-10 md:h-10 mt-1 cursor-pointer flex-shrink-0 transition-colors ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowCreateModal(true)}
             />
             <input
@@ -127,7 +128,7 @@ useEffect(() => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="flex-1 w-full pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`flex-1 w-full pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             />
           </div>
         </div>
@@ -137,11 +138,11 @@ useEffect(() => {
           {/* 방이 없을 때 표시할 메시지 */}
           {currentRooms.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-20 md:py-32">
-              <Users className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-gray-500 mb-4 sm:mb-6" />
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-400 mb-3 sm:mb-4 text-center">
+              <Users className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-4 sm:mb-6 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <h2 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 {search ? '검색 결과가 없습니다' : '현재 생성된 스터디 룸이 없습니다'}
               </h2>
-              <p className="text-gray-500 text-center mb-6 sm:mb-8 text-sm sm:text-base px-4">
+              <p className={`text-center mb-6 sm:mb-8 text-sm sm:text-base px-4 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
                 {search 
                   ? '다른 검색어로 시도하거나 새로운 스터디 룸을 생성해보세요'
                   : '새로운 스터디 룸을 생성하여 함께 공부해보세요'
