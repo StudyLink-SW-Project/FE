@@ -6,13 +6,12 @@ import { useSelector } from "react-redux";
 const APP_SERVER = "https://api.studylink.store/";
 const API = import.meta.env.VITE_APP_SERVER;
 
-
-// 선택 가능한 배경 이미지 목록 (public/bg 폴더에 위치)
+// ✅ 선택 가능한 배경 이미지 목록 (1~4 번호 체계)
 const AVAILABLE_BACKGROUNDS = [
-  "/bg/bg-0.jpg",
-  "/bg/bg-1.jpg",
-  "/bg/bg-2.jpg",
-  "/bg/bg-3.jpg",
+  "/bg/bg-1.jpg",  // 인덱스 0 → 백엔드에 1로 전송
+  "/bg/bg-2.jpg",  // 인덱스 1 → 백엔드에 2로 전송
+  "/bg/bg-3.jpg",  // 인덱스 2 → 백엔드에 3로 전송
+  "/bg/bg-4.jpg",  // 인덱스 3 → 백엔드에 4로 전송
 ];
 
 export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) {
@@ -22,14 +21,12 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [maxUsers, setMaxUsers] = useState(16);
-  const [bgFile, setBgFile] = useState(null);
+  const [bgFile, setBgFile] = useState(0); // ✅ 0번 인덱스로 초기화 (bg-1.jpg)
   const [error, setError] = useState("");
 
-    // 1) 비밀번호 사용 여부
+  // 비밀번호 관련 state
   const [usePassword, setUsePassword] = useState(false);
-  // 2) 실제 비밀번호 값
   const [password, setPassword] = useState("");
-  // 3) 입력된 비밀번호 보이기/숨기기 토글
   const [showPassword, setShowPassword] = useState(false);
   
   useEffect(() => {
@@ -37,8 +34,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setRoomName("");
       setDescription("");
       setPassword("");
+      setUsePassword(false); // ✅ 비밀번호 사용 여부 초기화
       setMaxUsers(16);
-      setBgFile(0);
+      setBgFile(0); // ✅ 첫 번째 이미지(bg-1.jpg)로 초기화
       setError("");
     }
   }, [isOpen]);
@@ -47,6 +45,59 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
   const handleBackgroundSelect = (idx) => {
     setBgFile(idx);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+    try {
+      // ✅ 비밀번호 로직 개선
+      const finalPassword = usePassword ? password.trim() : "";
+      
+      // 1) 토큰 발급
+      const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomName: String(roomName), participantName }),
+      });
+      
+      if (!res.ok) throw new Error("토큰 서버 오류");
+      
+      const { token } = await res.json();
+    
+      // ✅ onCreate 호출 - bgFile은 인덱스, 실제 이미지 경로도 함께 전달
+      onCreate({ 
+        roomName, 
+        description, 
+        password: finalPassword, 
+        maxUsers, 
+        bgFile, // 인덱스 (0,1,2,3)
+        bgImagePath: AVAILABLE_BACKGROUNDS[bgFile], // 실제 이미지 경로
+        isLocked: finalPassword !== "" 
+      });
+      
+      // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
+      onEnter(String(roomName), token, finalPassword, bgFile + 1); // bgFile+1로 1~4 번호 전달
+
+      // 2) 서버에 방 설정 정보 저장
+      await fetch(`${API}room/set`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomName: String(roomName),
+          password: finalPassword,
+          roomImage: String(bgFile + 1) // ✅ 1~4 번호를 문자열로 전달
+        }),
+      }).then(res => {
+        if (!res.ok) throw new Error("방 설정 저장 오류");
+      });
+
+      onClose();
+
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -63,28 +114,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <form className="flex flex-col md:flex-row gap-6" onSubmit={async e => {
-          e.preventDefault();
-          setError("");
-          try {
-            const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ roomName: String(roomName), participantName }),
-            });
-            
-            if (!res.ok) throw new Error("토큰 서버 오류");
-            
-            const { token } = await res.json();
-          
-            onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
-            onEnter(String(roomName), token, password, bgFile);
-            onClose();
-
-          } catch (err) {
-            setError(err.message);
-          }
-        }}>
+        <form className="flex flex-col md:flex-row gap-6" onSubmit={handleSubmit}>
           {/* 왼쪽: 입력 필드 */}
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* 방 이름 */}
@@ -118,37 +148,35 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               </div>
             </div>
 
-            {/* 비밀번호 입력(선택) */}
+            {/* ✅ 비밀번호 입력 개선 */}
             <div>
-              {/* 비밀번호 설정 체크박스 */}
               <label className="inline-flex items-center space-x-2 mb-2">
-                <span className="text-sm text-gray-300">비밀번호 설정</span>
                 <input
                   type="checkbox"
                   className="form-checkbox cursor-pointer"
                   checked={usePassword}
-                  onChange={e => setUsePassword(e.target.checked)}
+                  onChange={e => {
+                    setUsePassword(e.target.checked);
+                    if (!e.target.checked) {
+                      setPassword(""); // 체크 해제 시 비밀번호 초기화
+                    }
+                  }}
                 />
+                <span className="text-sm text-gray-300">비밀번호 설정</span>
               </label>
 
-              {/* 체크된 경우에만 비밀번호 입력창 표시 */}
               {usePassword && (
                 <div className="flex items-center border-b border-gray-600 pb-2">
-                  {/* 잠금 아이콘 */}
                   <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-
-                  {/* 비밀번호 필드 (showPassword에 따라 text/password 전환) */}
                   <input
-                    id="pw"
                     type={showPassword ? "text" : "password"}
                     placeholder="비밀번호를 입력하세요.."
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
                     aria-label="비밀번호 입력"
+                    required={usePassword} // ✅ 비밀번호 사용 시에만 required
                   />
-
-                  {/* 가시성 토글 버튼 */}
                   <button
                     type="button"
                     className="ml-2 p-1 focus:outline-none"
@@ -176,7 +204,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             </div>
           </div>
 
-          {/* 오른쪽: 이미지 선택 (2x2 그리드) */}
+          {/* ✅ 오른쪽: 이미지 선택 개선 */}
           <div className="w-full md:w-1/3">
             <label className="block text-sm text-gray-300 mb-2">배경 이미지 선택</label>
             <div className="grid grid-cols-2 grid-rows-2 gap-2">
@@ -184,11 +212,20 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                 <img
                   key={idx}
                   src={url}
-                  alt={`bg-${idx}`}
-                  className={`cursor-pointer rounded-lg border-2 ${bgFile === idx ? 'border-blue-500' : 'border-transparent'} w-full h-24 object-cover`}
+                  alt={`배경 이미지 ${idx + 1}`}
+                  className={`cursor-pointer rounded-lg border-2 transition-all duration-200 ${
+                    bgFile === idx 
+                      ? 'border-blue-500 ring-2 ring-blue-500/50' 
+                      : 'border-transparent hover:border-gray-400'
+                  } w-full h-24 object-cover`}
                   onClick={() => handleBackgroundSelect(idx)}
                 />
               ))}
+            </div>
+
+            {/* ✅ 선택된 이미지 표시 */}
+            <div className="mt-3 text-xs text-gray-400 text-center">
+              선택됨: 배경 이미지 {bgFile + 1}
             </div>
 
             {/* 버튼 (데스크톱) */}

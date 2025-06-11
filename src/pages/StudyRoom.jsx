@@ -27,7 +27,19 @@ export default function StudyRoom() {
 
   // API 기본 URL
   const API = import.meta.env.VITE_APP_SERVER;
-  // 마운트 시 방 목록 조회
+
+  // ✅ 이미지 번호를 실제 경로로 매핑하는 함수
+  const getImagePath = (imageNumber) => {
+    const imageMap = {
+      '1': '/bg/bg-1.jpg',
+      '2': '/bg/bg-2.jpg', 
+      '3': '/bg/bg-3.jpg',
+      '4': '/bg/bg-4.jpg'
+    };
+    return imageMap[String(imageNumber)] || '/bg/bg-1.jpg'; // 기본값
+  };
+
+  // ✅ 마운트 시 방 목록 조회 - 백엔드 응답에 맞춰 이미지 매핑
   useEffect(() => {
     (async () => {
       try {
@@ -35,18 +47,21 @@ export default function StudyRoom() {
         if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
         const data = await resp.json();
         console.log("room/rooms 응답:", data);
+        
         const roomsArray = data.rooms || data.result?.rooms; 
-      if (!Array.isArray(roomsArray)) {
-        throw new Error("rooms 배열을 찾을 수 없습니다");
-      }
-      const roomsDto = data.result?.rooms ?? [];
-      setRooms(
-        roomsDto.map((r) => ({
+        if (!Array.isArray(roomsArray)) {
+          throw new Error("rooms 배열을 찾을 수 없습니다");
+        }
+        
+        const roomsDto = data.result?.rooms ?? [];
+        setRooms(
+          roomsDto.map((r) => ({
             participants: r.participantsCounts,
-            maxParticipants: 4,
+            maxParticipants: r.maxParticipants || 4,
             title: r.roomName,
-            imageSrc: "/bg-0.png",
-            isLocked: false,
+            subtitle: "", // 백엔드에 description이 없다면 빈 문자열
+            imageSrc: getImagePath(r.roomImage), // ✅ 백엔드 roomImage 번호를 실제 경로로 변환
+            isLocked: r.password && r.password.trim() !== "", // ✅ 비밀번호 있으면 잠금
           }))
         );
       } catch (err) {
@@ -70,7 +85,7 @@ export default function StudyRoom() {
   const startIdx = (currentPage - 1) * roomsPerPage;
   const currentRooms = filtered.slice(startIdx, startIdx + roomsPerPage);
 
-  // 새 방 생성 핸들러
+  // ✅ 새 방 생성 핸들러 - CreateRoomModal에서 전달받은 데이터로 방 생성
   const handleCreate = (newRoom) => {
     setRooms((prev) => [
       ...prev,
@@ -80,9 +95,7 @@ export default function StudyRoom() {
         maxParticipants: newRoom.maxUsers || 4,
         title: newRoom.roomName,
         subtitle: newRoom.description,
-        imageSrc: newRoom.bgFile
-          ? URL.createObjectURL(newRoom.bgFile)
-          : "/bg-0.png",
+        imageSrc: newRoom.bgImagePath, // ✅ CreateRoomModal에서 전달받은 실제 이미지 경로 사용
         isLocked: newRoom.isLocked,
       },
     ]);
