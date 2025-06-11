@@ -110,7 +110,7 @@ export default function Header() {
             <img 
               src={isDark ? "/logo_white.png" : "/logo_black.png"}
               alt="Study Link Logo" 
-              className="h-12 sm:h-16 lg:h-20" 
+              className="h-12 sm:h-16 lg:h-20 lg:w-22" 
             />
           </Link>
 
