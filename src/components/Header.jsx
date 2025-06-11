@@ -91,7 +91,7 @@ export default function Header() {
 
       <header className={`
         flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 h-16 sm:h-20 border-b relative z-[60]
-        ${isDark ? 'bg-[#1D1F2C] text-white border-[#616680]' : 'bg-white text-gray-900 border-gray-200'}
+        ${isDark ? 'bg-[#1D1F2C] text-white border-[#616680]' : 'bg-[#F2F2F2] text-gray-900 border-gray-200'}
       `}>
         
         {/* 왼쪽: 햄버거 메뉴 + 로고 */}

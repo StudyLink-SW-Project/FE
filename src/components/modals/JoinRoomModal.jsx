@@ -70,11 +70,11 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-      <div className={`rounded-xl w-full max-w-sm mx-4 p-4 sm:p-6 relative ${isDark ? 'bg-[#1D1F2C] text-white' : 'bg-white text-gray-900'}`}>
+      <div className={`rounded-2xl w-full max-w-sm mx-4 p-4 sm:p-6 relative shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
         {/* 닫기 */}
         <button 
           onClick={onClose} 
-          className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
           <X className="w-5 h-5" />
         </button>
@@ -90,7 +90,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         <img
           src={room.imageSrc}
           alt={room.title}
-          className="w-full h-60 sm:h-70 object-cover rounded-md mb-4"
+          className="w-full h-60 sm:h-70 object-cover rounded-xl mb-4 border border-gray-200"
         />
 
         {/* 설명 */}
@@ -103,20 +103,20 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
               <label className={`flex items-center text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 <Lock className="w-4 h-4 mr-2" /> 스터디룸 비밀번호
               </label>
-              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+              <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
                 <input
                   type={showPwd ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="스터디룸 비밀번호를 입력하세요"
-                  className={`flex-1 bg-transparent py-2 outline-none text-sm sm:text-base ${isDark ? 'placeholder-gray-500 text-white' : 'placeholder-gray-400 text-gray-900'}`}
+                  className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'placeholder-gray-500 text-white' : 'placeholder-gray-400 text-gray-900'}`}
                   required
                   disabled={isEntering}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPwd((v) => !v)}
-                  className={`ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}
+                  className={`ml-2 p-1 rounded-lg transition-all duration-200 focus:outline-none ${isDark ? 'text-gray-500 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-200'}`}
                   disabled={isEntering}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -131,7 +131,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
           <button
             type="submit"
             disabled={isEntering || (room.isLocked && !password.trim())}
-            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-full text-white font-medium transition cursor-pointer text-sm sm:text-base"
+            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg cursor-pointer text-sm sm:text-base"
           >
             {isEntering ? "입장 중..." : "입장"}
           </button>

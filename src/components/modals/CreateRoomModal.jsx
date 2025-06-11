@@ -100,10 +100,10 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-      <div className={`rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative ${isDark ? 'bg-[#1D1F2C] text-white' : 'bg-white text-gray-900'}`}>
+      <div className={`rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
         <button
           onClick={onClose}
-          className={`absolute top-4 right-4 p-2 rounded-lg transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+          className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
           <X className="w-5 h-5" />
         </button>
@@ -118,7 +118,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             {/* 방 이름 */}
             <div>
               <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 이름</label>
-              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+              <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
                 <Home className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 <input
                   type="text"
@@ -134,7 +134,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             {/* 방 소개 */}
             <div>
               <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 소개</label>
-              <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+              <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
                 <FileText className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 <input
                   type="text"
@@ -148,10 +148,10 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
             {/* 비밀번호 입력 */}
             <div>
-              <label className="inline-flex items-center space-x-2 mb-2">
+              <label className="inline-flex items-center space-x-2 mb-3">
                 <input
                   type="checkbox"
-                  className="form-checkbox cursor-pointer"
+                  className="form-checkbox cursor-pointer rounded transition-all duration-200"
                   checked={usePassword}
                   onChange={e => {
                     setUsePassword(e.target.checked);
@@ -164,7 +164,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               </label>
 
               {usePassword && (
-                <div className={`flex items-center border-b pb-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
                   <Lock className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                   <input
                     type={showPassword ? "text" : "password"}
@@ -177,7 +177,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   />
                   <button
                     type="button"
-                    className="ml-2 p-1 focus:outline-none"
+                    className={`ml-2 p-1 rounded-lg transition-all duration-200 focus:outline-none ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
                     onClick={() => setShowPassword(prev => !prev)}
                     aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
                   >
@@ -195,7 +195,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             <div className="pt-4 sm:pt-6 md:hidden">
               <button
                 type="submit"
-                className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition cursor-pointer font-medium text-sm sm:text-base"
+                className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
               >
                 생성 후 입장하기
               </button>
@@ -211,7 +211,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   key={idx}
                   src={url}
                   alt={`배경 이미지 ${idx + 1}`}
-                  className={`cursor-pointer rounded-lg border-2 transition-all duration-200 w-full h-24 object-cover ${bgFile === idx ? 'border-blue-500 ring-2 ring-blue-500/50' : `border-transparent ${isDark ? 'hover:border-gray-400' : 'hover:border-gray-300'}`}`}
+                  className={`cursor-pointer rounded-xl border-2 transition-all duration-200 w-full h-24 object-cover hover:scale-105 ${bgFile === idx ? 'border-blue-500 ring-2 ring-blue-500/50 shadow-lg' : `border-transparent ${isDark ? 'hover:border-gray-400' : 'hover:border-gray-300'} hover:shadow-md`}`}
                   onClick={() => handleBackgroundSelect(idx)}
                 />
               ))}
@@ -219,14 +219,14 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
             {/* 선택된 이미지 표시 */}
             <div className={`mt-3 text-xs text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-              선택됨: 배경 이미지 {bgFile + 1}
+              이미지 {bgFile + 1}
             </div>
 
             {/* 버튼 (데스크탑) */}
             <div className="hidden md:block pt-6">
               <button
                 type="submit"
-                className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition cursor-pointer font-medium text-sm sm:text-base"
+                className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
               >
                 생성 후 입장하기
               </button>

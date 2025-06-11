@@ -6,10 +6,12 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Header from "../components/Header";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const {
     title: initTitle,
@@ -85,9 +87,9 @@ export default function QuestionDetail() {
 
   if (!state) {
     return (
-      <div className="min-h-screen bg-[#282A36] text-white p-4 sm:p-6 md:p-8">
+      <div className={`min-h-screen p-4 sm:p-6 md:p-8 ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
         <Header/>
-        <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
+        <Link to="/questions" className={`flex items-center mb-6 ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`}>
           <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
         </Link>
       </div>
@@ -274,46 +276,48 @@ export default function QuestionDetail() {
   return (
     <>
       <Header/>
-      <div className="min-h-screen bg-[#282A36] text-white p-4 sm:p-6 md:p-8">
-        <Link to="/questions" className="flex items-center mb-6 text-gray-400 hover:text-gray-200">
+      <div className={`min-h-screen p-4 sm:p-6 md:p-8 ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
+        <Link to="/questions" className={`flex items-center mb-6 ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`}>
           <ArrowLeft className="w-5 h-5 mr-2" /> 목록으로 돌아가기
         </Link>
 
-        <div className="bg-[#1D1F2C] rounded-xl p-4 md:p-6 mb-2 flex flex-col justify-between">
+        <div className={`rounded-xl p-4 md:p-6 mb-2 flex flex-col justify-between ${isDark ? 'bg-[#1D1F2C]' : 'bg-white border border-gray-200'}`}>
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-start gap-2 flex-1 pr-4">
-                <FileText className="w-6 h-6 mt-0.5 text-blue-400 flex-shrink-0" />
-                <h1 className="text-xl md:text-2xl font-semibold break-words">{titleToShow}</h1>
+                <FileText className={`w-6 h-6 mt-0.5 flex-shrink-0 ${isDark ? 'text-blue-400' : 'text-blue-500'}`} />
+                <h1 className={`text-xl md:text-2xl font-semibold break-words ${isDark ? 'text-white' : 'text-gray-900'}`}>{titleToShow}</h1>
               </div>
               {/* ★ 게시글 삭제 버튼 (작성자만 보임) */}
               {isAuthor && (
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors flex-shrink-0"
+                  className={`p-2 rounded-lg transition-colors flex-shrink-0 ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
                   title="게시글 삭제"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
               )}
             </div>
-            <p className="text-gray-300 whitespace-pre-wrap break-words">{excerptToShow}</p>
+            <p className={`whitespace-pre-wrap break-words ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{excerptToShow}</p>
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center text-gray-400 text-sm mt-6 md:mt-8 gap-4 md:gap-0">
+          <div className={`flex flex-col md:flex-row justify-between items-start md:items-center text-sm mt-6 md:mt-8 gap-4 md:gap-0 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             <div className="flex items-center gap-4">
-              <User className="w-4 h-4 -mr-2 text-gray-400" />
-              <span className="font-medium text-white mr-5">{authorToShow}</span>
+              <User className={`w-4 h-4 -mr-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <span className={`font-medium mr-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>{authorToShow}</span>
               <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4 text-gray-400" />
+                <MessageCircle className={`w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 {comments.length}
               </span>
               <button
                 onClick={handleQuestionLike}
                 className={`flex cursor-pointer items-center gap-1 text-sm ${
-                  qLiked ? "text-blue-400" : "text-gray-400 hover:text-white"
+                  qLiked 
+                    ? (isDark ? "text-blue-400" : "text-blue-500") 
+                    : (isDark ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-gray-700")
                 }`}
               >
                 <ThumbsUp className="cursor-pointer w-4 h-4" /> {qLikes}
@@ -326,16 +330,16 @@ export default function QuestionDetail() {
           <input
             type="text"
             placeholder="댓글을 입력하세요..."
-            className="flex-1 px-4 py-2 sm:rounded-l rounded bg-[#1D1F2C] text-white outline-none"
+            className={`flex-1 px-4 py-2 sm:rounded-l rounded outline-none ${isDark ? 'bg-[#1D1F2C] text-white placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             value={newComment} onChange={e => setNewComment(e.target.value)}
           />
-          <button type="submit" className="sm:-ml-2 px-6 py-2 bg-blue-600 sm:rounded-r rounded hover:bg-blue-500 transition cursor-pointer">
+          <button type="submit" className="sm:-ml-2 px-6 py-2 bg-blue-600 sm:rounded-r rounded hover:bg-blue-500 transition cursor-pointer text-white">
             등록
           </button>
         </form>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className={`text-xl font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             댓글 ({comments.filter(c => c.topParentId == null).length})
           </h2>
 
@@ -345,14 +349,14 @@ export default function QuestionDetail() {
               return (
                 <div key={parent.id} className="space-y-4">
                   {/* — 부모 댓글 카드 */}
-                  <div className="bg-[#1D1F2C] rounded-xl p-4 flex flex-col justify-between">
+                  <div className={`rounded-xl p-4 flex flex-col justify-between ${isDark ? 'bg-[#1D1F2C]' : 'bg-white border border-gray-200'}`}>
                     <div className="flex justify-between items-start mb-6">
-                      <p className="text-white flex-1 pr-4 break-words">{parent.text}</p>
+                      <p className={`flex-1 pr-4 break-words ${isDark ? 'text-white' : 'text-gray-900'}`}>{parent.text}</p>
                       {/* ★ 댓글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
                       {isCommentAuthor(parent.author) && (
                         <button
                           onClick={() => openCommentDeleteModal(parent)}
-                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors flex-shrink-0"
+                          className={`p-1 rounded transition-colors flex-shrink-0 ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
                           title="댓글 삭제"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -361,9 +365,9 @@ export default function QuestionDetail() {
                     </div>
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0">
                       <div className="flex items-center gap-4 text-sm">
-                        <User className="w-4 h-4 -mr-2 text-gray-400" />
-                        <span className="font-medium text-white mr-3">{parent.author}</span>
-                        <span className="text-gray-400 text-sm">
+                        <User className={`w-4 h-4 -mr-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                        <span className={`font-medium mr-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{parent.author}</span>
+                        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                           {new Date(parent.dateTime).toLocaleString()}
                         </span>
                       </div>
@@ -371,8 +375,8 @@ export default function QuestionDetail() {
                         onClick={() => handleCommentLike(parent.id)}
                         className={`flex cursor-pointer items-center gap-1 text-sm ${
                           likedComments.includes(parent.id)
-                            ? "text-blue-400"
-                            : "text-gray-400 hover:text-white"
+                            ? (isDark ? "text-blue-400" : "text-blue-500")
+                            : (isDark ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-gray-700")
                         }`}
                       >
                         <ThumbsUp className="w-4 h-4" /> {parent.likes}
@@ -382,7 +386,7 @@ export default function QuestionDetail() {
                     {/* 답글 토글 버튼 */}
                     <div className="mt-2 flex gap-1">
                       <button
-                        className="text-blue-400 text-xs hover:underline cursor-pointer"
+                        className={`text-xs hover:underline cursor-pointer ${isDark ? 'text-blue-400' : 'text-blue-500'}`}
                         onClick={() => setReplyTo(prev => prev === parent.id ? parent.id : parent.id)}
                       >
                         답글
@@ -391,7 +395,7 @@ export default function QuestionDetail() {
                       {/* 답글 접기/펼치기 버튼 (답글 개수 + 화살표) */}
                       {comments.filter(c => c.topParentId === parent.id).length > 0 && (
                         <button
-                          className="self-start text-blue-400 text-xs flex items-center gap-0.5 hover:underline cursor-pointer"
+                          className={`self-start text-xs flex items-center gap-0.5 hover:underline cursor-pointer ${isDark ? 'text-blue-400' : 'text-blue-500'}`}
                           onClick={() => setCollapsedReplies(prev => ({
                             ...prev,
                             [parent.id]: !prev[parent.id]
@@ -413,7 +417,7 @@ export default function QuestionDetail() {
                       <input
                         type="text"
                         placeholder="답글을 입력하세요..."
-                        className="flex-1 px-3 py-1 sm:rounded-l rounded bg-[#2A2D3F] text-white outline-none text-xs sm:text-sm"
+                        className={`flex-1 px-3 py-1 sm:rounded-l rounded outline-none text-xs sm:text-sm ${isDark ? 'bg-[#2A2D3F] text-white placeholder-gray-400' : 'bg-gray-50 text-gray-900 placeholder-gray-500 border border-gray-200'}`}
                         value={replyTo === parent.id ? replyText : ""}
                         onChange={e => {
                           if (replyTo !== parent.id) return;
@@ -423,7 +427,7 @@ export default function QuestionDetail() {
                       />
                       <button
                         type="submit"
-                        className="sm:-ml-2 px-3 py-1 bg-blue-600 sm:rounded-r rounded text-xs hover:bg-blue-500 cursor-pointer"
+                        className="sm:-ml-2 px-3 py-1 bg-blue-600 sm:rounded-r rounded text-xs hover:bg-blue-500 cursor-pointer text-white"
                       >
                         등록
                       </button>
@@ -438,15 +442,15 @@ export default function QuestionDetail() {
                         .map(reply => (
                           <div
                             key={reply.id}
-                            className="bg-[#1D1F2C] rounded-xl rounded-tl-none p-4 flex flex-col justify-between"
+                            className={`rounded-xl rounded-tl-none p-4 flex flex-col justify-between ${isDark ? 'bg-[#1D1F2C]' : 'bg-white border border-gray-200'}`}
                           >
                             <div className="flex justify-between items-start mb-6">
-                              <p className="text-white flex-1 pr-4 break-words">{reply.text}</p>
+                              <p className={`flex-1 pr-4 break-words ${isDark ? 'text-white' : 'text-gray-900'}`}>{reply.text}</p>
                               {/* ★ 답글 삭제 버튼 (작성자만 보임, 글 오른쪽 끝에 배치) */}
                               {isCommentAuthor(reply.author) && (
                                 <button
                                   onClick={() => openCommentDeleteModal(reply)}
-                                  className="p-1 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors flex-shrink-0"
+                                  className={`p-1 rounded transition-colors flex-shrink-0 ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
                                   title="댓글 삭제"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -455,9 +459,9 @@ export default function QuestionDetail() {
                             </div>
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0">
                               <div className="flex items-center gap-4 text-sm">
-                                <User className="w-4 h-4 -mr-2 text-gray-400" />
-                                <span className="font-medium text-white mr-3">{reply.author}</span>
-                                <span className="text-gray-400 text-sm">
+                                <User className={`w-4 h-4 -mr-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                                <span className={`font-medium mr-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{reply.author}</span>
+                                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                   {new Date(reply.dateTime).toLocaleString()}
                                 </span>
                               </div>
@@ -465,8 +469,8 @@ export default function QuestionDetail() {
                                 onClick={() => handleCommentLike(reply.id)}
                                 className={`flex cursor-pointer items-center gap-1 text-sm ${
                                   likedComments.includes(reply.id)
-                                    ? "text-blue-400"
-                                    : "text-gray-400 hover:text-white"
+                                    ? (isDark ? "text-blue-400" : "text-blue-500")
+                                    : (isDark ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-gray-700")
                                 }`}
                               >
                                 <ThumbsUp className="w-4 h-4" /> {reply.likes}
@@ -485,12 +489,12 @@ export default function QuestionDetail() {
         {/* 게시글 삭제 확인 모달 */}
         {showDeleteModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4">
-            <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
+            <div className={`rounded-xl p-6 max-w-sm w-full mx-4 ${isDark ? 'bg-[#1D1F2C]' : 'bg-white'}`}>
               <div className="text-center">
-                <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
-                <p className="text-gray-400 mb-6">해당 게시글을 삭제하시겠습니까?</p>
-                <p className="text-gray-500 text-sm mb-6">삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
+                <Trash2 className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} />
+                <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>게시글 삭제</h3>
+                <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>해당 게시글을 삭제하시겠습니까?</p>
+                <p className={`text-sm mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
 
                 <div className="flex gap-3">
                   <button
@@ -498,13 +502,13 @@ export default function QuestionDetail() {
                       setShowDeleteModal(false);
                       handleDeletePost();
                     }}
-                    className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer text-white"
                   >
                     삭제
                   </button>
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                    className={`flex-1 py-2 rounded transition cursor-pointer ${isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'}`}
                   >
                     취소
                   </button>
@@ -517,22 +521,22 @@ export default function QuestionDetail() {
         {/* ★ 댓글 삭제 확인 모달 */}
         {showCommentDeleteModal && commentToDelete && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-sm w-full mx-4">
+            <div className={`rounded-xl p-6 max-w-sm w-full mx-4 ${isDark ? 'bg-[#1D1F2C]' : 'bg-white'}`}>
               <div className="text-center">
-                <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">댓글 삭제</h3>
-                <p className="text-gray-400 mb-4">해당 댓글을 삭제하시겠습니까?</p>
-                <p className="text-gray-500 text-sm mb-6">삭제된 댓글은 복구할 수 없습니다.</p>
+                <Trash2 className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} />
+                <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>댓글 삭제</h3>
+                <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>해당 댓글을 삭제하시겠습니까?</p>
+                <p className={`text-sm mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>삭제된 댓글은 복구할 수 없습니다.</p>
                 <div className="flex gap-3">
                   <button
                     onClick={confirmDeleteComment}
-                    className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded transition cursor-pointer"
                   >
                     삭제
                   </button>
                   <button
                     onClick={closeCommentDeleteModal}
-                    className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                    className={`flex-1 py-2 rounded transition cursor-pointer ${isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'}`}
                   >
                     취소
                   </button>

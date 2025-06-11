@@ -103,7 +103,7 @@ export default function StudyRoom() {
   };
 
   return (
-    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-whit text-gray-900'}`}>
       <Header />
 
       {/* 상단 타이틀/검색 */}

@@ -12,7 +12,7 @@ export default function Home() {
       relative min-h-screen 
       ${isDark 
         ? 'bg-gradient-to-br from-[#000217] via-[#4F4EB2] to-purple-200' 
-        : 'bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100'
+        : 'bg-gradient-to-br  via-indigo-100 from-blue-500 to-purple-100'
       }
       ${isDark ? 'text-white' : 'text-gray-900'}
       flex flex-col
@@ -64,7 +64,7 @@ export default function Home() {
                   shadow-lg hover:shadow-xl transform hover:scale-105 mx-auto md:mx-0
                   ${isDark 
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
+                    : 'bg-gradient-to-r from-purple-300 to-blue-400 hover:from-purple-600 hover:to-blue-600'
                   }
                 `}
               >
