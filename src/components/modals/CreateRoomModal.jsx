@@ -78,21 +78,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             const { token } = await res.json();
           
             onCreate({ roomName, description, password, maxUsers, bgFile, isLocked: password.trim() !== "" });
-            onEnter(String(roomName), token);
-
-            // 2) 서버에 방 설정 정보 저장
-            await fetch(`${API}room/set`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                roomName: String(roomName),
-                password: String(password),
-                roomImage: String(bgFile)
-              }),
-            }).then(res => {
-              if (!res.ok) throw new Error("방 설정 저장 오류");
-            });
-
+            onEnter(String(roomName), token, password, bgFile);
             onClose();
 
           } catch (err) {
