@@ -40,36 +40,38 @@ export default function StudyRoom() {
   };
 
   // ✅ 마운트 시 방 목록 조회 - 백엔드 응답에 맞춰 이미지 매핑
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await fetch(`${API}room/rooms`);
-        if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
-        const data = await resp.json();
-        console.log("room/rooms 응답:", data);
-        
-        const roomsArray = data.rooms || data.result?.rooms; 
-        if (!Array.isArray(roomsArray)) {
-          throw new Error("rooms 배열을 찾을 수 없습니다");
-        }
-        
-        const roomsDto = data.result?.rooms ?? [];
-        setRooms(
-          roomsDto.map((r) => ({
-            participants: r.participantsCounts,
-            maxParticipants: r.maxParticipants || 4,
-            title: r.roomName,
-            subtitle: "", // 백엔드에 description이 없다면 빈 문자열
-            imageSrc: getImagePath(r.roomImage), // ✅ 백엔드 roomImage 번호를 실제 경로로 변환
-            isLocked: r.password && r.password.trim() !== "", // ✅ 비밀번호 있으면 잠금
-          }))
-        );
-      } catch (err) {
-        console.error(err);
-        toast.error(err.message);
+useEffect(() => {
+  (async () => {
+    try {
+      const resp = await fetch(`${API}room/rooms`);
+      if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
+      const data = await resp.json();
+      console.log("room/rooms 응답:", data);
+      
+      const roomsArray = data.rooms || data.result?.rooms; 
+      if (!Array.isArray(roomsArray)) {
+        throw new Error("rooms 배열을 찾을 수 없습니다");
       }
-    })();
-  }, [API]);
+      
+      const roomsDto = data.result?.rooms ?? [];
+      setRooms(
+        roomsDto.map((r) => ({
+          participants: r.participantsCounts,
+          maxParticipants: r.maxParticipants || 4,
+          title: r.roomName,
+          subtitle: "",
+          imageSrc: getImagePath(r.roomImage),
+          isLocked: r.password && r.password.trim() !== "",
+          password: r.password || "", // ✅ 실제 비밀번호도 저장 (검증용)
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  })();
+}, [API]);
+
 
   // 모달에서 "입장" 눌렀을 때
   const handleEnter = (roomId, token, password, img) => {

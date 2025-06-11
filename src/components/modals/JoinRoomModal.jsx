@@ -1,18 +1,17 @@
-// src/components/JoinRoomModal.jsx
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
 
-  // 토큰 발급 서버
-  let APP_SERVER = "https://api.studylink.store/";
+// 토큰 발급 서버
+let APP_SERVER = "https://api.studylink.store/";
 
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
-  // 리덕스에서 유저 정보 가져오기
   const user = useSelector(state => state.auth.user);
   const userName = user?.userName || `Guest_${Math.random().toString(36).slice(2,6)}`;
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
+  const [isEntering, setIsEntering] = useState(false);
 
   // 모달 열 때마다 초기화
   useEffect(() => {
@@ -20,6 +19,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
       setPassword("");
       setShowPwd(false);
       setError("");
+      setIsEntering(false);
     }
   }, [isOpen]);
 
@@ -28,24 +28,41 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   async function handleEnter(e) {
     e.preventDefault();
     setError("");
+    setIsEntering(true);
+    
     try {
-      // 1) 토큰 발급
+      // ✅ 프론트엔드에서 비밀번호 검증
+      if (room.isLocked) {
+        if (!password.trim()) {
+          throw new Error("비밀번호를 입력해주세요.");
+        }
+        
+        if (password.trim() !== room.password.trim()) {
+          throw new Error("비밀번호가 틀렸습니다.");
+        }
+      }
+
+      // ✅ 비밀번호 검증 통과 후 토큰 발급
       const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          roomName: String(room.title), // "0"도 허용되도록 String
+          roomName: String(room.title),
           participantName: userName,
         }),
       });
+      
       if (!res.ok) throw new Error("토큰 서버 오류");
       const { token } = await res.json();
 
-      // 2) 발급된 토큰을 부모로 전달
-      onEnter(String(room.title), token);
+      // ✅ 입장 처리
+      onEnter(String(room.title), token, password, room.imageNumber);
       onClose();
+      
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsEntering(false);
     }
   }
 
@@ -78,41 +95,43 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">{room.subtitle}</p>
 
         <form onSubmit={handleEnter}>
-
-        {/* 비밀번호 입력 (잠긴 방만) */}
-        {room.isLocked && (
-          <div className="mb-4 sm:mb-6">
-            <label className="flex items-center text-sm mb-2 text-gray-400">
-              <Lock className="w-4 h-4 mr-2" /> 비밀번호
-            </label>
-            <div className="flex items-center border-b border-gray-600 pb-2">
-              <input
-                type={showPwd ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="비밀번호를 입력하세요"
-                className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white text-sm sm:text-base"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPwd((v) => !v)}
-                className="text-gray-500 ml-2"
-              >
-                {showPwd ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
-              </button>
+          {/* ✅ 비밀번호 입력 (잠긴 방만) */}
+          {room.isLocked && (
+            <div className="mb-4 sm:mb-6">
+              <label className="flex items-center text-sm mb-2 text-gray-400">
+                <Lock className="w-4 h-4 mr-2" /> 비밀번호
+              </label>
+              <div className="flex items-center border-b border-gray-600 pb-2">
+                <input
+                  type={showPwd ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="비밀번호를 입력하세요"
+                  className="flex-1 bg-transparent py-2 outline-none placeholder-gray-500 text-white text-sm sm:text-base"
+                  required
+                  disabled={isEntering}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwd((v) => !v)}
+                  className="text-gray-500 ml-2"
+                  disabled={isEntering}
+                >
+                  {showPwd ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
           {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
 
-          {/* 입장 버튼 */}
+          {/* ✅ 입장 버튼 */}
           <button
             type="submit"
-            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-medium transition cursor-pointer text-sm sm:text-base"
+            disabled={isEntering || (room.isLocked && !password.trim())}
+            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-full text-white font-medium transition cursor-pointer text-sm sm:text-base"
           >
-            입장
+            {isEntering ? "입장 중..." : "입장"}
           </button>
         </form>
       </div>
