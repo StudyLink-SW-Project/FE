@@ -9,10 +9,17 @@ let APP_SERVER = "https://api.studylink.store/";
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   const user = useSelector(state => state.auth.user);
   const userName = user?.userName || `Guest_${Math.random().toString(36).slice(2,6)}`;
+
+  // 비밀번호, 표시 토글, 에러, 입장 상태
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [isEntering, setIsEntering] = useState(false);
+
+  // 목표 시간 입력 (시간, 분)
+  const [goalHours, setGoalHours] = useState(1);
+  const [goalMinutes, setGoalMinutes] = useState(0);
+  const [goalSeconds, setGoalSeconds] = useState(0);
   const { isDark } = useTheme(); 
 
   // 모달 열 때마다 초기화
@@ -22,6 +29,10 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
       setShowPwd(false);
       setError("");
       setIsEntering(false);
+      // 기본 목표시간 초기값 (1시간)
+      setGoalHours(1);
+      setGoalMinutes(0);
+      setGoalSeconds(0);
     }
   }, [isOpen]);
 
@@ -31,20 +42,15 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
     e.preventDefault();
     setError("");
     setIsEntering(true);
-    
+
     try {
-      // ✅ 프론트엔드에서 비밀번호 검증
+      // 비밀번호 검증
       if (room.isLocked) {
-        if (!password.trim()) {
-          throw new Error("비밀번호를 입력해주세요.");
-        }
-        
-        if (password.trim() !== room.password.trim()) {
-          throw new Error("비밀번호가 틀렸습니다.");
-        }
+        if (!password.trim()) throw new Error("비밀번호를 입력해주세요.");
+        if (password.trim() !== room.password.trim()) throw new Error("비밀번호가 틀렸습니다.");
       }
 
-      // ✅ 비밀번호 검증 통과 후 토큰 발급
+      // 토큰 발급
       const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,14 +59,20 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
           participantName: userName,
         }),
       });
-      
       if (!res.ok) throw new Error("토큰 서버 오류");
       const { token } = await res.json();
 
-      // ✅ 입장 처리
-      onEnter(String(room.title), token, password, room.imageNumber);
+      const totalGoalSeconds = Number(goalHours) * 3600 + Number(goalMinutes) * 60 + Number(goalSeconds) * 1;
+
+      // 입장 콜백 호출
+      onEnter(
+        String(room.title),
+        token,
+        password,
+        room.imageNumber,
+        totalGoalSeconds,
+      );
       onClose();
-      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -79,7 +91,6 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* 제목/인원 */}
         <h2 className="text-lg sm:text-xl font-semibold mb-2 pr-10">{room.title}</h2>
         <div className="flex items-center mb-4 text-sm">
           <Users className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
@@ -124,6 +135,42 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
               </div>
             </div>
           )}
+
+          {/* 목표 시간 설정 */}
+          <div className="mb-4">
+            <label className="text-sm text-gray-400 mb-1 block">목표 시간 설정</label>
+            <div className="flex items-center space-x-3">
+              <input
+                type="number"
+                min="0"
+                value={goalHours}
+                onChange={e => setGoalHours(e.target.value)}
+                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                disabled={isEntering}
+              />
+              <span className="text-white">시간</span>
+              <input
+                type="number"
+                min="0"
+                max="59"
+                value={goalMinutes}
+                onChange={e => setGoalMinutes(e.target.value)}
+                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                disabled={isEntering}
+              />
+              <span className="text-white">분</span>
+              <input
+                type="number"
+                min="0"
+                max="59"
+                value={goalSeconds}
+                onChange={e => setGoalSeconds(e.target.value)}
+                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                disabled={isEntering}
+              />
+              <span className="text-white">초</span>
+            </div>
+          </div>
 
           {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
 

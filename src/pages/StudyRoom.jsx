@@ -74,8 +74,11 @@ export default function StudyRoom() {
     })();
   }, [API]);
 
-  const handleEnter = (roomId, token, password, img) => {
-    navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId, password, img} });
+
+  // 모달에서 "입장" 눌렀을 때
+  const handleEnter = (roomId, token, password, img, goalSeconds) => {
+    // token, participantName 은 필요하시면 state로 넘기세요
+    navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId, password, img, goalSeconds} });
   };
 
   const filtered = rooms.filter((r) => r.title.includes(search));
