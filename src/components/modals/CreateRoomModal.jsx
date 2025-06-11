@@ -29,6 +29,11 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
+    // 목표 시간 입력 (시간, 분)
+  const [goalHours, setGoalHours] = useState(1);
+  const [goalMinutes, setGoalMinutes] = useState(0);
+  const [goalSeconds, setGoalSeconds] = useState(0);
+
   useEffect(() => {
     if (isOpen) {
       setRoomName("");
@@ -38,6 +43,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setMaxUsers(16);
       setBgFile(0); // ✅ 첫 번째 이미지(bg-1.jpg)로 초기화
       setError("");
+      setGoalHours(1);
+      setGoalMinutes(0);
+      setGoalSeconds(0);
     }
   }, [isOpen]);
 
@@ -77,8 +85,11 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
         isLocked: finalPassword !== "" 
       });
       
+      const totalGoalSeconds = Number(goalHours) * 3600 + Number(goalMinutes) * 60 + Number(goalSeconds) * 1;
+
+
       // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
-      onEnter(String(roomName), token, finalPassword, bgFile + 1); // bgFile+1로 1~4 번호 전달
+      onEnter(String(roomName), token, finalPassword, bgFile + 1, totalGoalSeconds); // bgFile+1로 1~4 번호 전달
 
       // 2) 서버에 방 설정 정보 저장
       await fetch(`${API}room/set`, {
@@ -102,7 +113,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-      <div className="bg-[#1D1F2C] rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative text-white">
+      <div className="bg-[#1D1F2C] rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative text-white min-h-[470px]">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
@@ -158,39 +169,81 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   onChange={e => {
                     setUsePassword(e.target.checked);
                     if (!e.target.checked) {
-                      setPassword(""); // 체크 해제 시 비밀번호 초기화
+                      setPassword("");
                     }
                   }}
                 />
                 <span className="text-sm text-gray-300">비밀번호 설정</span>
               </label>
 
-              {usePassword && (
-                <div className="flex items-center border-b border-gray-600 pb-2">
-                  <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="비밀번호를 입력하세요.."
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
-                    aria-label="비밀번호 입력"
-                    required={usePassword} // ✅ 비밀번호 사용 시에만 required
-                  />
-                  <button
-                    type="button"
-                    className="ml-2 p-1 focus:outline-none"
-                    onClick={() => setShowPassword(prev => !prev)}
-                    aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5 text-gray-400" />
-                    ) : (
-                      <Eye className="w-5 h-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              )}
+              {/* 여기에 최소 높이(min-h-10) 컨테이너를 두고 */}
+              <div className="min-h-10">
+                {usePassword ? (
+                  <div className="flex items-center border-b border-gray-600 pb-2">
+                    <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="비밀번호를 입력하세요.."
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                      aria-label="비밀번호 입력"
+                      required={usePassword}
+                    />
+                    <button
+                      type="button"
+                      className="ml-2 p-1 focus:outline-none cursor-pointer"
+                      onClick={() => setShowPassword(prev => !prev)}
+                      aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5 text-gray-400" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  // invisible로 공간은 차지하되 아무것도 안 보이게
+                  <div className="invisible">placeholder</div>
+                )}
+              </div>
+            </div>
+
+            {/* 목표 시간 설정 */}
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">목표 시간 설정</label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="number"
+                  min="0"
+                  value={goalHours}
+                  onChange={e => setGoalHours(e.target.value)}
+                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                  // disabled={isEntering}
+                />
+                <span className="text-white">시간</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={goalMinutes}
+                  onChange={e => setGoalMinutes(e.target.value)}
+                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                  // disabled={isEntering}
+                />
+                <span className="text-white">분</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={goalSeconds}
+                  onChange={e => setGoalSeconds(e.target.value)}
+                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
+                  // disabled={isEntering}
+                />
+                <span className="text-white">초</span>
+              </div>
             </div>
 
             {/* 버튼 (모바일) */}

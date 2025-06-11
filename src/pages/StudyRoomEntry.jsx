@@ -122,7 +122,7 @@ export default function StudyRoomEntry() {
           </h1>
 
           {/* 공부를 시작하면 타이머 + 토글 버튼 */}
-          <div className="flex items-center text-white text-4xl mt-5 ml-130">
+          <div className="flex items-center text-white text-4xl mt-5 ml-120">
             {/* 초기화 버튼 */}
             <button
               onClick={() => setShowModal(true)}
