@@ -6,9 +6,11 @@ import Pagination from "../components/Pagination";
 import { FileText, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function MyQuestions() {
   const [search, setSearch] = useState("");
+  const { isDark } = useTheme();
   
   // API 베이스 URL
   const API = import.meta.env.VITE_APP_SERVER;
@@ -154,7 +156,7 @@ export default function MyQuestions() {
   );
 
   return (
-    <div className="h-screen bg-[#282A36] text-white flex flex-col">
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
       <Header />
 
       <div className="flex-1 p-4 md:p-8 overflow-auto">
@@ -171,7 +173,7 @@ export default function MyQuestions() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             />
           </div>
         </div>
@@ -179,18 +181,18 @@ export default function MyQuestions() {
         {/* 로딩 상태 */}
         {loading && (
           <div className="flex justify-center items-center py-20">
-            <div className="text-lg text-gray-400">로딩 중...</div>
+            <div className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>로딩 중...</div>
           </div>
         )}
 
         {/* 게시글이 없는 경우 */}
         {!loading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 sm:py-20">
-            <FileText className="w-16 h-16 sm:w-24 sm:h-24 text-gray-500 mb-4 sm:mb-6" />
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-400 mb-3 sm:mb-4 text-center">
+            <FileText className={`w-16 h-16 sm:w-24 sm:h-24 mb-4 sm:mb-6 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+            <h2 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               {search ? '검색 결과가 없습니다' : '작성한 질문이 없습니다'}
             </h2>
-            <p className="text-gray-500 text-center text-sm sm:text-base px-4">
+            <p className={`text-center text-sm sm:text-base px-4 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
               {search 
                 ? '다른 검색어로 시도해보세요'
                 : '질문 게시판에서 새로운 질문을 작성해보세요'
@@ -202,7 +204,7 @@ export default function MyQuestions() {
         {/* 게시글 목록 */}
         {!loading && filtered.length > 0 && (
           <>
-            <div className="mb-4 text-sm text-gray-400">
+            <div className={`mb-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               총 {filtered.length}개의 질문
             </div>
             
@@ -217,7 +219,7 @@ export default function MyQuestions() {
                       e.stopPropagation();
                       openDeleteModal(q);
                     }}
-                    className="absolute top-4 right-4 p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all"
+                    className={`absolute top-4 right-4 p-2 rounded-lg transition-all ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
                     title="게시글 삭제"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -238,22 +240,22 @@ export default function MyQuestions() {
       {/* 게시글 삭제 확인 모달 */}
       {showDeleteModal && questionToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-          <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-md w-full mx-4">
+          <div className={`rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
             <div className="text-center">
-              <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
-              <p className="text-gray-400 mb-4">해당 게시글을 삭제하시겠습니까?</p>
-              <p className="text-gray-500 text-sm mb-6">삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
+              <Trash2 className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} />
+              <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>게시글 삭제</h3>
+              <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>해당 게시글을 삭제하시겠습니까?</p>
+              <p className={`text-sm mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
               <div className="flex gap-3">
                 <button
                   onClick={confirmDeleteQuestion}
-                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer"
                 >
                   삭제
                 </button>
                 <button
                   onClick={closeDeleteModal}
-                  className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                  className={`flex-1 py-2 rounded-xl transition-all duration-200 cursor-pointer ${isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'}`}
                 >
                   취소
                 </button>

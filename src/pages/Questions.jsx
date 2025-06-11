@@ -1,4 +1,4 @@
-// src/pages/Questions.jsx
+// src/pages/Questions.jsx - 테마 적용
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import QuestionCard from "../components/cards/QuestionCard";
@@ -7,10 +7,12 @@ import Pagination from "../components/Pagination";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Questions() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const { isDark } = useTheme(); 
 
   // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
   const API = import.meta.env.VITE_APP_SERVER;
@@ -171,7 +173,7 @@ export default function Questions() {
   );
 
   return (
-    <div className="h-screen bg-[#282A36] text-white flex flex-col">
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
       <Header />
 
       <div className="flex-1 p-8 overflow-auto">
@@ -181,7 +183,7 @@ export default function Questions() {
           </h1>
           <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
             <PlusCircle
-              className="w-10 h-10 mt-1 text-blue-400 hover:text-blue-600 cursor-pointer"
+              className={`w-10 h-10 mt-1 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowModal(true)}
             />
             <input
@@ -192,7 +194,7 @@ export default function Questions() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             />
           </div>
         </div>
@@ -209,7 +211,7 @@ export default function Questions() {
                     e.stopPropagation();
                     openDeleteModal(q);
                   }}
-                  className="absolute top-4 right-4 p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all"
+                  className={`absolute top-4 right-4 p-2 rounded-lg transition-all ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
                   title="게시글 삭제"
                 >
                   <Trash2 className="w-5 h-5" />
@@ -235,22 +237,22 @@ export default function Questions() {
       {/* ★ 게시글 삭제 확인 모달 */}
       {showDeleteModal && questionToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
-          <div className="bg-[#1D1F2C] rounded-xl p-6 max-w-md w-full mx-4">
+          <div className={`rounded-xl p-6 max-w-md w-full mx-4 ${isDark ? 'bg-[#1D1F2C]' : 'bg-white'}`}>
             <div className="text-center">
-              <Trash2 className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">게시글 삭제</h3>
-              <p className="text-gray-400 mb-4">해당 게시글을 삭제하시겠습니까?</p>
-              <p className="text-gray-500 text-sm mb-6">삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
+              <Trash2 className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} />
+              <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>게시글 삭제</h3>
+              <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>해당 게시글을 삭제하시겠습니까?</p>
+              <p className={`text-sm mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
               <div className="flex gap-3">
                 <button
                   onClick={confirmDeleteQuestion}
-                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 rounded transition cursor-pointer"
+                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded transition cursor-pointer"
                 >
                   삭제
                 </button>
                 <button
                   onClick={closeDeleteModal}
-                  className="flex-1 py-2 bg-gray-600 hover:bg-gray-500 rounded transition cursor-pointer"
+                  className={`flex-1 py-2 rounded transition cursor-pointer ${isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'}`}
                 >
                   취소
                 </button>
