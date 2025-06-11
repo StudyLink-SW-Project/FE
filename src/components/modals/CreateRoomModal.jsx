@@ -86,12 +86,9 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       
       const totalGoalSeconds = Number(goalHours) * 3600 + Number(goalMinutes) * 60 + Number(goalSeconds) * 1;
 
-
       // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
       onEnter(String(roomName), token, finalPassword, bgFile + 1, totalGoalSeconds); // bgFile+1로 1~4 번호 전달
       
-      onEnter(String(roomName), token, finalPassword, bgFile + 1); // bgFile+1로 1~4 번호 전달
-
       // 2) 서버에 방 설정 정보 저장
       await fetch(`${API}room/set`, {
         method: "POST",
@@ -171,7 +168,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                     setUsePassword(e.target.checked);
                     if (!e.target.checked) {
                       setPassword("");
-                      setPassword("");
                     }
                   }}
                 />
@@ -179,38 +175,40 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               </label>
 
               {/* 여기에 최소 높이(min-h-10) 컨테이너를 두고 */}
-              <div className="min-h-10">
+              <div className="min-h-15">
                 {usePassword ? (
-                  <div className="flex items-center border-b border-gray-600 pb-2">
-                    <Lock className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
+                    <Lock className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="비밀번호를 입력하세요.."
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-sm sm:text-base"
+                      className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
                       aria-label="비밀번호 입력"
                       required={usePassword}
                     />
                     <button
                       type="button"
-                      className="ml-2 p-1 focus:outline-none cursor-pointer"
+                      className={`ml-2 p-1 rounded-lg transition-all duration-200 focus:outline-none ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
                       onClick={() => setShowPassword(prev => !prev)}
                       aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
                     >
                       {showPassword ? (
-                        <EyeOff className="w-5 h-5 text-gray-400" />
+                        <EyeOff className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                       ) : (
-                        <Eye className="w-5 h-5 text-gray-400" />
+                        <Eye className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                       )}
                     </button>
                   </div>
                 ) : (
-                  // invisible로 공간은 차지하되 아무것도 안 보이게
-                  <div className="invisible">placeholder</div>
+                      // invisible로 공간은 차지하되 아무것도 안 보이게
+                      <div className="invisible">placeholder</div>
                 )}
               </div>
             </div>
+
+            
 
             {/* 목표 시간 설정 */}
             <div>
@@ -246,32 +244,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                 />
                 <span className="text-white">초</span>
               </div>
-              {usePassword && (
-                <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
-                  <Lock className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="비밀번호를 입력하세요.."
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
-                    aria-label="비밀번호 입력"
-                    required={usePassword}
-                  />
-                  <button
-                    type="button"
-                    className={`ml-2 p-1 rounded-lg transition-all duration-200 focus:outline-none ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
-                    onClick={() => setShowPassword(prev => !prev)}
-                    aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시하기"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
-                    ) : (
-                      <Eye className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
-                    )}
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* 버튼 (모바일) */}
@@ -306,7 +278,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             </div>
 
             {/* 버튼 (데스크탑) */}
-            <div className="hidden md:block pt-6">
+            <div className="hidden md:block pt-6 mt-13">
               <button
                 type="submit"
                 className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
