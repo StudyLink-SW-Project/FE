@@ -53,7 +53,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
         <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">D-Day 설정</h3>
         <ul className="mb-4 space-y-2 max-h-60 overflow-auto">
