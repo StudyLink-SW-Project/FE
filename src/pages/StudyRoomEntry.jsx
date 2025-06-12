@@ -200,7 +200,7 @@ export default function StudyRoomEntry() {
       {/* 목표 달성 모달 */}
       {showGoalModal && (
         <div className="fixed inset-0 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 w-80">
+          <div className="bg-white text-black rounded-lg p-6 w-80">
             <h2 className="text-xl font-semibold mb-4">축하합니다!</h2>
             <p className="mb-6">목표 공부 시간에 도달했습니다.</p>
             <button onClick={handleCloseGoalModal} className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
@@ -213,7 +213,7 @@ export default function StudyRoomEntry() {
       {/* 타이머 초기화 모달 */}
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center">
-          <div className="bg-white rounded-lg p-6 w-107">
+          <div className="bg-white text-black rounded-lg p-6 w-107">
             <h2 className="text-xl font-semibold mb-4">초기화 옵션 선택</h2>
             <div className="flex flex-col space-y-3 mb-6">
               <label className="flex items-start space-x-2 cursor-pointer">

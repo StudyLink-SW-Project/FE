@@ -3,7 +3,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
   const { isDark } = useTheme(); 
 
   return (
-    <div className={`fixed bottom-0 left-0 w-full flex justify-center py-4 space-x-2 text-white z-40 ${isDark ? 'bg-[#282A36]' : 'bg-gray-50'}`}>        
+    <div className={`fixed bottom-0 left-0 w-full flex justify-center py-4 space-x-2 text-white z-40 ${isDark ? 'bg-[#282A36]' : 'bg-[#EFF1FE]'}`}>        
       {/* 이전 버튼 */}
       <button
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}

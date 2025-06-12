@@ -9,10 +9,16 @@ import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle, Users } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTheme } from "../contexts/ThemeContext"; 
+import { StudyOverview } from "../components/StudyOverview";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
+
+  const [todayTime, setTodayTime] = useState(50);
+  const [goalHours, setGoalHours] = useState(() => Number(localStorage.getItem('goalHours') ?? 2));
+  const [goalMinutes, setGoalMinutes] = useState(() => Number(localStorage.getItem('goalMinutes') ?? 0));
+  const [resolution, setResolution] = useState(() => localStorage.getItem('resolution') || '');
 
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -105,30 +111,66 @@ export default function StudyRoom() {
     setShowCreateModal(false);
   };
 
+  // 오늘 공부한 시간 조회
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API}study/time/today`);
+        //if (!resp.ok) throw new Error(`오늘 공부 시간 조회 실패 (${resp.status})`);
+        const data = await resp.json();
+        setTodayTime(data.minutes || 50);
+      } catch (err) {
+        console.error(err);
+        toast.error(err.message);
+      }
+    })();
+  }, [API]);
+
+  // 목표 시간 변경 핸들러
+  const handleGoalChange = (h, m) => {   
+    setGoalHours(h);
+    setGoalMinutes(m);
+  };
+
+  // 설정 값 로컬 저장
+  useEffect(() => { localStorage.setItem('goalHours', goalHours); }, [goalHours]);
+  useEffect(() => { localStorage.setItem('goalMinutes', goalMinutes); }, [goalMinutes]);
+  useEffect(() => { localStorage.setItem('resolution', resolution); }, [resolution]);
+
   return (
-    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-whit text-gray-900'}`}>
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
+      
 
       {/* 상단 타이틀/검색 */}
       <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold flex items-center mb-2 sm:mb-0 gap-2 mt-1">
+        <div className="flex flex-row sm:flex-row justify-between items-start mb-6 gap-4">
+          <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
             스터디 룸
           </h1>
-          <div className="flex items-center w-full sm:w-64 space-x-3">
+
+          <div className="flex-shrink-0 w-3/4 -mt-4">
+            <StudyOverview
+              todayTime={todayTime}
+              goalHours={goalHours}
+              goalMinutes={goalMinutes}
+              resolution={resolution}
+              onResolutionChange={setResolution}
+              onGoalChange={handleGoalChange}
+            />
+          </div>
+
+          <div className="flex items-center w-full max-w-xs space-x-3 mt-3 self-start">
             <PlusCircle
-               className={`w-8 h-8 md:w-10 md:h-10 mt-1 cursor-pointer flex-shrink-0 transition-colors ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+              className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowCreateModal(true)}
             />
             <input
               type="text"
               placeholder="검색"
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              className={`flex-1 w-full pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
+              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+              className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             />
           </div>
         </div>
@@ -137,7 +179,7 @@ export default function StudyRoom() {
         <div className="container mx-auto px-2 sm:px-4 lg:px-6">
           {/* 방이 없을 때 표시할 메시지 */}
           {currentRooms.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 sm:py-20 md:py-32">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20 md:py-10">
               <Users className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-4 sm:mb-6 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
               <h2 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 {search ? '검색 결과가 없습니다' : '현재 생성된 스터디 룸이 없습니다'}

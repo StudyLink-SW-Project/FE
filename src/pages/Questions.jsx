@@ -173,7 +173,7 @@ export default function Questions() {
   );
 
   return (
-    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
 
       <div className="flex-1 p-8 overflow-auto">
@@ -181,9 +181,9 @@ export default function Questions() {
           <h1 className="text-4xl font-bold flex items-center">
             질문 게시판
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
+          <div className="flex items-center w-full md:w-56 space-x-3 -mr-1">
             <PlusCircle
-              className={`w-10 h-10 mt-1 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+              className={`w-16 h-16 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowModal(true)}
             />
             <input

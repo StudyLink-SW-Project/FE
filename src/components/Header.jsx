@@ -91,9 +91,9 @@ export default function Header() {
 
       <header className={`
         flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 h-16 sm:h-20 border-b relative z-[60]
-        ${isDark ? 'bg-[#1D1F2C] text-white border-[#616680]' : 'bg-[#F2F2F2] text-gray-900 border-gray-200'}
+        ${isDark ? 'bg-[#1D1F2C] text-white border-[#616680]' : 'bg-[#7E819A] text-white border-gray-200'}
       `}>
-        
+        {/* 7E819A */}
         {/* 왼쪽: 햄버거 메뉴 + 로고 */}
         <div className="flex items-center gap-3 sm:gap-4">
           {/* 모바일 햄버거 버튼 */}
@@ -108,7 +108,7 @@ export default function Header() {
           {/* 로고 */}
           <Link to="/" className="flex-shrink-0">
             <img 
-              src={isDark ? "/logo_white.png" : "/logo_black.png"}
+              src={isDark ? "/logo_white.png" : "/logo_white.png"}
               alt="Study Link Logo" 
               className="h-12 sm:h-16 lg:h-20 lg:w-22" 
             />
@@ -173,7 +173,7 @@ export default function Header() {
 
               {/* 드롭다운 메뉴 */}
               {menuOpen && (
-                <div className="absolute top-full mt-2 right-0 lg:left-1/2 lg:transform lg:-translate-x-1/2 z-[70]">
+                <div className="absolute top-full mt-2 right-full lg:left-1/2 lg:transform lg:-translate-x-1/2 z-[70]">
                   <UserMenu
                     onClose={() => setMenuOpen(false)}
                     onOpenProfile={handleOpenProfile}

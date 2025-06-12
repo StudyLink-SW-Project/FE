@@ -156,7 +156,7 @@ export default function MyQuestions() {
   );
 
   return (
-    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
 
       <div className="flex-1 p-4 md:p-8 overflow-auto">
