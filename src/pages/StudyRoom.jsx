@@ -126,39 +126,40 @@ export default function StudyRoom() {
     <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
       
-
-      {/* 상단 타이틀/검색 */}
       <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
-        <div className="flex flex-row sm:flex-row justify-between items-start mb-6 gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
-            스터디 룸
-          </h1>
+  <div className="flex flex-row sm:flex-row justify-between items-start mb-6 gap-4">
+    <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
+      스터디 룸
+    </h1>
 
-          <div className="flex-shrink-0 w-3/4 -mt-4">
-            <StudyOverview
-              todayTime={todayTime}
-              goalHours={goalHours}
-              goalMinutes={goalMinutes}
-              resolution={resolution}
-              onResolutionChange={setResolution}
-              onGoalChange={handleGoalChange}
-            />
-          </div>
+    <div className="flex-shrink-0 w-3/4 -mt-4">
+      <StudyOverview
+        todayTime={todayTime}
+        goalHours={goalHours}
+        goalMinutes={goalMinutes}
+        resolution={resolution}
+        onResolutionChange={setResolution}
+        onGoalChange={handleGoalChange}
+      />
+    </div>
 
-          <div className="flex items-center w-full max-w-xs space-x-3 mt-3 self-start">
-            <PlusCircle
-              className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
-              onClick={() => setShowCreateModal(true)}
-            />
-            <input
-              type="text"
-              placeholder="검색"
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
-            />
-          </div>
-        </div>
+    {/* 방이 있을 때만 추가 버튼과 검색창 표시 */}
+    {rooms.length > 0 && (
+      <div className="flex items-center w-full max-w-xs space-x-3 mt-3 self-start">
+        <PlusCircle
+          className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+          onClick={() => setShowCreateModal(true)}
+        />
+        <input
+          type="text"
+          placeholder="검색"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+          className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
+        />
+      </div>
+    )}
+  </div>
 
         {/* 컨텐츠 영역 */}
         <div className="container mx-auto px-2 sm:px-4 lg:px-6">
