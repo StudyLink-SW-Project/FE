@@ -5,21 +5,22 @@ import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
 import GoalCalendar from "./GoalCalendar";
 
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
-
   const API = import.meta.env.VITE_APP_SERVER;
 
-  // 🛠️ 공부시간 상태들 (문자열 그대로 표시)
-  const [todayTimeStr, setTodayTimeStr] = useState("");       // ex. "1시간30분"
-  const [totalTimeStr, setTotalTimeStr] = useState("");       // ex. "10시간20분"
-  const [goalTimeStr, setGoalTimeStr] = useState("");         // ex. "2시간0분"
+  // 🛠️ 문자열 그대로 표시할 공부시간 상태
+  const [todayTimeStr, setTodayTimeStr] = useState("");   // ex. "1시간30분"
+  const [totalTimeStr, setTotalTimeStr] = useState("");   // ex. "10시간20분"
+  const [goalTimeStr, setGoalTimeStr] = useState("");     // ex. "2시간0분"
 
-  // 목표 진행률 계산 (기존 numeric 로직 유지하려면, 별도 parsing 추가 필요)
-  // 필요 없으시면 아래 두 줄과 프로그레스 관련 코드를 제거하셔도 됩니다.
+  // 기존 프로그레스 계산을 위한 수치 (필요 없으시면 주석 처리하셔도 됩니다)
   const [todayTime, setTodayTime] = useState(0); // 분 단위
-  const totalGoal = 0; 
-  const progress = 0;
+  const [totalTime, setTotalTime] = useState(null); // 분 단위
+  const [goalHours, setGoalHours] = useState(0);
+  const [goalMinutes, setGoalMinutes] = useState(0);
+  const totalGoal = goalHours * 60 + goalMinutes;
+  const progress = totalGoal > 0 ? Math.min((todayTime / totalGoal) * 100, 100) : 0;
 
-  // 모달 상태
+  // 모달 열기/닫기 상태
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
   const [isDdayModalOpen, setDdayModalOpen] = useState(false);
   const [isResolutionModalOpen, setResolutionModalOpen] = useState(false);
@@ -37,7 +38,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   // D-day 상태
   const [dDays, setDDays] = useState([]);
 
-  // D-day 저장 및 불러오기
+  // D-day 로컬스토리지에서 불러오기
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("dDays") || "[]");
     setDDays(stored);
@@ -47,6 +48,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     localStorage.setItem("dDays", JSON.stringify(dDays));
   }, [dDays]);
 
+  // 가장 가까운 D-day 계산
   const nearest = dDays
     .map(({ name, date }) => ({
       name,
@@ -72,6 +74,15 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           setTodayTimeStr(data.result.todayStudyTime);
           setTotalTimeStr(data.result.totalStudyTime);
           setGoalTimeStr(data.result.goalStudyTime);
+
+          // 숫자 로직이 필요하시다면, 아래처럼 파싱하셔도 됩니다.
+          // const [tH, tM] = data.result.todayStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
+          // const [gH, gM] = data.result.goalStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
+          // const [toH, toM] = data.result.totalStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
+          // setTodayTime(tH * 60 + tM);
+          // setGoalHours(gH);
+          // setGoalMinutes(gM);
+          // setTotalTime(toH * 60 + toM);
         } else {
           throw new Error("공부 시간 데이터 오류");
         }
@@ -80,13 +91,16 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         setTodayTimeStr("");
         setTotalTimeStr("");
         setGoalTimeStr("");
+        setTodayTime(0);
+        setTotalTime(0);
+        setGoalHours(0);
+        setGoalMinutes(0);
       }
     }
-
     fetchStudyTime();
   }, [API]);
 
-
+  // 캘린더에 표시할 달성 날짜 예시
   const achievedDates = ["2025-06-22", "2025-06-18"];
 
   return (
@@ -100,17 +114,14 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
                 <span className="text-sm font-medium">오늘 공부 시간</span>
                 <span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span>
               </div>
-              <button
-                className="text-sm text-blue-400 hover:underline cursor-pointer"
-                onClick={() => setGoalModalOpen(true)}
-              >
+              <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openGoalModal}>
                 목표 설정
               </button>
             </div>
             <div className="mt-2 text-xl font-bold">
               {todayTimeStr || "0시간0분"} / {goalTimeStr || "0시간0분"}
             </div>
-            {/* progress bar 는 필요 없으시면 아래 부분 삭제 */}
+            {/* 필요 없으시다면 삭제 가능 */}
             <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
               <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
             </div>
@@ -152,10 +163,8 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 총 공부 시간 */}
         <div className="w-1/3 -ml-2 bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3 flex flex-col items-start">
           <span className="text-sm font-medium">총 공부 시간</span>
-          {totalTime !== null ? (
-            <div className="mt-2 text-xl font-bold">
-              {Math.floor(totalTime / 60)}시간 {totalTime % 60}분
-            </div>
+          {totalTimeStr ? (
+            <div className="mt-2 text-xl font-bold">{totalTimeStr}</div>
           ) : (
             <div className="mt-2 text-lg text-gray-400">로딩 중…</div>
           )}
@@ -165,8 +174,8 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
       {/* 모달들 */}
       <GoalSettingsModal
         isOpen={isGoalModalOpen}
-        goalHours={displayHours}
-        goalMinutes={displayMinutes}
+        goalHours={0}
+        goalMinutes={0}
         onClose={closeGoalModal}
         onSave={onGoalChange}
       />
@@ -177,11 +186,16 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         onClose={closeResolutionModal}
         onSave={onResolutionChange}
       />
+
+      {/* 달력 팝업 */}
       {isCalendarOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-xs">
           <div className="bg-white dark:bg-[#3B3E4B] rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" onClick={closeCalendar}>
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                onClick={closeCalendar}
+              >
                 ✕
               </button>
             </div>
