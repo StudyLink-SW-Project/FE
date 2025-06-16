@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import GoalSettingsModal from "./modals/GoalSettingsModal";
 import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
@@ -35,40 +35,41 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const closeDdayModal = () => setDdayModalOpen(false);
   const openResolutionModal = () => setResolutionModalOpen(true);
   const closeResolutionModal = () => setResolutionModalOpen(false);
-  const openCalendar = () => setCalendarOpen(true);
   const closeCalendar = () => setCalendarOpen(false);
 
   // D-day 상태
   const [dDays, setDDays] = useState([]);
 
-  // 서버 API로부터 D-day 목록 받아오기
-  useEffect(() => {
-    async function fetchDDays() {
-      try {
-        const res = await fetch(`${API}day`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (!res.ok) throw new Error("D-day API 호출 실패");
-        const data = await res.json();
-
-        if (data.isSuccess && Array.isArray(data.result)) {
-          // API 결과의 각 항목 { id, name, day } → { name, date }
-          const list = data.result.map(({ name, day }) => ({
-            name,
-            date: day,
-          }));
-          setDDays(list);
-        } else {
-          throw new Error("D-day 데이터 오류");
-        }
-      } catch (err) {
-        console.error(err);
-        setDDays([]);
+  // D-day 가져오는 함수 (useCallback 으로 묶어서 재사용)
+  const fetchDDays = useCallback(async () => {
+    try {
+      const res = await fetch(`${API}day`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("D-day API 호출 실패");
+      const data = await res.json();
+      if (data.isSuccess && Array.isArray(data.result)) {
+        const today = new Date();
+        const list = data.result
+          .map(({ id, name, day }) => ({ id, name, day }))
+          .filter(d => new Date(d.day) >= today)
+          .sort((a, b) => new Date(a.day) - new Date(b.day));
+        setDDays(list);
+      } else {
+        throw new Error("D-day 데이터 오류");
       }
+    } catch (err) {
+      console.error(err);
+      setDDays([]);
     }
-    fetchDDays();
   }, [API]);
+
+  // 최초 마운트 시 한 번 불러오기
+  useEffect(() => {
+    fetchDDays();
+  }, [fetchDDays]);
+
 
   // 가장 가까운 D-day 계산
   const nearest = dDays
@@ -222,6 +223,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         onClose={closeDdayModal}
         dDays={dDays}
         setDDays={setDDays}
+        onUpdated={async () => {
+          await fetchDDays();
+          closeDdayModal();
+        }}
       />
       <ResolutionSettingsModal
         isOpen={isResolutionModalOpen}
