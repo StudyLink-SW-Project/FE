@@ -225,7 +225,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         setDDays={setDDays}
         onUpdated={async () => {
           await fetchDDays();
-          closeDdayModal();
         }}
       />
       <ResolutionSettingsModal
