@@ -58,14 +58,18 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     .filter(item => item.diff >= 0)
     .sort((a, b) => a.diff - b.diff)[0];
 
-  // "0시간0분" 형식 파싱 함수
+  // 기존 parseTime 대체
   const parseTime = (str) => {
-    const match = str.match(/(\d+)시간(\d+)분/);
-    if (match) {
-      return [Number(match[1]), Number(match[2])];
-    }
-    return [0, 0];
+    // "숫자시간" 부분 추출
+    const hoursMatch = str.match(/(\d+)시간/);
+    // "숫자분" 부분 추출
+    const minutesMatch = str.match(/(\d+)분/);
+
+    const h = hoursMatch ? Number(hoursMatch[1]) : 0;
+    const m = minutesMatch ? Number(minutesMatch[1]) : 0;
+    return [h, m];
   };
+
 
   // 공부 시간 정보 API 호출 및 파싱
   useEffect(() => {
