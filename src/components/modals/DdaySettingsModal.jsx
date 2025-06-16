@@ -9,15 +9,40 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
   const [date, setDate] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
-  // 모달 열 때 만료된 D-day 자동 삭제 및 날짜 순 정렬
+  // 모달 열 때마다 서버에서 최신 D-day 목록을 불러와 로컬 상태에 세팅
   useEffect(() => {
     if (!isOpen) return;
-    const today = new Date();
-    const filtered = dDays
-      .filter(d => (new Date(d.day) - today) >= 0)
-      .sort((a, b) => new Date(a.day) - new Date(b.day));
-    setDDays(filtered);
-  }, [isOpen]);
+    async function fetchDDays() {
+      try {
+        const res = await fetch(`${API}day/list`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("D-day 목록 API 실패");
+        const data = await res.json();
+        if (data.isSuccess && Array.isArray(data.result)) {
+          // [{ id, name, day }] → [{ id, name, day }]
+          const list = data.result.map(({ id, name, day }) => ({
+            id,
+            name,
+            day,
+          }));
+          // 만료된 항목 제거 & 날짜순 정렬
+          const today = new Date();
+          const filtered = list
+            .filter(d => new Date(d.day) >= today)
+            .sort((a, b) => new Date(a.day) - new Date(b.day));
+          setDDays(filtered);
+        } else {
+          throw new Error("D-day 데이터 형식 오류");
+        }
+      } catch (err) {
+        console.error(err);
+        setDDays([]); // 에러 시 빈 리스트
+      }
+    }
+    fetchDDays();
+  }, [isOpen, API, setDDays]);
 
   // 항목 삭제: DELETE /d-day/{id}
   const handleDelete = async (idx) => {
@@ -63,7 +88,6 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         });
         if (!res.ok) throw new Error("D-day 수정 API 실패");
 
-        // 로컬 상태 갱신
         updatedList = dDays.map((d, i) =>
           i === editIndex ? { ...d, name, day: date } : d
         );
@@ -77,13 +101,12 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         });
         if (!res.ok) throw new Error("D-day 추가 API 실패");
         const data = await res.json();
-        // 서버 응답의 id 반영
         updatedList = [...dDays, { id: data.result.id, name, day: date }];
       }
 
-      // 만료된 건 필터링 & 날짜 순 정렬
+      // 만료된 항목 제거 & 날짜순 정렬
       const filtered = updatedList
-        .filter(d => (new Date(d.day) - today) >= 0)
+        .filter(d => new Date(d.day) >= today)
         .sort((a, b) => new Date(a.day) - new Date(b.day));
 
       setDDays(filtered);
