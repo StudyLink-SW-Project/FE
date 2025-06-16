@@ -7,20 +7,21 @@ import GoalCalendar from "./GoalCalendar";
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
   const API = import.meta.env.VITE_APP_SERVER;
 
-  // 🛠️ 문자열 그대로 표시할 공부시간 상태
-  const [todayTimeStr, setTodayTimeStr] = useState("");   // ex. "1시간30분"
-  const [totalTimeStr, setTotalTimeStr] = useState("");   // ex. "10시간20분"
-  const [goalTimeStr, setGoalTimeStr] = useState("");     // ex. "2시간0분"
+  // 공부시간 상태 (분 단위 및 목표 시/분)
+  const [todayTime, setTodayTime] = useState(0);        // 오늘 공부 시간 (분)
+  const [totalTime, setTotalTime] = useState(null);     // 총 공부 시간 (분)
+  const [goalHours, setGoalHours] = useState(0);        // 목표 시간: 시간
+  const [goalMinutes, setGoalMinutes] = useState(0);    // 목표 시간: 분
 
-  // 기존 프로그레스 계산을 위한 수치 (필요 없으시면 주석 처리하셔도 됩니다)
-  const [todayTime, setTodayTime] = useState(0); // 분 단위
-  const [totalTime, setTotalTime] = useState(null); // 분 단위
-  const [goalHours, setGoalHours] = useState(0);
-  const [goalMinutes, setGoalMinutes] = useState(0);
+  // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;
   const progress = totalGoal > 0 ? Math.min((todayTime / totalGoal) * 100, 100) : 0;
 
-  // 모달 열기/닫기 상태
+  // 화면 표시용
+  const displayHours = goalHours;
+  const displayMinutes = goalMinutes;
+
+  // 모달 상태
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
   const [isDdayModalOpen, setDdayModalOpen] = useState(false);
   const [isResolutionModalOpen, setResolutionModalOpen] = useState(false);
@@ -38,12 +39,11 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   // D-day 상태
   const [dDays, setDDays] = useState([]);
 
-  // D-day 로컬스토리지에서 불러오기
+  // D-day 로컬스토리지 연동
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("dDays") || "[]");
     setDDays(stored);
   }, []);
-
   useEffect(() => {
     localStorage.setItem("dDays", JSON.stringify(dDays));
   }, [dDays]);
@@ -58,7 +58,16 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     .filter(item => item.diff >= 0)
     .sort((a, b) => a.diff - b.diff)[0];
 
-  // 공부 시간 정보 API 호출
+  // "0시간0분" 형식 파싱 함수
+  const parseTime = (str) => {
+    const match = str.match(/(\d+)시간(\d+)분/);
+    if (match) {
+      return [Number(match[1]), Number(match[2])];
+    }
+    return [0, 0];
+  };
+
+  // 공부 시간 정보 API 호출 및 파싱
   useEffect(() => {
     async function fetchStudyTime() {
       try {
@@ -70,27 +79,23 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         const data = await res.json();
 
         if (data.isSuccess && data.result) {
-          // 문자열 그대로 상태에 저장
-          setTodayTimeStr(data.result.todayStudyTime);
-          setTotalTimeStr(data.result.totalStudyTime);
-          setGoalTimeStr(data.result.goalStudyTime);
+          const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
 
-          // 숫자 로직이 필요하시다면, 아래처럼 파싱하셔도 됩니다.
-          // const [tH, tM] = data.result.todayStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
-          // const [gH, gM] = data.result.goalStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
-          // const [toH, toM] = data.result.totalStudyTime.match(/(\d+)시간(\d+)분/).slice(1).map(Number);
-          // setTodayTime(tH * 60 + tM);
-          // setGoalHours(gH);
-          // setGoalMinutes(gM);
-          // setTotalTime(toH * 60 + toM);
+          // 문자열 파싱
+          const [tH, tM] = parseTime(todayStudyTime);
+          const [toH, toM] = parseTime(totalStudyTime);
+          const [gH, gM] = parseTime(goalStudyTime);
+
+          // 상태에 저장
+          setTodayTime(tH * 60 + tM);
+          setTotalTime(toH * 60 + toM);
+          setGoalHours(gH);
+          setGoalMinutes(gM);
         } else {
           throw new Error("공부 시간 데이터 오류");
         }
       } catch (err) {
         console.error(err);
-        setTodayTimeStr("");
-        setTotalTimeStr("");
-        setGoalTimeStr("");
         setTodayTime(0);
         setTotalTime(0);
         setGoalHours(0);
@@ -114,14 +119,16 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
                 <span className="text-sm font-medium">오늘 공부 시간</span>
                 <span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span>
               </div>
-              <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openGoalModal}>
+              <button
+                className="text-sm text-blue-400 hover:underline cursor-pointer"
+                onClick={openGoalModal}
+              >
                 목표 설정
               </button>
             </div>
             <div className="mt-2 text-xl font-bold">
-              {todayTimeStr || "0시간0분"} / {goalTimeStr || "0시간0분"}
+              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {displayHours}시간 {displayMinutes}분
             </div>
-            {/* 필요 없으시다면 삭제 가능 */}
             <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
               <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
             </div>
@@ -133,7 +140,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
             <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">내 D-Day</span>
-                <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openDdayModal}>
+                <button
+                  className="text-sm text-blue-400 hover:underline cursor-pointer"
+                  onClick={openDdayModal}
+                >
                   설정
                 </button>
               </div>
@@ -151,7 +161,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
             <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">내 각오</span>
-                <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openResolutionModal}>
+                <button
+                  className="text-sm text-blue-400 hover:underline cursor-pointer"
+                  onClick={openResolutionModal}
+                >
                   설정
                 </button>
               </div>
@@ -163,8 +176,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 총 공부 시간 */}
         <div className="w-1/3 -ml-2 bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3 flex flex-col items-start">
           <span className="text-sm font-medium">총 공부 시간</span>
-          {totalTimeStr ? (
-            <div className="mt-2 text-xl font-bold">{totalTimeStr}</div>
+          {totalTime !== null ? (
+            <div className="mt-2 text-xl font-bold">
+              {Math.floor(totalTime / 60)}시간 {totalTime % 60}분
+            </div>
           ) : (
             <div className="mt-2 text-lg text-gray-400">로딩 중…</div>
           )}
@@ -174,8 +189,8 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
       {/* 모달들 */}
       <GoalSettingsModal
         isOpen={isGoalModalOpen}
-        goalHours={1}
-        goalMinutes={0}
+        goalHours={displayHours}
+        goalMinutes={displayMinutes}
         onClose={closeGoalModal}
         onSave={(newHours, newMinutes) => {
           // 부모 상태 바로 업데이트
@@ -185,7 +200,12 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           onGoalChange(newHours, newMinutes);
         }}
       />
-      <DdaySettingsModal isOpen={isDdayModalOpen} onClose={closeDdayModal} dDays={dDays} setDDays={setDDays} />
+      <DdaySettingsModal
+        isOpen={isDdayModalOpen}
+        onClose={closeDdayModal}
+        dDays={dDays}
+        setDDays={setDDays}
+      />
       <ResolutionSettingsModal
         isOpen={isResolutionModalOpen}
         resolution={resolution}
@@ -193,7 +213,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         onSave={onResolutionChange}
       />
 
-      {/* 달력 팝업 */}
+      {/* 캘린더 팝업 */}
       {isCalendarOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-xs">
           <div className="bg-white dark:bg-[#3B3E4B] rounded-lg p-6 w-full max-w-md">
