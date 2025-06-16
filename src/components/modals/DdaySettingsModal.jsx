@@ -9,6 +9,15 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
   const [date, setDate] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
+  // YYYY-MM-DD 포맷으로 바꿔주는 함수
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");  // 월(two digits)
+    const d = String(date.getDate()).padStart(2, "0");       // 일(two digits)
+    return `${y}-${m}-${d}`;
+  };
+
   // 모달 열 때마다 서버에서 최신 D-day 목록을 불러와 로컬 상태에 세팅
   useEffect(() => {
     if (!isOpen) return;
@@ -120,7 +129,10 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
           {dDays.map((d, idx) => (
             <li key={d.id} className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
               <span className="flex-1 font-medium">{d.name}</span>
-              <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">{d.day}</span>
+              {/* 포맷된 날짜 출력 */}
+              <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
+                {formatDate(d.day)}
+              </span>
               <div className="flex items-center space-x-2">
                 <button onClick={() => handleEdit(idx)} aria-label="수정">
                   <Edit2 className="w-5 h-5 text-green-600 hover:text-green-400 cursor-pointer" />
