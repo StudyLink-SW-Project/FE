@@ -25,6 +25,7 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
       setIsSaving(true);
       const res = await fetch(`${API}study/goal/${totalMinutes}`, {
         method: "POST",
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("목표 설정 실패");
