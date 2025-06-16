@@ -208,44 +208,6 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
               </div>
             </div>
 
-            
-
-            {/* 목표 시간 설정 */}
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">목표 시간 설정</label>
-              <div className="flex items-center space-x-3">
-                <input
-                  type="number"
-                  min="0"
-                  value={goalHours}
-                  onChange={e => setGoalHours(e.target.value)}
-                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                  // disabled={isEntering}
-                />
-                <span className="text-white">시간</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="59"
-                  value={goalMinutes}
-                  onChange={e => setGoalMinutes(e.target.value)}
-                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                  // disabled={isEntering}
-                />
-                <span className="text-white">분</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="59"
-                  value={goalSeconds}
-                  onChange={e => setGoalSeconds(e.target.value)}
-                  className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                  // disabled={isEntering}
-                />
-                <span className="text-white">초</span>
-              </div>
-            </div>
-
             {/* 버튼 (모바일) */}
             <div className="pt-4 sm:pt-6 md:hidden">
               <button

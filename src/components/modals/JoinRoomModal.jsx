@@ -136,42 +136,6 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
             </div>
           )}
 
-          {/* 목표 시간 설정 */}
-          <div className="mb-4">
-            <label className="text-sm text-gray-400 mb-1 block">목표 시간 설정</label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="number"
-                min="0"
-                value={goalHours}
-                onChange={e => setGoalHours(e.target.value)}
-                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                disabled={isEntering}
-              />
-              <span className="text-white">시간</span>
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={goalMinutes}
-                onChange={e => setGoalMinutes(e.target.value)}
-                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                disabled={isEntering}
-              />
-              <span className="text-white">분</span>
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={goalSeconds}
-                onChange={e => setGoalSeconds(e.target.value)}
-                className="w-12 h-10 leading-none text-center bg-transparent border-b border-gray-600 outline-none text-white text-sm appearance-none"
-                disabled={isEntering}
-              />
-              <span className="text-white">초</span>
-            </div>
-          </div>
-
           {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
 
           {/* 입장 버튼 */}
