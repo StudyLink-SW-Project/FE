@@ -45,7 +45,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   useEffect(() => {
     async function fetchDDays() {
       try {
-        const res = await fetch(`${API}dday/list`, {
+        const res = await fetch(`${API}day`, {
           method: "GET",
           credentials: "include",
         });
