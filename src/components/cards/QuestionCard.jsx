@@ -46,7 +46,7 @@ export default function QuestionCard({
         {/* 하단: 왼쪽 작성자&시간, 오른쪽 답변수&조회수 */}
         <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs sm:text-sm mt-6 sm:mt-8 gap-3 sm:gap-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           {/* 왼쪽: 작성자 + 작성일시 */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-1">
             <User className={`w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
             <span className={`font-medium mr-3 sm:mr-5 text-xs sm:text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{author}</span>
             <span className="text-xs sm:text-sm">
