@@ -178,7 +178,7 @@ export default function Questions() {
 
       <div className="flex-1 p-8 overflow-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
-          <h1 className="text-4xl font-bold flex items-center">
+          <h1 className="text-4xl font-bold flex items-center -mt-5">
             질문 게시판
           </h1>
           <div className="flex items-center w-full md:w-56 space-x-3 -mr-1">

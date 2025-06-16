@@ -2,93 +2,168 @@ import { useState, useEffect } from "react";
 import GoalSettingsModal from "./modals/GoalSettingsModal";
 import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
+import GoalCalendar from "./GoalCalendar";
 
-export function StudyOverview({ todayTime, goalHours, goalMinutes, resolution, onResolutionChange, onGoalChange }) {
+export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
+
+  const API = import.meta.env.VITE_APP_SERVER;
+
+  // 공부시간 상태들
+  const [todayTime, setTodayTime] = useState(0); // 분 단위
+  const [totalTime, setTotalTime] = useState(null); // 분 단위
+  const [goalHours, setGoalHours] = useState(0);
+  const [goalMinutes, setGoalMinutes] = useState(0);
+
   // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;
   const progress = totalGoal > 0 ? Math.min((todayTime / totalGoal) * 100, 100) : 0;
 
-  // NaN 방지용 디폴트
   const displayHours = isNaN(goalHours) ? 0 : goalHours;
   const displayMinutes = isNaN(goalMinutes) ? 0 : goalMinutes;
 
-  // 모달 오픈 상태
+  // 모달 상태
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
   const [isDdayModalOpen, setDdayModalOpen] = useState(false);
   const [isResolutionModalOpen, setResolutionModalOpen] = useState(false);
+  const [isCalendarOpen, setCalendarOpen] = useState(false);
 
-  // D-day 목록 상태
-  const [dDays, setDDays] = useState([]);
-
-  // 모달 핸들러
   const openGoalModal = () => setGoalModalOpen(true);
   const closeGoalModal = () => setGoalModalOpen(false);
   const openDdayModal = () => setDdayModalOpen(true);
   const closeDdayModal = () => setDdayModalOpen(false);
   const openResolutionModal = () => setResolutionModalOpen(true);
   const closeResolutionModal = () => setResolutionModalOpen(false);
+  const openCalendar = () => setCalendarOpen(true);
+  const closeCalendar = () => setCalendarOpen(false);
 
-  // 로컬스토리지에서 dDays 불러오기
+  // D-day 상태
+  const [dDays, setDDays] = useState([]);
+
+  // D-day 저장 및 불러오기
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("dDays") || "[]");
     setDDays(stored);
   }, []);
-  // dDays 저장
+
   useEffect(() => {
     localStorage.setItem("dDays", JSON.stringify(dDays));
   }, [dDays]);
 
-  // 가장 가까운 D-day 계산
   const nearest = dDays
-    .map(({ name, date }) => ({ name, date, diff: (new Date(date) - new Date()) / (1000 * 60 * 60 * 24) }))
+    .map(({ name, date }) => ({
+      name,
+      date,
+      diff: (new Date(date) - new Date()) / (1000 * 60 * 60 * 24),
+    }))
     .filter(item => item.diff >= 0)
     .sort((a, b) => a.diff - b.diff)[0];
 
-  return (
-    <div className="mx-auto w-3/5 px-4 sm:px-6 lg:px-8 py-4 rounded-b-lg">
-      {/* 오늘 공부 섹션 */}
-      <div className="mb-2 bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
-        <div className="flex justify-between items-center">
-          <div><span className="text-sm font-medium">오늘 공부 시간</span><span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span></div>
-          <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openGoalModal}>목표 설정</button>
-        </div>
-        <div className="mt-2 text-xl font-bold">
-          {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {displayHours}시간 {displayMinutes}분
-        </div>
-        <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
-          <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
-        </div>
-        <span className="text-sm text-blue-400 mt-1 block">{Math.floor(progress)}% 달성</span>
-      </div>
+  // 공부 시간 정보 API 호출
+  useEffect(() => {
+    async function fetchStudyTime() {
+      try {
+        const res = await fetch(`${API}study/time`);
+        if (!res.ok) throw new Error("공부 시간 API 호출 실패");
+        const data = await res.json();
 
-      {/* D-day 및 각오 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div className="relative bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">내 D-Day</span>
-            <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openDdayModal}>설정</button>
+        if (data.isSuccess && data.result) {
+          const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
+
+          const [tHour, tMin] = todayStudyTime.split(":").map(Number);
+          const [gHour, gMin] = goalStudyTime.split(":").map(Number);
+          const [totalHour, totalMin] = totalStudyTime.split(":").map(Number);
+
+          setTodayTime(tHour * 60 + tMin);
+          setGoalHours(gHour);
+          setGoalMinutes(gMin);
+          setTotalTime(totalHour * 60 + totalMin);
+        } else {
+          throw new Error("공부 시간 데이터 오류");
+        }
+      } catch (err) {
+        console.error(err);
+        setTodayTime(0);
+        setGoalHours(0);
+        setGoalMinutes(0);
+        setTotalTime(0);
+      }
+    }
+
+    fetchStudyTime();
+  }, []);
+
+  const achievedDates = ["2025-06-22", "2025-06-18"];
+
+  return (
+    <div className="mx-auto w-3/5 px-4 sm:px-6 lg:px-8 py-4">
+      <div className="flex gap-4 items-stretch">
+        <div className="flex flex-col gap-2 flex-1">
+          {/* 오늘 공부 시간 */}
+          <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-sm font-medium">오늘 공부 시간</span>
+                <span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span>
+              </div>
+              <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openGoalModal}>
+                목표 설정
+              </button>
+            </div>
+            <div className="mt-2 text-xl font-bold">
+              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {displayHours}시간 {displayMinutes}분
+            </div>
+            <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
+              <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
+            </div>
+            <span className="text-sm text-blue-400 mt-1 block">{Math.floor(progress)}% 달성</span>
           </div>
-          {/* D-day와 이름 사이에 구분선 추가 */}
-          {nearest ? (
-            <div className="flex items-center mt-2">
-              <span className="text-xl font-bold mr-1">D-{Math.ceil(nearest.diff)}</span>
-              <span className="inline-block mx-2 w-px h-5 bg-gray-300 dark:bg-gray-600" />
-              <span className="text-xl font-bold ml-1">{nearest.name}</span>
+
+          {/* D-day & 각오 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">내 D-Day</span>
+                <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openDdayModal}>
+                  설정
+                </button>
+              </div>
+              {nearest ? (
+                <div className="flex items-center mt-2">
+                  <span className="text-xl font-bold mr-1">D-{Math.ceil(nearest.diff)}</span>
+                  <span className="inline-block mx-2 w-px h-5 bg-gray-300 dark:bg-gray-600" />
+                  <span className="text-xl font-bold ml-1">{nearest.name}</span>
+                </div>
+              ) : (
+                <span className="mt-1 text-xl font-bold block">---</span>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">내 각오</span>
+                <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openResolutionModal}>
+                  설정
+                </button>
+              </div>
+              <span className="mt-2 text-lg font-bold block break-all">{resolution || "---"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 총 공부 시간 */}
+        <div className="w-1/3 -ml-2 bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3 flex flex-col items-start">
+          <span className="text-sm font-medium">총 공부 시간</span>
+          {totalTime !== null ? (
+            <div className="mt-2 text-xl font-bold">
+              {Math.floor(totalTime / 60)}시간 {totalTime % 60}분
             </div>
           ) : (
-            <span className="mt-1 text-xl font-bold block">---</span>
+            <div className="mt-2 text-lg text-gray-400">로딩 중…</div>
           )}
-        </div>
-        <div className="relative bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">내 각오</span>
-            <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openResolutionModal}>설정</button>
-          </div>
-          <span className="mt-2 text-lg font-bold block">{resolution || '---'}</span>
         </div>
       </div>
 
-      {/* 모달 컴포넌트 */}
+      {/* 모달들 */}
       <GoalSettingsModal
         isOpen={isGoalModalOpen}
         goalHours={displayHours}
@@ -96,18 +171,25 @@ export function StudyOverview({ todayTime, goalHours, goalMinutes, resolution, o
         onClose={closeGoalModal}
         onSave={onGoalChange}
       />
-      <DdaySettingsModal
-        isOpen={isDdayModalOpen}
-        onClose={closeDdayModal}
-        dDays={dDays}
-        setDDays={setDDays}
-      />
+      <DdaySettingsModal isOpen={isDdayModalOpen} onClose={closeDdayModal} dDays={dDays} setDDays={setDDays} />
       <ResolutionSettingsModal
         isOpen={isResolutionModalOpen}
         resolution={resolution}
         onClose={closeResolutionModal}
         onSave={onResolutionChange}
       />
+      {isCalendarOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-xs">
+          <div className="bg-white dark:bg-[#3B3E4B] rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" onClick={closeCalendar}>
+                ✕
+              </button>
+            </div>
+            <GoalCalendar achievedDates={achievedDates} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

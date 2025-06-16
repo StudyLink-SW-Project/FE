@@ -81,12 +81,12 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
       <div className={`rounded-2xl w-full max-w-sm mx-4 p-4 sm:p-6 relative shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
         {/* 닫기 */}
         <button 
           onClick={onClose} 
-          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+          className={`absolute top-3 right-3 p-2 cursor-pointer rounded-full transition-all duration-200 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
           <X className="w-5 h-5" />
         </button>
