@@ -90,7 +90,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     }
 
     fetchStudyTime();
-  }, []);
+  }, [API]);
 
   const achievedDates = ["2025-06-22", "2025-06-18"];
 
