@@ -14,7 +14,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
     if (!isOpen) return;
     async function fetchDDays() {
       try {
-        const res = await fetch(`${API}day/list`, {
+        const res = await fetch(`${API}day`, {
           method: "GET",
           credentials: "include",
         });
