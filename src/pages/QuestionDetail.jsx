@@ -305,7 +305,17 @@ export default function QuestionDetail() {
             <div className="flex items-center gap-4">
               <User className={`w-4 h-4 -mr-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
               <span className={`font-medium mr-5 ${isDark ? 'text-white' : 'text-gray-900'}`}>{authorToShow}</span>
-              <span className="text-sm">{new Date(dateTimeToShow).toLocaleString()}</span>
+              <span className="text-sm">
+                {new Date(dateTimeToShow).toLocaleString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false // 24시간 형식 사용
+                  })}
+                  </span>
             </div>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
