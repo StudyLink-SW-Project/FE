@@ -73,10 +73,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
   // 가장 가까운 D-day 계산
   const nearest = dDays
-    .map(({ name, date }) => ({
+    .map(({ name, day }) => ({
       name,
-      date,
-      diff: (new Date(date) - new Date()) / (1000 * 60 * 60 * 24),
+      date: day,
+      diff: (new Date(day) - new Date()) / (1000 * 60 * 60 * 24),
     }))
     .filter(item => item.diff >= 0)
     .sort((a, b) => a.diff - b.diff)[0];
