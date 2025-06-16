@@ -18,7 +18,7 @@ export default function QuestionCard({
     excerpt.length > 100 ? excerpt.slice(0, 100) + "..." : excerpt;
 
   return (
-    <div className="relative group">
+    <div className="relative group ml-15 mr-15">
       <Link
         to={`/questions/${id}`}
         state={{          
@@ -32,7 +32,7 @@ export default function QuestionCard({
           likes,
           liked,
         }}
-        className={`block -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 border-b py-4 sm:py-5 md:py-6 transition-colors duration-200 ${isDark ? 'border-gray-700 hover:bg-[#2D2F40]' : 'border-gray-200 hover:bg-gray-50'}`}
+        className={`block -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 border-b py-4 sm:py-5 md:py-6 transition-colors duration-200 ${isDark ? 'border-gray-700 hover:bg-[#2D2F40]' : 'border-gray-300 hover:bg-gray-50'}`}
       >
         {/* 왼쪽: 태그 + 제목/요약 */}
         <div className="flex-1 pr-12 sm:pr-14 md:pr-16">

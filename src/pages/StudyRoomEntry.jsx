@@ -7,6 +7,7 @@ import {
 import '@livekit/components-styles';
 import './StudyRoomCustom.css';
 import { PauseCircle, PlayCircle, RefreshCw } from "lucide-react";
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 // LiveKit 서버 URL
 const LIVEKIT_URL = "wss://api.studylink.store:443";
@@ -122,53 +123,70 @@ export default function StudyRoomEntry() {
           </h1>
 
           {/* 공부를 시작하면 타이머 + 토글 버튼 */}
-          <div className="flex items-center text-white text-4xl mt-5 ml-120">
-            {/* 초기화 버튼 */}
-            <button
-              onClick={() => setShowModal(true)}
-              className="
-                mr-4 focus:outline-none text-white text-5xl 
-                hover:text-gray-300 
-                transform hover:scale-102 
-                transition duration-200
-                cursor-pointer
-              "
-            >
-              <RefreshCw size={32} className="mt-2"/>
-            </button>
+          <Tooltip.Provider>
+            <div className="flex items-center text-white text-4xl mt-5 ml-120">
+              
+              {/* 🔄 초기화 버튼 */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="mr-4 focus:outline-none text-white text-5xl hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
+                  >
+                    <RefreshCw size={32} className="mt-2" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="top"
+                    className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50"
+                    sideOffset={5}
+                  >
+                    스톱워치 초기화
+                    <Tooltip.Arrow className="fill-gray-800" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
 
-            {/* 타이머 표시 */}
-            {formatTime(elapsedSeconds)}
+              {/* ⏱ 시간 표시 */}
+              {formatTime(elapsedSeconds)}
 
-            {/* 일시정지/재시작 버튼 */}
-            <button
-              onClick={() => setIsRunning(prev => !prev)}
-              className="
-                ml-4 mt-2 focus:outline-none text-white 
-                hover:text-gray-300 
-                transform hover:scale-102 
-                transition duration-200   
-                cursor-pointer            
-              "
-            >
-              {isRunning
-                ? <PauseCircle size={32}/>
-                : <PlayCircle  size={32}/>
-              }
-            </button>
-            <div className="text-xs ml-10 mt-3">
-              <h1 className=" ">오늘 공부 시간</h1>
-              <h1 className="ml-5">00:00:00</h1>
+              {/* ▶️ 일시정지/재시작 버튼 */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    onClick={() => setIsRunning(prev => !prev)}
+                    className="ml-4 mt-2 focus:outline-none text-white hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
+                  >
+                    {isRunning
+                      ? <PauseCircle size={32} />
+                      : <PlayCircle  size={32} />
+                    }
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="top"
+                    className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50"
+                    sideOffset={5}
+                  >
+                    {isRunning ? '공부 중지' : '공부 시작'}
+                    <Tooltip.Arrow className="fill-gray-800" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              {/* 오늘 공부 시간, 목표 시간 표기 영역 */}
+              <div className="text-xs ml-10 mt-3">
+                <h1 className=" ">오늘 공부 시간</h1>
+                <h1 className="ml-5">00:00:00</h1>
+              </div>
+              <div className="text-xs ml-5 mt-3">
+                <h1 className=" ">목표 공부 시간</h1>
+                <h1 className="ml-5">{formatTime(goalSeconds)}</h1>
+              </div>
             </div>
-            <div className="text-xs ml-5 mt-3">
-              <h1 className=" ">목표 공부 시간</h1>
-              <h1 className="ml-5">{formatTime(goalSeconds)}</h1>
-            </div>
-            {/* <div className="text-xs ml-5 mt-3">
-              <h1 className=" ">D-DAY</h1>
-              <h1 className="ml-[8px]">000</h1>
-            </div> */}
-          </div>
+          </Tooltip.Provider>
         
         </div>
       </div>

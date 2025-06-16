@@ -15,7 +15,7 @@ export default function ResolutionSettingsModal({ isOpen, resolution, onSave, on
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs">
+    <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm">
         <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">내 각오 설정 (최대 30자)</h3>
         <textarea

@@ -115,13 +115,7 @@ export default function Header() {
           </Link>
 
           {/* 데스크탑 네비게이션 */}
-          <nav className="hidden lg:flex gap-6 xl:gap-8 ml-8">
-            <Link 
-              to="/" 
-              className={`font-medium text-xl px-4 py-2 transition-all duration-200 hover:scale-105 ${isDark ? 'hover:text-gray-300' : 'hover:text-gray-600'}`}
-            >
-              홈
-            </Link>
+          <nav className="hidden lg:flex gap-6 xl:gap-8 ml-8">           
             <Link 
               to="/study-room" 
               className={`font-medium text-xl px-4 py-2 transition-all duration-200 hover:scale-105 ${isDark ? 'hover:text-gray-300' : 'hover:text-gray-600'}`}
@@ -188,13 +182,13 @@ export default function Header() {
               <div className="hidden sm:flex gap-3 lg:gap-4">
                 <Link
                   to="/login"
-                  className={`px-8 py-3 rounded-full font-medium text-lg tracking-wide transition-all duration-200 hover:scale-105 ${isDark ? 'bg-white text-black hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+                  className={`px-6 py-2 rounded-full font-medium text-base tracking-wide transition-all duration-200 hover:scale-105 ${isDark ? 'bg-white text-black hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
                 >
                   로그인
                 </Link>
                 <Link
                   to="/signup"
-                  className={`px-7 py-3 rounded-full font-medium text-lg tracking-wide transition-all duration-200 hover:scale-105 border ${isDark ? 'border-white hover:bg-white/10' : 'border-gray-900 hover:bg-gray-900/10'}`}
+                  className={`px-5 py-2 rounded-full font-medium text-base tracking-wide transition-all duration-200 hover:scale-105 border ${isDark ? 'border-white hover:bg-white/10' : 'border-white'}`}
                 >
                   회원가입
                 </Link>
