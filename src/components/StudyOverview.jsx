@@ -196,7 +196,13 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         goalHours={displayHours}
         goalMinutes={displayMinutes}
         onClose={closeGoalModal}
-        onSave={onGoalChange}
+        onSave={(newH, newM) => {
+          // 1) UI 즉시 갱신
+          setGoalHours(newH);
+          setGoalMinutes(newM);
+          // 2) 필요하다면 외부 콜백도 함께 호출
+          onGoalChange(newH, newM);
+        }}
       />
       <DdaySettingsModal
         isOpen={isDdayModalOpen}
