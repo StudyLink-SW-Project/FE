@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Edit2, Trash2 } from "lucide-react";
 
-export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) {
+export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, onUpdated }) {
   const API = import.meta.env.VITE_APP_SERVER;
 
   const [name, setName] = useState("");
@@ -69,53 +69,41 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
     setDate(dDays[idx].day);
   };
 
-  // 추가 또는 수정 저장
   const handleSave = async () => {
     if (!name || !date) return;
     const today = new Date();
 
     try {
       let updatedList;
-
       if (editIndex !== null) {
-        // 수정: PUT /d-day
+        // 수정
         const target = dDays[editIndex];
-        const res = await fetch(`${API}day/${target.id}`, {
+        await fetch(`${API}day/${target.id}`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: target.id, name, day: date }),
         });
-        if (!res.ok) throw new Error("D-day 수정 API 실패");
-
-        updatedList = dDays.map((d, i) =>
-          i === editIndex ? { ...d, name, day: date } : d
-        );
       } else {
-        // 추가: POST /d-day
+        // 추가
         const res = await fetch(`${API}day`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, day: date }),
         });
-        if (!res.ok) throw new Error("D-day 추가 API 실패");
         const data = await res.json();
-        updatedList = [...dDays, { id: data.result.id, name, day: date }];
+        // (id는 부모가 다시 fetch하며 취득)
       }
 
-      // 만료된 항목 제거 & 날짜순 정렬
-      const filtered = updatedList
-        .filter(d => new Date(d.day) >= today)
-        .sort((a, b) => new Date(a.day) - new Date(b.day));
-
-      setDDays(filtered);
+      // 모달 닫기 및 부모 갱신 콜백 호출
+      onUpdated?.();
       setName("");
       setDate("");
       setEditIndex(null);
     } catch (err) {
       console.error(err);
-      // 에러 시에도 입력 초기화
+      // 에러 시에도 입력 초기화만
       setName("");
       setDate("");
       setEditIndex(null);
