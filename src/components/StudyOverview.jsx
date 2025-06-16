@@ -160,9 +160,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           ) : (
             <div className="mt-2 text-lg text-gray-400">로딩 중…</div>
           )}
-          <button className="mt-4 px-3 py-1 bg-blue-400 text-white rounded hover:bg-blue-500" onClick={openCalendar}>
-            달성 기록 보기
-          </button>
         </div>
       </div>
 
