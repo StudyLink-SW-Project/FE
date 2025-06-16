@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onClose }) {
+export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onClose, onSave }) {
   if (!isOpen) return null;
 
   const [hours, setHours] = useState(goalHours);
@@ -29,6 +29,8 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
       });
 
       if (!res.ok) throw new Error("목표 설정 실패");
+
+      onSave(hours, minutes);
 
       // 성공적으로 저장한 후 모달 닫기
       onClose();
