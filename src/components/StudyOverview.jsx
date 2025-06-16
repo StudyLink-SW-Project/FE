@@ -41,14 +41,34 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   // D-day 상태
   const [dDays, setDDays] = useState([]);
 
-  // D-day 로컬스토리지 연동
+  // 서버 API로부터 D-day 목록 받아오기
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("dDays") || "[]");
-    setDDays(stored);
-  }, []);
-  useEffect(() => {
-    localStorage.setItem("dDays", JSON.stringify(dDays));
-  }, [dDays]);
+    async function fetchDDays() {
+      try {
+        const res = await fetch(`${API}dday/list`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("D-day API 호출 실패");
+        const data = await res.json();
+
+        if (data.isSuccess && Array.isArray(data.result)) {
+          // API 결과의 각 항목 { id, name, day } → { name, date }
+          const list = data.result.map(({ name, day }) => ({
+            name,
+            date: day,
+          }));
+          setDDays(list);
+        } else {
+          throw new Error("D-day 데이터 오류");
+        }
+      } catch (err) {
+        console.error(err);
+        setDDays([]);
+      }
+    }
+    fetchDDays();
+  }, [API]);
 
   // 가장 가까운 D-day 계산
   const nearest = dDays
@@ -62,16 +82,12 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
   // 기존 parseTime 대체
   const parseTime = (str) => {
-    // "숫자시간" 부분 추출
     const hoursMatch = str.match(/(\d+)시간/);
-    // "숫자분" 부분 추출
     const minutesMatch = str.match(/(\d+)분/);
-
     const h = hoursMatch ? Number(hoursMatch[1]) : 0;
     const m = minutesMatch ? Number(minutesMatch[1]) : 0;
     return [h, m];
   };
-
 
   // 공부 시간 정보 API 호출 및 파싱
   useEffect(() => {
@@ -86,13 +102,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
         if (data.isSuccess && data.result) {
           const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
-
-          // 문자열 파싱
           const [tH, tM] = parseTime(todayStudyTime);
           const [toH, toM] = parseTime(totalStudyTime);
           const [gH, gM] = parseTime(goalStudyTime);
 
-          // 상태에 저장
           setTodayTime(tH * 60 + tM);
           setTotalTime(toH * 60 + toM);
           setGoalHours(gH);
@@ -199,10 +212,8 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         goalMinutes={goalMinutes}
         onClose={closeGoalModal}
         onSave={(newH, newM) => {
-          // 1) UI 즉시 갱신
           setGoalHours(newH);
           setGoalMinutes(newM);
-          // 2) 필요하다면 외부 콜백도 함께 호출
           onGoalChange(newH, newM);
         }}
       />
