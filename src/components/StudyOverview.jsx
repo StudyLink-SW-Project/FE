@@ -8,7 +8,6 @@ import { useGoal } from "../contexts/GoalContext";
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
   const API = import.meta.env.VITE_APP_SERVER;
 
-
   // 공부시간 상태 (분 단위)
   const [todayTime, setTodayTime] = useState(0);
   const [totalTime, setTotalTime] = useState(null);

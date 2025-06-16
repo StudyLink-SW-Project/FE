@@ -8,6 +8,7 @@ import '@livekit/components-styles';
 import './StudyRoomCustom.css';
 import { PauseCircle, PlayCircle, RefreshCw } from "lucide-react";
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { useGoal } from '../contexts/GoalContext';
 
 // LiveKit 서버 URL
 const LIVEKIT_URL = "wss://api.studylink.store:443";
@@ -20,7 +21,10 @@ export default function StudyRoomEntry() {
   const roomName    = state?.roomName;
   const password    = state?.password;
   const img         = state?.img;
-  const goalSeconds = state?.goalSeconds;
+  // Context에서 목표 시간(시간/분)을 가져와 초 단위로 변환
+  const { goalHours, goalMinutes } = useGoal();
+  const goalSeconds = goalHours * 3600 + goalMinutes * 60;
+
   const navigate    = useNavigate();
 
   // ⏱ 타이머 상태
