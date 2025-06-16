@@ -3,15 +3,18 @@ import GoalSettingsModal from "./modals/GoalSettingsModal";
 import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
 import GoalCalendar from "./GoalCalendar";
+import { useGoal } from "../contexts/GoalContext";
 
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
   const API = import.meta.env.VITE_APP_SERVER;
 
-  // 공부시간 상태 (분 단위 및 목표 시/분)
-  const [todayTime, setTodayTime] = useState(0);        // 오늘 공부 시간 (분)
-  const [totalTime, setTotalTime] = useState(null);     // 총 공부 시간 (분)
-  const [goalHours, setGoalHours] = useState(0);        // 목표 시간: 시간
-  const [goalMinutes, setGoalMinutes] = useState(0);    // 목표 시간: 분
+
+  // 공부시간 상태 (분 단위)
+  const [todayTime, setTodayTime] = useState(0);
+  const [totalTime, setTotalTime] = useState(null);
+
+  // 전역 목표 시간 가져오기/설정
+  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes } = useGoal();
 
   // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;
@@ -193,8 +196,8 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
       {/* 모달들 */}
       <GoalSettingsModal
         isOpen={isGoalModalOpen}
-        goalHours={displayHours}
-        goalMinutes={displayMinutes}
+        goalHours={goalHours}
+        goalMinutes={goalMinutes}
         onClose={closeGoalModal}
         onSave={(newH, newM) => {
           // 1) UI 즉시 갱신
