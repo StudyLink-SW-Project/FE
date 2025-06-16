@@ -120,7 +120,13 @@ export default function StudyRoomEntry() {
       alert("기록 전송 중 오류가 발생했습니다.");
     }
   };
-  
+
+  const handleCloseGoalModal = () => {
+    setShowGoalModal(false);
+    // 추가 동작 예: 기록 저장 후 초기화
+    setElapsedSeconds(0);
+  };
+
   return (
     <div className="h-screen bg-[#0f172a]">
       {/* 헤더 */}
@@ -247,7 +253,7 @@ export default function StudyRoomEntry() {
       {/* 타이머 초기화 모달 */}
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center">
-          <div className="bg-white text-black rounded-lg p-6 w-107">
+          <div className="bg-white text-black rounded-lg p-6 w-110">
             <h2 className="text-xl font-semibold mb-4">초기화 옵션 선택</h2>
             <div className="flex flex-col space-y-3 mb-6">
               <label className="flex items-start space-x-2 cursor-pointer">
@@ -261,7 +267,7 @@ export default function StudyRoomEntry() {
                 <div>
                   <span className="font-medium">스톱워치 초기화</span><br/>
                   <span className="text-xs text-gray-600">
-                    스톱워치에 표기된 공부시간은 저장되고 스톱워치를 초기화합니다
+                    스톱워치에 표기된 공부시간을 저장하고 스톱워치를 초기화합니다
                   </span>
                 </div>
               </label>
@@ -276,7 +282,7 @@ export default function StudyRoomEntry() {
                 <div>
                   <span className="font-medium">공부기록 초기화</span><br/>
                   <span className="text-xs text-gray-600">
-                    스톱워치에 표기된 공부시간과 스톱워치를 모두 초기화합니다
+                    스톱워치에 표기된 공부시간을 저장하지 않고 스톱워치를 초기화합니다
                   </span>
                 </div>
               </label>
