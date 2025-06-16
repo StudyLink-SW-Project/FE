@@ -23,7 +23,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
   const handleDelete = async (idx) => {
     const target = dDays[idx];
     try {
-      const res = await fetch(`${API}d-day/${target.id}`, {
+      const res = await fetch(`${API}day/${target.id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -55,7 +55,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
       if (editIndex !== null) {
         // 수정: PUT /d-day
         const target = dDays[editIndex];
-        const res = await fetch(`${API}d-day`, {
+        const res = await fetch(`${API}day/${target.id}`, {
           method: "PUT",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -69,7 +69,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         );
       } else {
         // 추가: POST /d-day
-        const res = await fetch(`${API}d-day`, {
+        const res = await fetch(`${API}day`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
