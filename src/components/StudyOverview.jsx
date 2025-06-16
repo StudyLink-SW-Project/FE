@@ -8,18 +8,16 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
   const API = import.meta.env.VITE_APP_SERVER;
 
-  // 공부시간 상태들
+  // 🛠️ 공부시간 상태들 (문자열 그대로 표시)
+  const [todayTimeStr, setTodayTimeStr] = useState("");       // ex. "1시간30분"
+  const [totalTimeStr, setTotalTimeStr] = useState("");       // ex. "10시간20분"
+  const [goalTimeStr, setGoalTimeStr] = useState("");         // ex. "2시간0분"
+
+  // 목표 진행률 계산 (기존 numeric 로직 유지하려면, 별도 parsing 추가 필요)
+  // 필요 없으시면 아래 두 줄과 프로그레스 관련 코드를 제거하셔도 됩니다.
   const [todayTime, setTodayTime] = useState(0); // 분 단위
-  const [totalTime, setTotalTime] = useState(null); // 분 단위
-  const [goalHours, setGoalHours] = useState(0);
-  const [goalMinutes, setGoalMinutes] = useState(0);
-
-  // 목표 진행률 계산
-  const totalGoal = goalHours * 60 + goalMinutes;
-  const progress = totalGoal > 0 ? Math.min((todayTime / totalGoal) * 100, 100) : 0;
-
-  const displayHours = isNaN(goalHours) ? 0 : goalHours;
-  const displayMinutes = isNaN(goalMinutes) ? 0 : goalMinutes;
+  const totalGoal = 0; 
+  const progress = 0;
 
   // 모달 상태
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
@@ -63,37 +61,31 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     async function fetchStudyTime() {
       try {
         const res = await fetch(`${API}study/time`, {
-        method: "GET",
-        credentials: "include",
-      });
+          method: "GET",
+          credentials: "include",
+        });
         if (!res.ok) throw new Error("공부 시간 API 호출 실패");
         const data = await res.json();
 
         if (data.isSuccess && data.result) {
-          const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
-
-          const [tHour, tMin] = todayStudyTime.split(":").map(Number);
-          const [gHour, gMin] = goalStudyTime.split(":").map(Number);
-          const [totalHour, totalMin] = totalStudyTime.split(":").map(Number);
-
-          setTodayTime(tHour * 60 + tMin);
-          setGoalHours(gHour);
-          setGoalMinutes(gMin);
-          setTotalTime(totalHour * 60 + totalMin);
+          // 문자열 그대로 상태에 저장
+          setTodayTimeStr(data.result.todayStudyTime);
+          setTotalTimeStr(data.result.totalStudyTime);
+          setGoalTimeStr(data.result.goalStudyTime);
         } else {
           throw new Error("공부 시간 데이터 오류");
         }
       } catch (err) {
         console.error(err);
-        setTodayTime(0);
-        setGoalHours(0);
-        setGoalMinutes(0);
-        setTotalTime(0);
+        setTodayTimeStr("");
+        setTotalTimeStr("");
+        setGoalTimeStr("");
       }
     }
 
     fetchStudyTime();
   }, [API]);
+
 
   const achievedDates = ["2025-06-22", "2025-06-18"];
 
@@ -108,13 +100,17 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
                 <span className="text-sm font-medium">오늘 공부 시간</span>
                 <span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span>
               </div>
-              <button className="text-sm text-blue-400 hover:underline cursor-pointer" onClick={openGoalModal}>
+              <button
+                className="text-sm text-blue-400 hover:underline cursor-pointer"
+                onClick={() => setGoalModalOpen(true)}
+              >
                 목표 설정
               </button>
             </div>
             <div className="mt-2 text-xl font-bold">
-              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {displayHours}시간 {displayMinutes}분
+              {todayTimeStr || "0시간0분"} / {goalTimeStr || "0시간0분"}
             </div>
+            {/* progress bar 는 필요 없으시면 아래 부분 삭제 */}
             <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
               <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
             </div>
