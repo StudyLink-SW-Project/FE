@@ -9,39 +9,39 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
   const [date, setDate] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
-  // 모달 오픈 시 만료된 D-day 자동 삭제 및 정렬
+  // 모달 열 때 만료된 D-day 자동 삭제 및 날짜 순 정렬
   useEffect(() => {
     if (!isOpen) return;
     const today = new Date();
     const filtered = dDays
-      .filter(d => (new Date(d.date) - today) / (1000 * 60 * 60 * 24) >= 0)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .filter(d => (new Date(d.day) - today) >= 0)
+      .sort((a, b) => new Date(a.day) - new Date(b.day));
     setDDays(filtered);
   }, [isOpen]);
 
-  // 항목 삭제
+  // 항목 삭제: DELETE /d-day/{id}
   const handleDelete = async (idx) => {
     const target = dDays[idx];
     try {
-      const res = await fetch(`${API}dday?id=${target.id}`, {
+      const res = await fetch(`${API}d-day/${target.id}`, {
         method: "DELETE",
         credentials: "include",
       });
       if (!res.ok) throw new Error("D-day 삭제 API 실패");
-      // 로컬 상태에서 제거
+      // 성공 시 로컬에서도 제거
       setDDays(dDays.filter((_, i) => i !== idx));
     } catch (err) {
       console.error(err);
-      // 에러 시에도 UI 반영
+      // 실패해도 UI 반영
       setDDays(dDays.filter((_, i) => i !== idx));
     }
   };
 
-  // 항목 수정 모드 진입
+  // 수정 모드 진입
   const handleEdit = (idx) => {
     setEditIndex(idx);
     setName(dDays[idx].name);
-    setDate(dDays[idx].date);
+    setDate(dDays[idx].day);
   };
 
   // 추가 또는 수정 저장
@@ -51,10 +51,11 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
 
     try {
       let updatedList;
+
       if (editIndex !== null) {
-        // 수정 API 호출
+        // 수정: PUT /d-day
         const target = dDays[editIndex];
-        const res = await fetch(`${API}dday`, {
+        const res = await fetch(`${API}d-day`, {
           method: "PUT",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -62,13 +63,13 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         });
         if (!res.ok) throw new Error("D-day 수정 API 실패");
 
-        // 로컬 상태 업데이트
+        // 로컬 상태 갱신
         updatedList = dDays.map((d, i) =>
-          i === editIndex ? { ...d, name, date } : d
+          i === editIndex ? { ...d, name, day: date } : d
         );
       } else {
-        // 추가 API 호출
-        const res = await fetch(`${API}day`, {
+        // 추가: POST /d-day
+        const res = await fetch(`${API}d-day`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -76,16 +77,14 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         });
         if (!res.ok) throw new Error("D-day 추가 API 실패");
         const data = await res.json();
-        // 서버가 반환한 id 사용
-        const newItem = { id: data.result.id, name, date };
-
-        updatedList = [...dDays, newItem];
+        // 서버 응답의 id 반영
+        updatedList = [...dDays, { id: data.result.id, name, day: date }];
       }
 
-      // 만료된 건 필터링 및 날짜 순 정렬
+      // 만료된 건 필터링 & 날짜 순 정렬
       const filtered = updatedList
-        .filter(d => (new Date(d.date) - today) / (1000 * 60 * 60 * 24) >= 0)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+        .filter(d => (new Date(d.day) - today) >= 0)
+        .sort((a, b) => new Date(a.day) - new Date(b.day));
 
       setDDays(filtered);
       setName("");
@@ -93,7 +92,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
       setEditIndex(null);
     } catch (err) {
       console.error(err);
-      // 에러 발생해도 입력 초기화 및 모달 유지
+      // 에러 시에도 입력 초기화
       setName("");
       setDate("");
       setEditIndex(null);
@@ -105,16 +104,12 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
     <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
         <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">D-Day 설정</h3>
+
         <ul className="mb-4 space-y-2 max-h-60 overflow-auto">
           {dDays.map((d, idx) => (
-            <li
-              key={d.id}
-              className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded"
-            >
+            <li key={d.id} className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
               <span className="flex-1 font-medium">{d.name}</span>
-              <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
-                {d.date}
-              </span>
+              <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">{d.day}</span>
               <div className="flex items-center space-x-2">
                 <button onClick={() => handleEdit(idx)} aria-label="수정">
                   <Edit2 className="w-5 h-5 text-green-600 hover:text-green-400 cursor-pointer" />
@@ -126,6 +121,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
             </li>
           ))}
         </ul>
+
         <div className="flex space-x-2 mb-4">
           <input
             type="text"
@@ -141,6 +137,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
             onChange={e => setDate(e.target.value)}
           />
         </div>
+
         <div className="flex justify-end space-x-2">
           <button
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded cursor-pointer"
