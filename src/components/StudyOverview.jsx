@@ -62,7 +62,10 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   useEffect(() => {
     async function fetchStudyTime() {
       try {
-        const res = await fetch(`${API}study/time`);
+        const res = await fetch(`${API}study/time`, {
+        method: "POST",
+        credentials: "include",
+      });
         if (!res.ok) throw new Error("공부 시간 API 호출 실패");
         const data = await res.json();
 
