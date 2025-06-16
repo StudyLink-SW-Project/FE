@@ -92,23 +92,35 @@ export default function StudyRoomEntry() {
     }
   };
 
-  const handleConfirmReset = () => {
-    if (resetOption === "stopwatch") {
-      // TODO: 공부 기록 저장 로직 추가
-      console.log("옵션1: 스톱워치 초기화 (기록 저장)");
-    } else {
-      console.log("옵션2: 공부기록까지 초기화");
+  const handleConfirmReset = async () => {
+    try {
+      if (resetOption === "stopwatch") {
+        // 1) 기록된 시간을 분 단위로 환산 (초 단위는 버림)
+        const minutes = Math.floor(elapsedSeconds / 60);
+
+        // 2) 서버로 전송
+        const res = await fetch(`${API}study/${minutes}`, {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("공부 시간 기록 전송 실패");
+
+        console.log(`서버에 ${minutes}분 기록 전송 완료`);
+      } else {
+        // 전체 초기화 옵션인 경우, 필요 API가 있다면 여기에 추가
+        console.log("옵션2: 공부기록까지 초기화");
+      }
+
+      // 3) 타이머 초기화 및 모달 닫기
+      setElapsedSeconds(0);
+      setShowModal(false);
+
+    } catch (err) {
+      console.error(err);
+      alert("기록 전송 중 오류가 발생했습니다.");
     }
-    setElapsedSeconds(0);
-    setShowModal(false);
   };
-
-  const handleCloseGoalModal = () => {
-    setShowGoalModal(false);
-    // 추가 동작 예: 기록 저장 후 초기화
-    setElapsedSeconds(0);
-  };
-
+  
   return (
     <div className="h-screen bg-[#0f172a]">
       {/* 헤더 */}

@@ -73,14 +73,14 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
         </div>
         <div className="flex justify-end space-x-2">
           <button
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-500"
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-500 cursor-pointer"
             onClick={onClose}
             disabled={isSaving}
           >
             취소
           </button>
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
             onClick={handleSave}
             disabled={isSaving}
           >
