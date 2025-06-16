@@ -111,21 +111,6 @@ export default function StudyRoom() {
     setShowCreateModal(false);
   };
 
-  // 오늘 공부한 시간 조회
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await fetch(`${API}study/time/today`);
-        //if (!resp.ok) throw new Error(`오늘 공부 시간 조회 실패 (${resp.status})`);
-        const data = await resp.json();
-        setTodayTime(data.minutes || 50);
-      } catch (err) {
-        console.error(err);
-        toast.error(err.message);
-      }
-    })();
-  }, [API]);
-
   // 목표 시간 변경 핸들러
   const handleGoalChange = (h, m) => {   
     setGoalHours(h);
