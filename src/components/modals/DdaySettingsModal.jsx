@@ -81,7 +81,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays }) 
         // 수정: PUT /d-day
         const target = dDays[editIndex];
         const res = await fetch(`${API}day/${target.id}`, {
-          method: "PUT",
+          method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: target.id, name, day: date }),
