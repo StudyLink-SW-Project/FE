@@ -192,13 +192,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         goalHours={displayHours}
         goalMinutes={displayMinutes}
         onClose={closeGoalModal}
-        onSave={(newHours, newMinutes) => {
-          // 부모 상태 바로 업데이트
-          setGoalHours(newHours);
-          setGoalMinutes(newMinutes);
-          // 필요하면 API로부터 재조회도 가능합니다.
-          onGoalChange(newHours, newMinutes);
-        }}
+        onSave={onGoalChange}
       />
       <DdaySettingsModal
         isOpen={isDdayModalOpen}
