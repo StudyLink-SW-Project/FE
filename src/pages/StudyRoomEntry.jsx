@@ -50,7 +50,7 @@ export default function StudyRoomEntry() {
 
   // 목표 도달 체크
   useEffect(() => {
-    if (goalSeconds != null && elapsedSeconds >= goalSeconds) {
+    if (goalSeconds != 0 && elapsedSeconds >= goalSeconds) {
       setIsRunning(false);
       setShowGoalModal(true);
     }
