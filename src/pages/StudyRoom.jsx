@@ -1,4 +1,4 @@
-// src/pages/StudyRoom.jsx - 완전한 테마 적용
+// src/pages/StudyRoom.jsx - 레이아웃 수정
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -15,7 +15,7 @@ export default function StudyRoom() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
 
-  const [todayTime, setTodayTime] = useState(50);
+  const [todayTime] = useState(50);
   const [goalHours, setGoalHours] = useState(() => Number(localStorage.getItem('goalHours') ?? 2));
   const [goalMinutes, setGoalMinutes] = useState(() => Number(localStorage.getItem('goalMinutes') ?? 0));
   const [resolution, setResolution] = useState(() => localStorage.getItem('resolution') || '');
@@ -82,7 +82,6 @@ export default function StudyRoom() {
     fetchRooms();
   }, [fetchRooms]);
 
-
   // 모달에서 "입장" 눌렀을 때
   const handleEnter = (roomId, token, password, img, goalSeconds) => {
     // token, participantName 은 필요하시면 state로 넘기세요
@@ -129,61 +128,126 @@ export default function StudyRoom() {
       <Header />
       
       <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
-        <div className="flex flex-row sm:flex-row justify-between items-start mb-6 gap-4">
-          <div className="flex flex-row items-center">
-            <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
-              스터디 룸
-            </h1>
-            <button
-              onClick={fetchRooms}
-              className="px-2 py-2 z-99 ml-3 mt-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
-            >
-              <RotateCw />
-            </button>
-          </div>
-
-          <div className="w-2/3 -mt-2">
-            <StudyOverview
-              todayTime={todayTime}
-              goalHours={goalHours}
-              goalMinutes={goalMinutes}
-              resolution={resolution}
-              onResolutionChange={setResolution}
-              onGoalChange={handleGoalChange}
-            />
-          </div>
+        
+        {/* 헤더 영역 */}
+        <div className="mb-4 sm:mb-6">
           
+          {/* 모바일/태블릿: 세로 배치 */}
+          <div className="block lg:hidden">
+            {/* 제목 + 새로고침 */}
+            <div className="flex flex-row items-center gap-3 mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex-shrink-0">
+                스터디 룸
+              </h1>
+              <button
+                onClick={fetchRooms}
+                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                title="목록 새로고침"
+              >
+                <RotateCw className="w-5 h-5" />
+              </button>
+            </div>
 
-          <div
-            className={`
-              flex items-center w-full max-w-xs space-x-3 mt-3 self-start
-              ${rooms.length > 0 ? 'visible' : 'invisible pointer-events-none'}
-            `}
-          >
-            <PlusCircle
-              className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
-                isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
-              }`}
-              onClick={() => setShowCreateModal(true)}
-            />
-            <input
-              type="text"
-              placeholder="검색"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              className={`
-                flex-1 pl-4 py-2 rounded-full text-sm
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-                ${isDark
-                  ? 'bg-white text-black placeholder-gray-400'
-                  : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
-              `}
-            />
+                        {/* 검색 영역 - 모바일/태블릿 */}
+            {rooms.length > 0 && (
+              <div className="flex items-center gap-3 w-full sm:max-w-sm">
+                <PlusCircle
+                  className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
+                    isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                  }`}
+                  onClick={() => setShowCreateModal(true)}
+                />
+                <input
+                  type="text"
+                  placeholder="검색"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className={`
+                    flex-1 sm:w-40 pl-3 sm:pl-4 py-2 rounded-full text-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${isDark
+                      ? 'bg-white text-black placeholder-gray-400'
+                      : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
+                  `}
+                />
+              </div>
+            )}
+
+            {/* StudyOverview - 모바일/태블릿 */}
+            <div className="w-full mb-4">
+              <StudyOverview
+                todayTime={todayTime}
+                goalHours={goalHours}
+                goalMinutes={goalMinutes}
+                resolution={resolution}
+                onResolutionChange={setResolution}
+                onGoalChange={handleGoalChange}
+              />
+            </div>
+
+
           </div>
 
+          {/* PC: 기존 가로 배치 */}
+          <div className="hidden lg:flex justify-between items-start gap-4">
+            
+            {/* 왼쪽: 제목 + 새로고침 */}
+            <div className="flex flex-row items-center gap-3">
+              <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
+                스터디 룸
+              </h1>
+              <button
+                onClick={fetchRooms}
+                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                title="목록 새로고침"
+              >
+                <RotateCw className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* 가운데: StudyOverview - PC */}
+            <div className="w-2/3 -mt-2">
+              <StudyOverview
+                todayTime={todayTime}
+                goalHours={goalHours}
+                goalMinutes={goalMinutes}
+                resolution={resolution}
+                onResolutionChange={setResolution}
+                onGoalChange={handleGoalChange}
+              />
+            </div>
+
+            {/* 오른쪽: 검색 영역 - PC */}
+            {rooms.length > 0 && (
+              <div className="flex items-center gap-3 w-full max-w-xs mt-3 self-start">
+                <PlusCircle
+                  className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
+                    isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                  }`}
+                  onClick={() => setShowCreateModal(true)}
+                />
+                <input
+                  type="text"
+                  placeholder="검색"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className={`
+                    flex-1 pl-4 py-2 rounded-full text-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${isDark
+                      ? 'bg-white text-black placeholder-gray-400'
+                      : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
+                  `}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 컨텐츠 영역 */}
