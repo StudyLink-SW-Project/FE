@@ -1,4 +1,4 @@
-// src/pages/StudyRoom.jsx - 레이아웃 수정
+// src/pages/StudyRoom.jsx - 고정된 레이아웃으로 수정
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -129,7 +129,7 @@ export default function StudyRoom() {
       
       <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
         
-        {/* 헤더 영역 */}
+        {/* 헤더 영역 - 고정된 높이 */}
         <div className="mb-4 sm:mb-6">
           
           {/* 모바일/태블릿: 세로 배치 */}
@@ -148,33 +148,38 @@ export default function StudyRoom() {
               </button>
             </div>
 
-                        {/* 검색 영역 - 모바일/태블릿 */}
-            {rooms.length > 0 && (
-              <div className="flex items-center gap-3 w-full sm:max-w-sm">
-                <PlusCircle
-                  className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
-                    isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
-                  }`}
-                  onClick={() => setShowCreateModal(true)}
-                />
-                <input
-                  type="text"
-                  placeholder="검색"
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className={`
-                    flex-1 sm:w-40 pl-3 sm:pl-4 py-2 rounded-full text-sm
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    ${isDark
-                      ? 'bg-white text-black placeholder-gray-400'
-                      : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
-                  `}
-                />
-              </div>
-            )}
+            {/* 검색 영역 - 모바일/태블릿 (고정된 높이 공간) */}
+            <div className="h-12 mb-4 flex items-center">
+              {rooms.length > 0 ? (
+                <div className="flex items-center gap-3 w-full sm:max-w-sm">
+                  <PlusCircle
+                    className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
+                      isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                    }`}
+                    onClick={() => setShowCreateModal(true)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="검색"
+                    value={search}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className={`
+                      flex-1 sm:w-40 pl-3 sm:pl-4 py-2 rounded-full text-sm
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
+                      ${isDark
+                        ? 'bg-white text-black placeholder-gray-400'
+                        : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
+                    `}
+                  />
+                </div>
+              ) : (
+                // 빈 공간 유지 (높이는 고정)
+                <div className="w-full h-full"></div>
+              )}
+            </div>
 
             {/* StudyOverview - 모바일/태블릿 */}
             <div className="w-full mb-4">
@@ -187,8 +192,6 @@ export default function StudyRoom() {
                 onGoalChange={handleGoalChange}
               />
             </div>
-
-
           </div>
 
           {/* PC: 기존 가로 배치 */}
@@ -220,33 +223,38 @@ export default function StudyRoom() {
               />
             </div>
 
-            {/* 오른쪽: 검색 영역 - PC */}
-            {rooms.length > 0 && (
-              <div className="flex items-center gap-3 w-full max-w-xs mt-3 self-start">
-                <PlusCircle
-                  className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
-                    isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
-                  }`}
-                  onClick={() => setShowCreateModal(true)}
-                />
-                <input
-                  type="text"
-                  placeholder="검색"
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className={`
-                    flex-1 pl-4 py-2 rounded-full text-sm
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    ${isDark
-                      ? 'bg-white text-black placeholder-gray-400'
-                      : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
-                  `}
-                />
-              </div>
-            )}
+            {/* 오른쪽: 검색 영역 - PC (고정된 높이 공간) */}
+            <div className="w-full max-w-xs mt-3 self-start h-12 flex items-center">
+              {rooms.length > 0 ? (
+                <div className="flex items-center gap-3 w-full">
+                  <PlusCircle
+                    className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
+                      isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                    }`}
+                    onClick={() => setShowCreateModal(true)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="검색"
+                    value={search}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className={`
+                      flex-1 pl-4 py-2 rounded-full text-sm
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
+                      ${isDark
+                        ? 'bg-white text-black placeholder-gray-400'
+                        : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}
+                    `}
+                  />
+                </div>
+              ) : (
+                // 빈 공간 유지 (높이는 고정)
+                <div className="w-full h-full"></div>
+              )}
+            </div>
           </div>
         </div>
 
