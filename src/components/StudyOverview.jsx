@@ -200,9 +200,15 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
               </div>
               {nearest ? (
                 <div className="flex items-center mt-2">
-                  <span className="text-xl font-bold mr-1">D-{Math.ceil(nearest.diff)}</span>
+                  <span className="text-lg font-bold mr-1">
+                    D-{Math.ceil(nearest.diff)}
+                  </span>
                   <span className="inline-block mx-2 w-px h-5 bg-gray-300 dark:bg-gray-600" />
-                  <span className="text-xl font-bold ml-1">{nearest.name}</span>
+                  <span className="text-lg font-bold ml-1">
+                    {nearest.name.length > 5
+                      ? `${nearest.name.slice(0, 5)}...`
+                      : nearest.name}
+                  </span>
                 </div>
               ) : (
                 <span className="mt-1 text-xl font-bold block">---</span>

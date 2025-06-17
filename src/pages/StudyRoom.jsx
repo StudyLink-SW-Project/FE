@@ -1,12 +1,12 @@
 // src/pages/StudyRoom.jsx - 완전한 테마 적용
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import StudyRoomCard from "../components/cards/StudyRoomCard";
 import CreateRoomModal from "../components/modals/CreateRoomModal";
 import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
-import { PlusCircle, Users } from "lucide-react";
+import { PlusCircle, RotateCw, Users } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTheme } from "../contexts/ThemeContext"; 
 import { StudyOverview } from "../components/StudyOverview";
@@ -47,38 +47,40 @@ export default function StudyRoom() {
     return imageMap[String(imageNumber)] || '/bg/bg-1.jpg'; // 기본값
   };
 
-  // ✅ 마운트 시 방 목록 조회 - 백엔드 응답에 맞춰 이미지 매핑
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await fetch(`${API}room/rooms`);
-        if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
-        const data = await resp.json();
-        console.log("room/rooms 응답:", data);
-        
-        const roomsArray = data.rooms || data.result?.rooms; 
-        if (!Array.isArray(roomsArray)) {
-          throw new Error("rooms 배열을 찾을 수 없습니다");
-        }
-        
-        const roomsDto = data.result?.rooms ?? [];
-        setRooms(
-          roomsDto.map((r) => ({
-            participants: r.participantsCounts,
-            maxParticipants: r.maxParticipants || 4,
-            title: r.roomName,
-            subtitle: "", 
-            imageSrc: getImagePath(r.roomImage), 
-            isLocked: r.password && r.password.trim() !== "", 
-            password: r.password || "", 
-          }))
-        );
-      } catch (err) {
-        console.error(err);
-        toast.error(err.message);
+  // 1) 방 목록 조회 로직을 별도 함수로 분리
+  const fetchRooms = useCallback(async () => {
+    try {
+      const resp = await fetch(`${API}room/rooms`);
+      if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
+      const data = await resp.json();
+      console.log("room/rooms 응답:", data);
+
+      const roomsArray = data.rooms || data.result?.rooms;
+      if (!Array.isArray(roomsArray)) {
+        throw new Error("rooms 배열을 찾을 수 없습니다");
       }
-    })();
+
+      setRooms(
+        roomsArray.map((r) => ({
+          participants: r.participantsCounts,
+          maxParticipants: r.maxParticipants || 4,
+          title: r.roomName,
+          subtitle: "",
+          imageSrc: getImagePath(r.roomImage),
+          isLocked: !!(r.password && r.password.trim()),
+          password: r.password || "",
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
   }, [API]);
+
+  // 2) 마운트 시 자동 호출
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
 
 
   // 모달에서 "입장" 눌렀을 때
@@ -128,11 +130,19 @@ export default function StudyRoom() {
       
       <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
         <div className="flex flex-row sm:flex-row justify-between items-start mb-6 gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
-            스터디 룸
-          </h1>
+          <div className="flex flex-row items-center">
+            <h1 className="text-3xl md:text-4xl font-bold flex-shrink-0">
+              스터디 룸
+            </h1>
+            <button
+              onClick={fetchRooms}
+              className="px-2 py-2 z-99 ml-3 mt-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
+            >
+              <RotateCw />
+            </button>
+          </div>
 
-          <div className="flex-shrink-0 w-3/4 -mt-4">
+          <div className="w-2/3 -mt-2">
             <StudyOverview
               todayTime={todayTime}
               goalHours={goalHours}
@@ -142,6 +152,7 @@ export default function StudyRoom() {
               onGoalChange={handleGoalChange}
             />
           </div>
+          
 
           <div
             className={`

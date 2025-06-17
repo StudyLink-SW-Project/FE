@@ -48,7 +48,7 @@ export default function StudyRoomEntry() {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setElapsedSeconds(prev => prev + 60);
+        setElapsedSeconds(prev => prev + 60); // 테스트 용으로 60. 나중에 1로 바꾸기
       }, 1000);
     }
     return () => clearInterval(interval);
