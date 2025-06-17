@@ -4,16 +4,59 @@ import { useTheme } from "../../contexts/ThemeContext";
 
 export default function ResolutionSettingsModal({ isOpen, resolution, onSave, onClose }) {
   const [text, setText] = useState(resolution);
+  const API = import.meta.env.VITE_APP_SERVER;
 
   const { isDark } = useTheme();
 
   useEffect(() => {
-    if (isOpen) setText(resolution);
+    if (isOpen) {
+      // 열릴 때마다 서버에서 최신 각오를 가져옵니다.
+      async function fetchResolution() {
+        try {
+          const res = await fetch(`${API}user/resolve`, {
+            method: "GET",
+            credentials: "include",
+          });
+          if (!res.ok) throw new Error("각오 조회 API 실패");
+          const data = await res.json();
+          if (data.isSuccess && data.result && typeof data.result.resolve === "string") {
+            setText(data.result.resolve);
+          } else {
+            console.error("각오 데이터 형식 오류", data);
+            setText(resolution);
+          }
+        } catch (err) {
+          console.error(err);
+          setText(resolution);
+        }
+      }
+      fetchResolution();
+    }
   }, [isOpen, resolution]);
 
-  const handleSave = () => {
-    onSave(text.slice(0, 30));
-    onClose();
+  const handleSave = async () => {
+    const payload = { resolve: text.slice(0, 30) };
+    try {
+      const res = await fetch(`${API}user/resolve`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("각오 저장 API 실패");
+      const data = await res.json();
+      if (data.isSuccess) {
+        // 상위에도 변경사항 알림
+        onSave(payload.resolve);
+      } else {
+        console.error("각오 저장 응답 오류:", data);
+      }
+    } catch (err) {
+      console.error(err);
+      // 실패 시에도 onSave 혹은 사용자 알림 로직 추가 가능
+    } finally {
+      onClose();
+    }
   };
 
   if (!isOpen) return null;
