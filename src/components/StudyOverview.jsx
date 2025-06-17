@@ -10,11 +10,11 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const { isDark } = useTheme();
   
   // 공부시간 상태 (분 단위)
-  const [todayTime, setTodayTime] = useState(0);
   const [totalTime, setTotalTime] = useState(null);
+  const [displayTodayTime, setDisplayTodayTime] = useState(0);
 
   // 전역 목표 시간 가져오기/설정
-  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes } = useStudy();
+  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes, todayTime } = useStudy();
 
   // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;
@@ -24,6 +24,14 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
   const [isDdayModalOpen, setDdayModalOpen] = useState(false);
   const [isResolutionModalOpen, setResolutionModalOpen] = useState(false);
+  const [isCalendarOpen, setCalendarOpen] = useState(false);
+
+  const openGoalModal = () => setGoalModalOpen(true);
+  const closeGoalModal = () => setGoalModalOpen(false);
+  const openDdayModal = () => setDdayModalOpen(true);
+  const closeDdayModal = () => setDdayModalOpen(false);
+  const closeResolutionModal = () => setResolutionModalOpen(false);
+  const closeCalendar = () => setCalendarOpen(false);
 
   // D-day 상태
   const [dDays, setDDays] = useState([]);
@@ -90,11 +98,13 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
         if (data.isSuccess && data.result) {
           const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
+
+          // 오늘 공부 시간도 파싱해서 Context에 저장
           const [tH, tM] = parseTime(todayStudyTime);
+          setDisplayTodayTime(tH * 60 + tM);
           const [toH, toM] = parseTime(totalStudyTime);
           const [gH, gM] = parseTime(goalStudyTime);
 
-          setTodayTime(tH * 60 + tM);
           setTotalTime(toH * 60 + toM);
           setGoalHours(gH);
           setGoalMinutes(gM);
@@ -103,7 +113,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         }
       } catch (err) {
         console.error(err);
-        setTodayTime(0);
         setTotalTime(0);
         setGoalHours(0);
         setGoalMinutes(0);
@@ -163,7 +172,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           
           <div>
             <div className="text-sm sm:text-base lg:text-xl font-bold mb-1 lg:mb-2">
-              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {goalHours}시간 {goalMinutes}분
+              {Math.floor(displayTodayTime / 60)}시간 {displayTodayTime % 60}분 / {goalHours}시간 {goalMinutes}분
             </div>
             
             {/* 진행률 바 */}

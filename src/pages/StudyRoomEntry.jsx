@@ -22,7 +22,7 @@ export default function StudyRoomEntry() {
   const password    = state?.password;
   const img         = state?.img;
   // Context에서 목표 시간(시간/분)을 가져와 초 단위로 변환
-  const { goalHours, goalMinutes, todayTime: ctxTodayMinutes } = useStudy();
+  const { goalHours, goalMinutes, todayTime: ctxTodayMinutes, setTodayTime } = useStudy();
   const goalSeconds = goalHours * 3600 + goalMinutes * 60;
 
   const navigate    = useNavigate();
@@ -47,10 +47,10 @@ export default function StudyRoomEntry() {
   const [resetOption,     setResetOption]   = useState("stopwatch"); // "stopwatch" | "all"
 
   const formatStudyTime = (minutes) => {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${h}시간 ${m}분`;
-};
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}시간 ${m}분`;
+  };
 
   // ⏱ 타이머 시작/정지 로직
   useEffect(() => {
@@ -126,6 +126,7 @@ export default function StudyRoomEntry() {
         // 3) 로컬 UI에 누적 반영 (공부기록 저장 후 초기화 옵션일 때만)     
         if (resetOption === "stopwatch") {
           setBaseTodayMinutes(prev => prev + minutes);
+          setTodayTime(prev => prev + minutes);
         }
         console.log(`서버에 ${minutes}분 기록 전송 완료`);
       } else {
@@ -153,22 +154,22 @@ export default function StudyRoomEntry() {
     <div className="h-screen bg-[#0f172a]">
       {/* 헤더 */}
       <div>
-        <div className="hidden sm:flex flex justify space-x-3 items-center h-16 ml-4">
-          <img 
-            src="/logo_white.png" 
-            alt="Study Link Logo" 
-            className="h-20 mt-5" 
-          />
-          <h1 className="text-white text-4xl flex justify-center items-center mt-[10px]">
-            {roomName}
-          </h1>
-          {/* <h1 className="text-gray-500 text-3xl flex justify-center items-center mt-[17px]">
-            |
-          </h1> */}
+        <div className="hidden sm:flex w-full items-center h-16 relative">
+          {/* 1. 로고 & 방 이름: 왼쪽 끝으로 */}
+          <div className="flex items-center space-x-4 mt-[14px] ml-4">
+            <img 
+              src="/logo_white.png" 
+              alt="Study Link Logo" 
+              className="h-20" 
+            />
+            <h1 className="text-white text-4xl">
+              {roomName}
+            </h1>
+          </div>
 
-          {/* 타이머 영역 또는 시작 버튼 */}
+          {/* 2. 타이머 영역: 컨테이너 정가운데 */}
           <Tooltip.Provider>
-            <div className="flex items-center text-white text-4xl mt-5 ml-150">
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center text-white text-4xl mt-4">
               {!showTimerSection ? (
                 <button
                   onClick={() => setShowTimerSection(true)}
@@ -250,8 +251,8 @@ export default function StudyRoomEntry() {
           video={true}
           onConnected={handleConnected}
           onDisconnected={() => {
-            navigate('/study-room', { replace: true });
             handleConfirmReset();
+            navigate('/study-room', { replace: true });
           }}
           onError={err => console.error("LiveKit 오류:", err)}
         >
@@ -311,7 +312,10 @@ export default function StudyRoomEntry() {
             </div>
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false); 
+                  setIsRunning(true);
+                }}
                 className="px-4 py-2 bg-gray-200 rounded cursor-pointer"
               >
                 취소

@@ -47,7 +47,7 @@ export function StudyProvider({ children }) {
   }, [API]);
 
   return (
-    <StudyContext.Provider value={{ goalHours, goalMinutes, setGoalHours, setGoalMinutes, todayTime, totalTime, }}>
+    <StudyContext.Provider value={{ goalHours, goalMinutes, setGoalHours, setGoalMinutes, setTodayTime, todayTime, totalTime, }}>
       {children}
     </StudyContext.Provider>
   );
