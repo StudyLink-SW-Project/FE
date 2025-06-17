@@ -160,10 +160,10 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
             ${isDark
               ? '[&::-webkit-calendar-picker-indicator]:invert'
               : '[&::-webkit-calendar-picker-indicator]:invert-0'
-            } [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+            } [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"`}
             value={date}
             min={todayStr}
-            onChange={e => setDate(e.target.value)}`}
+            onChange={e => setDate(e.target.value)}
           />
         </div>
 
