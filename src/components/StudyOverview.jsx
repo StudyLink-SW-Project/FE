@@ -3,7 +3,7 @@ import GoalSettingsModal from "./modals/GoalSettingsModal";
 import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
 import GoalCalendar from "./GoalCalendar";
-import { useGoal } from "../contexts/GoalContext";
+import { useStudy } from "../contexts/StudyContext";
 import { useTheme } from "../contexts/ThemeContext";
 
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
@@ -16,7 +16,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const [totalTime, setTotalTime] = useState(null);
 
   // 전역 목표 시간 가져오기/설정
-  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes } = useGoal();
+  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes } = useStudy();
 
   // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;

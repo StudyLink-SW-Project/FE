@@ -13,13 +13,13 @@ import SignupPage from "./pages/SignupPage";
 import StudyRoomEntry from "./pages/StudyRoomEntry";
 import QuestionDetail from "./pages/QuestionDetail";
 import OAuth2Callback from "./pages/OAuth2Callback";
-import { GoalProvider } from './contexts/GoalContext';
+import { StudyProvider } from './contexts/StudyContext';
 
 export default function App() {
   return (
     <>
       <ToastContainer position="top-center" />
-      <GoalProvider>
+      <StudyProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/study-room" element={
@@ -51,7 +51,7 @@ export default function App() {
           <Route path="/login/oauth2/code/:provider" element={<OAuth2Callback />} />      
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </GoalProvider>
+      </StudyProvider>
     </>
   );
 }

@@ -8,7 +8,7 @@ import '@livekit/components-styles';
 import './StudyRoomCustom.css';
 import { PauseCircle, PlayCircle, RefreshCw } from "lucide-react";
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { useGoal } from '../contexts/GoalContext';
+import { useStudy } from '../contexts/StudyContext';
 
 // LiveKit 서버 URL
 const LIVEKIT_URL = "wss://api.studylink.store:443";
@@ -22,7 +22,7 @@ export default function StudyRoomEntry() {
   const password    = state?.password;
   const img         = state?.img;
   // Context에서 목표 시간(시간/분)을 가져와 초 단위로 변환
-  const { goalHours, goalMinutes } = useGoal();
+  const { goalHours, goalMinutes, todayTime } = useStudy();
   const goalSeconds = goalHours * 3600 + goalMinutes * 60;
 
   const navigate    = useNavigate();
@@ -37,12 +37,18 @@ export default function StudyRoomEntry() {
   const [showModal,       setShowModal]     = useState(false);
   const [resetOption,     setResetOption]   = useState("stopwatch"); // "stopwatch" | "all"
 
+  const formatStudyTime = (minutes) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}시간 ${m}분`;
+};
+
   // ⏱ 타이머 시작/정지 로직
   useEffect(() => {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setElapsedSeconds(prev => prev + 1);
+        setElapsedSeconds(prev => prev + 60);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -201,11 +207,11 @@ export default function StudyRoomEntry() {
               {/* 오늘 공부 시간, 목표 시간 표기 영역 */}
               <div className="text-xs ml-10 mt-3">
                 <h1 className=" ">오늘 공부 시간</h1>
-                <h1 className="ml-5">00:00:00</h1>
+                <h1 className="ml-3 mt-1">{formatStudyTime(todayTime)}</h1>
               </div>
               <div className="text-xs ml-5 mt-3">
                 <h1 className=" ">목표 공부 시간</h1>
-                <h1 className="ml-5">{formatTime(goalSeconds)}</h1>
+                <h1 className="ml-3 mt-1">{formatStudyTime(goalSeconds / 60)}</h1>
               </div>
             </div>
           </Tooltip.Provider>
@@ -230,6 +236,7 @@ export default function StudyRoomEntry() {
           onConnected={handleConnected}
           onDisconnected={() => {
             navigate('/study-room', { replace: true });
+            handleConfirmReset();
           }}
           onError={err => console.error("LiveKit 오류:", err)}
         >
