@@ -12,11 +12,11 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const { isDark } = useTheme();
   
   // 공부시간 상태 (분 단위)
-  const [todayTime, setTodayTime] = useState(0);
   const [totalTime, setTotalTime] = useState(null);
+  const [displayTodayTime, setDisplayTodayTime] = useState(0);
 
   // 전역 목표 시간 가져오기/설정
-  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes } = useStudy();
+  const { goalHours, goalMinutes, setGoalHours, setGoalMinutes, todayTime } = useStudy();
 
   // 목표 진행률 계산
   const totalGoal = goalHours * 60 + goalMinutes;
@@ -36,7 +36,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const closeGoalModal = () => setGoalModalOpen(false);
   const openDdayModal = () => setDdayModalOpen(true);
   const closeDdayModal = () => setDdayModalOpen(false);
-  const openResolutionModal = () => setResolutionModalOpen(true);
   const closeResolutionModal = () => setResolutionModalOpen(false);
   const closeCalendar = () => setCalendarOpen(false);
 
@@ -106,11 +105,13 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
         if (data.isSuccess && data.result) {
           const { todayStudyTime, totalStudyTime, goalStudyTime } = data.result;
+
+          // 오늘 공부 시간도 파싱해서 Context에 저장
           const [tH, tM] = parseTime(todayStudyTime);
+          setDisplayTodayTime(tH * 60 + tM);
           const [toH, toM] = parseTime(totalStudyTime);
           const [gH, gM] = parseTime(goalStudyTime);
 
-          setTodayTime(tH * 60 + tM);
           setTotalTime(toH * 60 + toM);
           setGoalHours(gH);
           setGoalMinutes(gM);
@@ -119,7 +120,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         }
       } catch (err) {
         console.error(err);
-        setTodayTime(0);
         setTotalTime(0);
         setGoalHours(0);
         setGoalMinutes(0);
@@ -178,7 +178,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
               </button>
             </div>
             <div className="mt-2 text-xl font-bold">
-              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {displayHours}시간 {displayMinutes}분
+              {Math.floor(displayTodayTime / 60)}시간 {displayTodayTime % 60}분 / {displayHours}시간 {displayMinutes}분
             </div>
             <div className="w-full bg-gray-300 dark:bg-gray-400 rounded h-2 mt-2">
               <div className="bg-blue-500 h-2 rounded" style={{ width: `${progress}%` }} />
