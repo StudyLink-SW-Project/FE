@@ -22,7 +22,7 @@ export default function StudyRoomEntry() {
   const password    = state?.password;
   const img         = state?.img;
   // Context에서 목표 시간(시간/분)을 가져와 초 단위로 변환
-  const { goalHours, goalMinutes, todayTime } = useStudy();
+  const { goalHours, goalMinutes, todayTime: ctxTodayMinutes } = useStudy();
   const goalSeconds = goalHours * 3600 + goalMinutes * 60;
 
   const navigate    = useNavigate();
@@ -30,6 +30,15 @@ export default function StudyRoomEntry() {
   // ⏱ 타이머 상태
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isRunning,       setIsRunning]     = useState(false); // 시작 전에는 멈춰있음
+  const [showTimerSection, setShowTimerSection] = useState(false);
+
+  // ——— 오늘 공부시간 누적용 로컬 상태 (분 단위)
+  const [baseTodayMinutes, setBaseTodayMinutes] = useState(ctxTodayMinutes);
+
+  // Context.todayTime이 바뀌면 동기화
+  useEffect(() => {
+    setBaseTodayMinutes(ctxTodayMinutes);
+  }, [ctxTodayMinutes]);
 
   // 목표 달성 모달
   const [showGoalModal,    setShowGoalModal] = useState(false);
@@ -61,6 +70,9 @@ export default function StudyRoomEntry() {
       setShowGoalModal(true);
     }
   }, [elapsedSeconds, goalSeconds]);
+
+  // 화면에 표시할 오늘 공부시간 (분 단위)
+  const displayedTodayMinutes = baseTodayMinutes + Math.floor(elapsedSeconds / 60);
 
   // ⏱ 초를 시간:분:초 포맷으로 변환
   const formatTime = (seconds) => {
@@ -111,6 +123,10 @@ export default function StudyRoomEntry() {
         });
         if (!res.ok) throw new Error("공부 시간 기록 전송 실패");
 
+        // 3) 로컬 UI에 누적 반영 (공부기록 저장 후 초기화 옵션일 때만)     
+        if (resetOption === "stopwatch") {
+          setBaseTodayMinutes(prev => prev + minutes);
+        }
         console.log(`서버에 ${minutes}분 기록 전송 완료`);
       } else {
         // 전체 초기화 옵션인 경우, 필요 API가 있다면 여기에 추가
@@ -120,7 +136,7 @@ export default function StudyRoomEntry() {
       // 3) 타이머 초기화 및 모달 닫기
       setElapsedSeconds(0);
       setShowModal(false);
-
+      setIsRunning(true);
     } catch (err) {
       console.error(err);
       alert("기록 전송 중 오류가 발생했습니다.");
@@ -143,76 +159,75 @@ export default function StudyRoomEntry() {
             alt="Study Link Logo" 
             className="h-20 mt-5" 
           />
-          <h1 className="text-white text-4xl flex justify-center items-center mt-[30px]">
+          <h1 className="text-white text-4xl flex justify-center items-center mt-[10px]">
             {roomName}
           </h1>
-          <h1 className="text-gray-500 text-2xl flex justify-center items-center mt-[26px]">
+          {/* <h1 className="text-gray-500 text-3xl flex justify-center items-center mt-[17px]">
             |
-          </h1>
+          </h1> */}
 
-          {/* 공부를 시작하면 타이머 + 토글 버튼 */}
+          {/* 타이머 영역 또는 시작 버튼 */}
           <Tooltip.Provider>
-            <div className="flex items-center text-white text-4xl mt-5 ml-120">
-              
-              {/* 🔄 초기화 버튼 */}
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className="mr-4 focus:outline-none text-white text-5xl hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
-                  >
-                    <RefreshCw size={32} className="mt-2" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="top"
-                    className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50"
-                    sideOffset={5}
-                  >
-                    스톱워치 초기화
-                    <Tooltip.Arrow className="fill-gray-800" />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
+            <div className="flex items-center text-white text-4xl mt-5 ml-150">
+              {!showTimerSection ? (
+                <button
+                  onClick={() => setShowTimerSection(true)}
+                  className="px-4 py-2 text-lg bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
+                >
+                  스터디 시간 기록하기
+                </button>
+              ) : (
+                <>
+                  {/* 🔄 초기화 버튼 */}
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <button
+                        onClick={() => { setIsRunning(false); setShowModal(true); }}
+                        className="mr-4 focus:outline-none text-white text-5xl hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
+                      >
+                        <RefreshCw size={32} className="mt-2" />
+                      </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content side="top" className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50" sideOffset={5}>
+                        스톱워치 초기화
+                        <Tooltip.Arrow className="fill-gray-800" />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
 
-              {/* ⏱ 시간 표시 */}
-              {formatTime(elapsedSeconds)}
+                  {/* ⏱ 시간 표시 */}
+                  {formatTime(elapsedSeconds)}
 
-              {/* ▶️ 일시정지/재시작 버튼 */}
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    onClick={() => setIsRunning(prev => !prev)}
-                    className="ml-4 mt-2 focus:outline-none text-white hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
-                  >
-                    {isRunning
-                      ? <PauseCircle size={32} />
-                      : <PlayCircle  size={32} />
-                    }
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="top"
-                    className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50"
-                    sideOffset={5}
-                  >
-                    {isRunning ? '공부 중지' : '공부 시작'}
-                    <Tooltip.Arrow className="fill-gray-800" />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
+                  {/* ▶️ 일시정지/재시작 버튼 */}
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <button
+                        onClick={() => setIsRunning(prev => !prev)}
+                        className="ml-4 mt-2 focus:outline-none text-white hover:text-gray-300 transform hover:scale-102 transition duration-200 cursor-pointer"
+                      >
+                        {isRunning ? <PauseCircle size={32} /> : <PlayCircle size={32} />}
+                      </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content side="top" className="bg-gray-600 text-white text-sm px-3 py-2 rounded shadow z-50" sideOffset={5}>
+                        {isRunning ? '공부 중지' : '공부 시작'}
+                        <Tooltip.Arrow className="fill-gray-800" />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
 
-              {/* 오늘 공부 시간, 목표 시간 표기 영역 */}
-              <div className="text-xs ml-10 mt-3">
-                <h1 className=" ">오늘 공부 시간</h1>
-                <h1 className="ml-3 mt-1">{formatStudyTime(todayTime)}</h1>
-              </div>
-              <div className="text-xs ml-5 mt-3">
-                <h1 className=" ">목표 공부 시간</h1>
-                <h1 className="ml-3 mt-1">{formatStudyTime(goalSeconds / 60)}</h1>
-              </div>
+                  {/* 오늘 공부 시간, 목표 시간 */}
+                  <div className="text-xs ml-10 mt-3">
+                    <h1>오늘 공부 시간</h1>
+                    <h1 className="ml-3 mt-1">{formatStudyTime(displayedTodayMinutes)}</h1>
+                  </div>
+                  <div className="text-xs ml-5 mt-3">
+                    <h1>목표 공부 시간</h1>
+                    <h1 className="ml-3 mt-1">{formatStudyTime(goalSeconds / 60)}</h1>
+                  </div>
+                </>
+              )}
             </div>
           </Tooltip.Provider>
         
@@ -260,7 +275,7 @@ export default function StudyRoomEntry() {
       {/* 타이머 초기화 모달 */}
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center">
-          <div className="bg-white text-black rounded-lg p-6 w-110">
+          <div className="bg-white text-black rounded-lg p-6 w-114">
             <h2 className="text-xl font-semibold mb-4">초기화 옵션 선택</h2>
             <div className="flex flex-col space-y-3 mb-6">
               <label className="flex items-start space-x-2 cursor-pointer">
@@ -272,7 +287,7 @@ export default function StudyRoomEntry() {
                   onChange={() => setResetOption("stopwatch")}
                 />
                 <div>
-                  <span className="font-medium">스톱워치 초기화</span><br/>
+                  <span className="font-medium">공부기록 저장 후 초기화</span><br/>
                   <span className="text-xs text-gray-600">
                     스톱워치에 표기된 공부시간을 저장하고 스톱워치를 초기화합니다
                   </span>
