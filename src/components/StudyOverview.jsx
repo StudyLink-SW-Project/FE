@@ -4,10 +4,13 @@ import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
 import GoalCalendar from "./GoalCalendar";
 import { useGoal } from "../contexts/GoalContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
   const API = import.meta.env.VITE_APP_SERVER;
 
+  const { isDark } = useTheme();
+  
   // 공부시간 상태 (분 단위)
   const [todayTime, setTodayTime] = useState(0);
   const [totalTime, setTotalTime] = useState(null);
@@ -133,7 +136,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
       <div className="flex gap-4 items-stretch">
         <div className="flex flex-col gap-2 flex-1">
           {/* 오늘 공부 시간 */}
-          <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+          <div className={`rounded p-3 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
             <div className="flex justify-between items-center">
               <div>
                 <span className="text-sm font-medium">오늘 공부 시간</span>
@@ -157,7 +160,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
 
           {/* D-day & 각오 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+            <div className={`rounded p-3 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">내 D-Day</span>
                 <button
@@ -178,7 +181,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
               )}
             </div>
 
-            <div className="bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3">
+            <div className={`rounded p-3 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">내 각오</span>
                 <button
@@ -194,7 +197,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         </div>
 
         {/* 총 공부 시간 */}
-        <div className="w-1/3 -ml-2 bg-white dark:bg-[#3B3E4B] border border-gray-200 dark:border-gray-600 rounded p-3 flex flex-col items-start">
+        <div className={`w-1/3 -ml-2 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'} rounded p-3 flex flex-col items-start`}>
           <span className="text-sm font-medium">총 공부 시간</span>
           {totalTime !== null ? (
             <div className="mt-2 text-xl font-bold">
