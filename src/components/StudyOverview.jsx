@@ -173,25 +173,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div>
             <div className="text-sm sm:text-base lg:text-xl font-bold mb-1 lg:mb-2">
               {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {goalHours}시간 {goalMinutes}분
-    <div className="mx-auto w-3/5 px-4 sm:px-6 lg:px-8 py-4">
-      <div className="flex gap-4 items-stretch">
-        <div className="flex flex-col gap-2 flex-1">
-          {/* 오늘 공부 시간 */}
-          <div className={`rounded p-3 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-sm font-medium">오늘 공부 시간</span>
-                <span className="text-sm text-gray-00 font-medium opacity-50"> / 목표 공부 시간</span>
-              </div>
-              <button
-                className="text-sm text-blue-400 hover:underline cursor-pointer"
-                onClick={openGoalModal}
-              >
-                목표 설정
-              </button>
-            </div>
-            <div className="mt-2 text-xl font-bold">
-              {Math.floor(displayTodayTime / 60)}시간 {displayTodayTime % 60}분 / {displayHours}시간 {displayMinutes}분
             </div>
             
             {/* 진행률 바 */}
