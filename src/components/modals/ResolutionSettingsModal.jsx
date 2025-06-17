@@ -1,8 +1,11 @@
 // src/components/modals/ResolutionSettingsModal.jsx
 import { useState, useEffect } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function ResolutionSettingsModal({ isOpen, resolution, onSave, onClose }) {
   const [text, setText] = useState(resolution);
+
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (isOpen) setText(resolution);
@@ -16,8 +19,8 @@ export default function ResolutionSettingsModal({ isOpen, resolution, onSave, on
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm">
-        <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">내 각오 설정 (최대 30자)</h3>
+      <div className={` ${isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900 '} rounded-lg p-6 w-full max-w-sm`}>
+        <h3 className="text-lg font-medium mb-4">내 각오 설정 (최대 30자)</h3>
         <textarea
           className="w-full h-24 rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           maxLength={30}

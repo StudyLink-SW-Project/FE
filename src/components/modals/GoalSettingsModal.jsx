@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onClose, onSave }) {
   if (!isOpen) return null;
+
+  const { isDark } = useTheme();
 
   const [hours, setHours] = useState(goalHours);
   const [minutes, setMinutes] = useState(goalMinutes);
@@ -44,8 +47,8 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
 
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm">
-        <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">목표 공부 시간 설정</h3>
+      <div className={`${isDark ? 'bg-gray-800 text-white border-[#616680]' : 'bg-white text-black border-gray-200'} rounded-lg p-6 w-full max-w-sm`}>
+        <h3 className={`${isDark ? 'text-gray-100' : 'text-gray-900'} text-lg font-medium mb-4`}>목표 공부 시간 설정</h3>
         <div className="flex items-end space-x-2 mb-4">
           <div className="flex items-center space-x-1">
             <input
@@ -56,7 +59,7 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
               onChange={(e) => setHours(Number(e.target.value))}
               placeholder="시간"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">시간</span>
+            <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>시간</span>
           </div>
           <div className="flex items-center space-x-1">
             <input
@@ -68,7 +71,7 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
               onChange={(e) => setMinutes(Number(e.target.value))}
               placeholder="분"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">분</span>
+            <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>분</span>
           </div>
         </div>
         <div className="flex justify-end space-x-2">

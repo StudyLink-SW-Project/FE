@@ -128,8 +128,36 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     fetchStudyTime();
   }, [API]);
 
-  // 캘린더에 표시할 달성 날짜 예시
-  const achievedDates = ["2025-06-22", "2025-06-18"];
+  useEffect(() => {
+    async function fetchResolution() {
+      try {
+        const res = await fetch(`${API}user/resolve`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("각오 조회 API 실패");
+        const data = await res.json();
+        // data.result.resolve 에 문자열이 담겨온다고 가정
+        if (data.isSuccess && data.result && typeof data.result.resolve === "string") {
+          onResolutionChange(data.result.resolve);
+        } else {
+          throw new Error("각오 데이터 형식 오류");
+        }
+      } catch (err) {
+        console.error(err);
+        // 실패 시 빈 문자열로 초기화
+        onResolutionChange("");
+      }
+    }
+    fetchResolution();
+  }, [API, onResolutionChange]);
+
+  // 각오 표시용 (최대 11자, 초과 시 "..." 추가)
+ const displayResolution = resolution
+    ? (resolution.length > 13
+         ? resolution.slice(0, 13) + "..."
+         : resolution)
+     : "";
 
   return (
     <div className="mx-auto w-3/5 px-4 sm:px-6 lg:px-8 py-4">
@@ -181,17 +209,20 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
               )}
             </div>
 
+            {/* 내 각오 Card */}
             <div className={`rounded p-3 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">내 각오</span>
                 <button
                   className="text-sm text-blue-400 hover:underline cursor-pointer"
-                  onClick={openResolutionModal}
+                  onClick={() => setResolutionModalOpen(true)}
                 >
                   설정
                 </button>
               </div>
-              <span className="mt-2 text-lg font-bold block break-all">{resolution || "---"}</span>
+              <span className="mt-2 text-sm font-bold block break-all">
+                {displayResolution  || "---"}
+              </span>
             </div>
           </div>
         </div>

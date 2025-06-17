@@ -1,9 +1,12 @@
 // src/components/DdaySettingsModal.jsx
 import { useState, useEffect } from "react";
 import { Edit2, Trash2 } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, onUpdated }) {
   const API = import.meta.env.VITE_APP_SERVER;
+
+  const { isDark } = useTheme();
 
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
@@ -120,8 +123,8 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
-        <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">D-Day 설정</h3>
+      <div className={`${isDark ? 'bg-gray-800 text-white border-[#616680]' : 'bg-white text-black border-gray-200'} rounded-lg p-6 w-full max-w-lg`}>
+        <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>D-Day 설정</h3>
 
         <ul className="mb-4 space-y-2 max-h-60 overflow-auto">
           {dDays.map((d, idx) => (
@@ -153,10 +156,14 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
           />
           <input
             type="date"
-            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+            className={`rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm 
+            ${isDark
+              ? '[&::-webkit-calendar-picker-indicator]:invert'
+              : '[&::-webkit-calendar-picker-indicator]:invert-0'
+            } [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
             value={date}
             min={todayStr}
-            onChange={e => setDate(e.target.value)}
+            onChange={e => setDate(e.target.value)}`}
           />
         </div>
 
