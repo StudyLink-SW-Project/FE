@@ -151,7 +151,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         <div className={`col-span-1 lg:col-span-2 rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-1 lg:gap-2 mb-2 lg:mb-3">
             <div className="flex-1">
-              <span className="text-xs sm:text-sm font-medium block">오늘 공부 시간 / 목표 공부 시간</span>
+              <span className="text-xs sm:text-sm font-medium block">오늘 / 목표 공부 시간</span>
             </div>
             <button
               className="text-xs sm:text-sm text-blue-400 hover:underline cursor-pointer self-start lg:self-center"
@@ -199,7 +199,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* D-day 카드 */}
         <div className={`col-span-1 rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
           <div className="flex justify-between items-center mb-1 sm:mb-2">
-            <span className="text-xs sm:text-sm font-medium">내 D-Day</span>
+            <span className="text-xs sm:text-sm font-medium">D-Day</span>
             <button
               className="text-xs sm:text-sm text-blue-400 hover:underline cursor-pointer"
               onClick={() => setDdayModalOpen(true)}
@@ -231,7 +231,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 각오 카드 */}
         <div className={`col-span-1 lg:col-span-2 rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 ${isDark ? 'bg-[#3B3E4B] text-white border-[#616680]' : 'bg-white text-black border-gray-200'}`}>
           <div className="flex justify-between items-center mb-1 sm:mb-2">
-            <span className="text-xs sm:text-sm font-medium">내 각오</span>
+            <span className="text-xs sm:text-sm font-medium">나의 각오</span>
             <button
               className="text-xs sm:text-sm text-blue-400 hover:underline cursor-pointer"
               onClick={() => setResolutionModalOpen(true)}
