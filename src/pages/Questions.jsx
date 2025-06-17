@@ -1,4 +1,4 @@
-// src/pages/Questions.jsx - 테마 적용
+// src/pages/Questions.jsx - 반응형 개선
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import QuestionCard from "../components/cards/QuestionCard";
@@ -176,12 +176,39 @@ export default function Questions() {
     <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
 
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+        
+        {/* 헤더 영역 - 반응형 분기 */}
+        
+        {/* 모바일/태블릿: 세로 배치 */}
+        <div className="block lg:hidden">
+          <div className="flex flex-col gap-4 mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold">질문 게시판</h1>
+            <div className="flex items-center gap-3 w-full">
+              <PlusCircle
+                className={`w-8 h-8 sm:w-10 sm:h-10 cursor-pointer flex-shrink-0 ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+                onClick={() => setShowModal(true)}
+              />
+              <input
+                type="text"
+                placeholder="검색"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className={`flex-1 sm:max-w-xs pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* PC: 기존 가로 배치 유지 */}
+        <div className="hidden lg:flex justify-between items-start mb-7 gap-4">
           <h1 className="text-4xl font-bold flex items-center -mt-5">
             질문 게시판
           </h1>
-          <div className="flex items-center w-full md:w-56 space-x-3 -mr-1">
+          <div className="flex items-center w-56 space-x-3 -mr-1">
             <PlusCircle
               className={`w-16 h-16 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowModal(true)}
@@ -199,6 +226,7 @@ export default function Questions() {
           </div>
         </div>
 
+        {/* 질문 목록 */}
         <div className="space-y-2">
           {filtered.map((q) => (
             <div key={q.id} className="relative">
