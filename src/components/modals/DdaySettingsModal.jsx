@@ -9,6 +9,8 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
   const [date, setDate] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
   // YYYY-MM-DD 포맷으로 바꿔주는 함수
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
@@ -80,10 +82,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
 
   const handleSave = async () => {
     if (!name || !date) return;
-    const today = new Date();
-
     try {
-      let updatedList;
       if (editIndex !== null) {
         // 수정
         const target = dDays[editIndex];
@@ -95,13 +94,12 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
         });
       } else {
         // 추가
-        const res = await fetch(`${API}day`, {
+        await fetch(`${API}day`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, day: date }),
         });
-        const data = await res.json();
         // (id는 부모가 다시 fetch하며 취득)
       }
 
@@ -157,6 +155,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
             type="date"
             className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
             value={date}
+            min={todayStr}
             onChange={e => setDate(e.target.value)}
           />
         </div>
