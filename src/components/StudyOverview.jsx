@@ -172,7 +172,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           
           <div>
             <div className="text-sm sm:text-base lg:text-xl font-bold mb-1 lg:mb-2">
-              {Math.floor(todayTime / 60)}시간 {todayTime % 60}분 / {goalHours}시간 {goalMinutes}분
+              {Math.floor(displayTodayTime / 60)}시간 {displayTodayTime % 60}분 / {goalHours}시간 {goalMinutes}분
             </div>
             
             {/* 진행률 바 */}
