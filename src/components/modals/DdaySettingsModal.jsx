@@ -128,10 +128,10 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
 
         <ul className="mb-4 space-y-2 max-h-60 overflow-auto">
           {dDays.map((d, idx) => (
-            <li key={d.id} className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
+            <li key={d.id} className={`${isDark ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900'} flex items-center p-2 rounded`}>
               <span className="flex-1 font-medium">{d.name}</span>
               {/* 포맷된 날짜 출력 */}
-              <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
+              <span className={`${isDark ? 'text-gray-300' : 'text-gray-900'} text-sm mr-2`}>
                 {formatDate(d.day)}
               </span>
               <div className="flex items-center space-x-2">
