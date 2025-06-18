@@ -204,7 +204,7 @@ export default function StudyRoom() {
               </h1>
               <button
                 onClick={fetchRooms}
-                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                className="p-2 mt-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition cursor-pointer"
                 title="목록 새로고침"
               >
                 <RotateCw className="w-5 h-5" />

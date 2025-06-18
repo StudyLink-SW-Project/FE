@@ -24,14 +24,6 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   const [isGoalModalOpen, setGoalModalOpen] = useState(false);
   const [isDdayModalOpen, setDdayModalOpen] = useState(false);
   const [isResolutionModalOpen, setResolutionModalOpen] = useState(false);
-  const [isCalendarOpen, setCalendarOpen] = useState(false);
-
-  const openGoalModal = () => setGoalModalOpen(true);
-  const closeGoalModal = () => setGoalModalOpen(false);
-  const openDdayModal = () => setDdayModalOpen(true);
-  const closeDdayModal = () => setDdayModalOpen(false);
-  const closeResolutionModal = () => setResolutionModalOpen(false);
-  const closeCalendar = () => setCalendarOpen(false);
 
   // D-day 상태
   const [dDays, setDDays] = useState([]);

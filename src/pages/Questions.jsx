@@ -176,7 +176,7 @@ export default function Questions() {
     <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
 
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto mt-5">
         
         {/* 헤더 영역 - 반응형 분기 */}
         

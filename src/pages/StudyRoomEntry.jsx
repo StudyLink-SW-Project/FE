@@ -26,25 +26,44 @@ export default function StudyRoomEntry() {
   const goalSeconds = goalHours * 3600 + goalMinutes * 60;
 
   const navigate    = useNavigate();
+  const [showExitModal, setShowExitModal] = useState(false);
+
+  // onDisconnected 시 모달만 띄우도록 바꿔줍니다.
+  const handleDisconnected = () => {
+    setShowExitModal(true);
+  };
+
+  // 모달에서 ‘확인’ 누르면 기록 저장 + 이동
+  const confirmExit = async () => {
+    await handleConfirmReset();           // 공부시간 기록 전송 및 로컬 반영
+    setShowExitModal(false);
+    setShowSavedModal(true);
+  };
+
+  // 모달에서 ‘취소’ 누르면 새로고침 → 토큰 유지로 재접속
+  const cancelExit = () => {
+    window.location.reload();
+  };
 
   // ⏱ 타이머 상태
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [isRunning,       setIsRunning]     = useState(false); // 시작 전에는 멈춰있음
+  const [isRunning,       setIsRunning]     = useState(false);
   const [showTimerSection, setShowTimerSection] = useState(false);
 
   // ——— 오늘 공부시간 누적용 로컬 상태 (분 단위)
   const [baseTodayMinutes, setBaseTodayMinutes] = useState(ctxTodayMinutes);
-
-  // Context.todayTime이 바뀌면 동기화
-  useEffect(() => {
-    setBaseTodayMinutes(ctxTodayMinutes);
-  }, [ctxTodayMinutes]);
+  useEffect(() => { setBaseTodayMinutes(ctxTodayMinutes); }, [ctxTodayMinutes]);
 
   // 목표 달성 모달
   const [showGoalModal,    setShowGoalModal] = useState(false);
 
+  // 초기화 옵션 모달
   const [showModal,       setShowModal]     = useState(false);
-  const [resetOption,     setResetOption]   = useState("stopwatch"); // "stopwatch" | "all"
+  const [resetOption,     setResetOption]   = useState("stopwatch");
+
+  // 새로 추가: 저장 완료 모달
+  const [showSavedModal, setShowSavedModal] = useState(false);
+  const [savedMinutes, setSavedMinutes] = useState(0);
 
   const formatStudyTime = (minutes) => {
     const h = Math.floor(minutes / 60);
@@ -52,59 +71,41 @@ export default function StudyRoomEntry() {
     return `${h}시간 ${m}분`;
   };
 
-  // ⏱ 타이머 시작/정지 로직
   useEffect(() => {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setElapsedSeconds(prev => prev + 60); // 테스트 용으로 60. 나중에 1로 바꾸기
+        setElapsedSeconds(prev => prev + 60);
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [isRunning]);
 
-  // 목표 도달 체크
   useEffect(() => {
-    if (goalSeconds != 0 && elapsedSeconds >= goalSeconds) {
+    if (goalSeconds !== 0 && elapsedSeconds >= goalSeconds) {
       setIsRunning(false);
       setShowGoalModal(true);
     }
   }, [elapsedSeconds, goalSeconds]);
 
-  // 화면에 표시할 오늘 공부시간 (분 단위)
   const displayedTodayMinutes = baseTodayMinutes + Math.floor(elapsedSeconds / 60);
-
-  // ⏱ 초를 시간:분:초 포맷으로 변환
   const formatTime = (seconds) => {
     const hours   = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs    = seconds % 60;
-    const hh = String(hours).padStart(2, '0');
-    const mm = String(minutes).padStart(2, '0');
-    const ss = String(secs).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
+    return [hours, minutes, secs]
+      .map(n => String(n).padStart(2, '0'))
+      .join(':');
   };
-
 
   if (!token) {
     return <Navigate to="/study-room" replace />;
   }
 
-  // 1) 연결 성공 후 호출할 콜백
   const handleConnected = async () => {
     try {
-      const res = await fetch(`${API}room/set`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomName:  String(roomName),
-          password:  String(password),      
-          roomImage: String(img),
-        }),
-      });
-      if (!res.ok) {
-        throw new Error("방 설정 저장 실패");
-      }
+      const res = await fetch(`${API}room/set`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roomName, password, roomImage: img }) });
+      if (!res.ok) throw new Error("방 설정 저장 실패");
     } catch (err) {
       console.error(err);
     }
@@ -113,28 +114,19 @@ export default function StudyRoomEntry() {
   const handleConfirmReset = async () => {
     try {
       if (resetOption === "stopwatch") {
-        // 1) 기록된 시간을 분 단위로 환산 (초 단위는 버림)
         const minutes = Math.floor(elapsedSeconds / 60);
-
-        // 2) 서버로 전송
-        const res = await fetch(`${API}study/${minutes}`, {
-          method: "POST",
-          credentials: "include",
-        });
+        const res = await fetch(`${API}study/${minutes}`, { method: "POST", credentials: "include" });
         if (!res.ok) throw new Error("공부 시간 기록 전송 실패");
 
-        // 3) 로컬 UI에 누적 반영 (공부기록 저장 후 초기화 옵션일 때만)     
-        if (resetOption === "stopwatch") {
-          setBaseTodayMinutes(prev => prev + minutes);
-          setTodayTime(prev => prev + minutes);
-        }
-        console.log(`서버에 ${minutes}분 기록 전송 완료`);
-      } else {
-        // 전체 초기화 옵션인 경우, 필요 API가 있다면 여기에 추가
-        console.log("옵션2: 공부기록까지 초기화");
-      }
+        // 로컬 반영
+        setBaseTodayMinutes(prev => prev + minutes);
+        setTodayTime(prev => prev + minutes);
 
-      // 3) 타이머 초기화 및 모달 닫기
+        // 저장 완료 모달 띄우기
+        setSavedMinutes(minutes);
+        setShowSavedModal(true);
+      }
+      // 초기화
       setElapsedSeconds(0);
       setShowModal(false);
       setIsRunning(true);
@@ -142,6 +134,11 @@ export default function StudyRoomEntry() {
       console.error(err);
       alert("기록 전송 중 오류가 발생했습니다.");
     }
+  };
+
+  const handleCloseSavedModal = () => {
+    setShowSavedModal(false);
+    navigate('/study-room', { replace: true });
   };
 
   const handleCloseGoalModal = () => {
@@ -250,10 +247,7 @@ export default function StudyRoomEntry() {
           audio={true}
           video={true}
           onConnected={handleConnected}
-          onDisconnected={() => {
-            handleConfirmReset();
-            navigate('/study-room', { replace: true });
-          }}
+          onDisconnected={handleDisconnected}
           onError={err => console.error("LiveKit 오류:", err)}
         >
           <VideoConference />
@@ -267,6 +261,19 @@ export default function StudyRoomEntry() {
             <h2 className="text-xl font-semibold mb-4">축하합니다!</h2>
             <p className="mb-6">목표 공부 시간에 도달했습니다.</p>
             <button onClick={handleCloseGoalModal} className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* 저장 완료 모달 */}
+      {showSavedModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-black rounded-lg p-6 w-80">
+            <h2 className="text-xl font-semibold mb-4">저장 완료!</h2>
+            <p className="mb-6">오늘 {savedMinutes}분이 저장되었습니다.</p>
+            <button onClick={handleCloseSavedModal} className="px-4 py-2 bg-blue-600 text-white rounded">
               확인
             </button>
           </div>
@@ -330,6 +337,31 @@ export default function StudyRoomEntry() {
           </div>
         </div>
       )}
+
+      {/* ① onDisconnected 시 보여줄 확인 모달 */}
+        {showExitModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg w-80">
+              <h2 className="text-lg font-semibold mb-4">
+                정말 나가시겠습니까?
+              </h2>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={cancelExit}
+                  className="px-3 py-1 bg-gray-200 rounded"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={confirmExit}
+                  className="px-3 py-1 bg-blue-600 text-white rounded"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
