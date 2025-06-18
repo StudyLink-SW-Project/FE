@@ -8,13 +8,13 @@ export default function HelpModal({ isOpen, onClose }) {
       key: 0,
       imgSrcs: ['/help/help1-1.png', '/help/help1-2.png'],
       title: '1. 스터디룸 시작하기',
-      description: '우측 상단 + 버튼을 통해 스터디룸을 생성할 수 있습니다.\n\n\n\n\n현재 생성된 방이 없다면, 하단 스터디룸 생성하기 버튼을 통해 생성할 수 있습니다.',
+      description: '우측 상단 + 버튼으로 스터디룸 생성이 가능합니다.\n\n\n\n\n현재 생성된 방이 없다면, 하단 스터디룸 생성하기 버튼을 통해 생성할 수 있습니다.',
     },
     {
       key: 1,
       imgSrcs: ['/help/help2-1.png'],
       title: '2. 스터디룸 생성하기',
-      description: '방 이름, 방 소개, 비밀번호, 배경 이미지를 설정하고, \n방을 생성할 수 있습니다. \n생성이 완료되면 스터디룸에 바로 입장합니다.\n\n*방 이름은 필수 옵션입니다.',
+      description: '방 이름, 방 소개, 비밀번호, 배경 이미지를 설정하고, \n방을 생성할 수 있습니다. \n-> 생성이 완료되면 스터디룸에 바로 입장합니다.\n\n*방 이름은 필수 옵션입니다.',
     },
     {
       key: 2,
@@ -26,7 +26,7 @@ export default function HelpModal({ isOpen, onClose }) {
       key: 3,
       imgSrcs: ['/help/help4-1.png'],
       title: '4. 목표 설정하기 / 공부 기록 확인하기',
-      description: '나의 목표 공부 시간, D-Day, 각오를 설정하고 확인할 수 있습니다.\n스터디룸 이용을 마치고, 오늘, 누적 공부 시간을 확인할 수 있습니다.',
+      description: '나의 목표 공부 시간, D-Day, 각오를 설정하고 \n확인할 수 있습니다.\n\n스터디룸 이용을 마치고, \n오늘, 누적 공부 시간을 확인할 수 있습니다.',
     },
   ];
 
@@ -40,7 +40,7 @@ export default function HelpModal({ isOpen, onClose }) {
   const imgHeight = imgCount > 0 ? `${100 / imgCount}%` : '100%';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-opacity-70 backdrop-brightness-20 flex items-center justify-center z-50">
       <div className="relative bg-white w-2/4 h-2/4 rounded-lg shadow-lg flex overflow-hidden">
         {/* Left Arrow: 투명 배경, hover 시 흰 배경 */}
         <button

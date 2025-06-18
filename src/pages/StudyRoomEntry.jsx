@@ -252,7 +252,7 @@ export default function StudyRoomEntry() {
       
       {/* 저장 완료 모달 */}
       {showSavedModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
           <div className="bg-white text-black rounded-lg p-6 w-80">
             <h2 className="text-xl font-semibold mb-4">저장 완료!</h2>
             <p className="mb-6">오늘 {savedMinutes}분이 저장되었습니다.</p>
