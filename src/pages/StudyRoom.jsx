@@ -6,10 +6,11 @@ import StudyRoomCard from "../components/cards/StudyRoomCard";
 import CreateRoomModal from "../components/modals/CreateRoomModal";
 import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
-import { PlusCircle, RotateCw, Users } from "lucide-react";
+import { PlusCircle, RotateCw, Users, CircleHelp } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTheme } from "../contexts/ThemeContext"; 
 import { StudyOverview } from "../components/StudyOverview";
+import HelpModal from "../components/modals/HelpModal";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
@@ -33,6 +34,8 @@ export default function StudyRoom() {
   // 서버에서 가져온 방 목록
   const [rooms, setRooms] = useState([]);
 
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  
   // API 기본 URL
   const API = import.meta.env.VITE_APP_SERVER;
 
@@ -195,7 +198,7 @@ export default function StudyRoom() {
           </div>
 
           {/* PC: 기존 가로 배치 */}
-          <div className="hidden lg:flex justify-between items-start gap-4">
+          <div className="hidden lg:flex justify-between items-start gap-1">
             
             {/* 왼쪽: 제목 + 새로고침 */}
             <div className="flex flex-row items-center gap-3">
@@ -209,10 +212,17 @@ export default function StudyRoom() {
               >
                 <RotateCw className="w-5 h-5" />
               </button>
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="p-2 mt-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition cursor-pointer"
+                title="목록 새로고침"
+              >
+                <CircleHelp className="w-5 h-5" />
+              </button>
             </div>
 
             {/* 가운데: StudyOverview - PC */}
-            <div className="w-2/3 -mt-2">
+            <div className="w-3/4 -mt-2 ml-70">
               <StudyOverview
                 todayTime={todayTime}
                 goalHours={goalHours}
@@ -323,6 +333,11 @@ export default function StudyRoom() {
         isOpen={showJoinModal}
         onClose={() => setShowJoinModal(false)}
         onEnter={handleEnter}
+      />
+      {/* ④ 도움말 모달 */}
+      <HelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
       />
     </div>
   );

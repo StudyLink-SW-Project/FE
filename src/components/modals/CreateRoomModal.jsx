@@ -128,7 +128,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* 방 이름 */}
             <div>
-              <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 이름</label>
+              <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>방 이름<span div className="text-red-500 ml-2">*</span></label>
               <div className={`flex items-center border rounded-xl px-4 py-3 transition-all duration-200 ${isDark ? 'border-gray-600 bg-[#2A2D3F] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500' : 'border-[#E0E0E0] bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 focus-within:bg-white'}`}>
                 <Home className={`w-5 h-5 mr-3 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                 <input

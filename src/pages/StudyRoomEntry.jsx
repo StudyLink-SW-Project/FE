@@ -1,6 +1,7 @@
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { 
+  DisconnectButton,
   LiveKitRoom, 
   VideoConference
 } from "@livekit/components-react";
@@ -26,24 +27,6 @@ export default function StudyRoomEntry() {
   const goalSeconds = goalHours * 3600 + goalMinutes * 60;
 
   const navigate    = useNavigate();
-  const [showExitModal, setShowExitModal] = useState(false);
-
-  // onDisconnected 시 모달만 띄우도록 바꿔줍니다.
-  const handleDisconnected = () => {
-    setShowExitModal(true);
-  };
-
-  // 모달에서 ‘확인’ 누르면 기록 저장 + 이동
-  const confirmExit = async () => {
-    await handleConfirmReset();           // 공부시간 기록 전송 및 로컬 반영
-    setShowExitModal(false);
-    setShowSavedModal(true);
-  };
-
-  // 모달에서 ‘취소’ 누르면 새로고침 → 토큰 유지로 재접속
-  const cancelExit = () => {
-    window.location.reload();
-  };
 
   // ⏱ 타이머 상태
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -247,10 +230,10 @@ export default function StudyRoomEntry() {
           audio={true}
           video={true}
           onConnected={handleConnected}
-          onDisconnected={handleDisconnected}
+          onDisconnected={()=>setShowSavedModal(true) }
           onError={err => console.error("LiveKit 오류:", err)}
         >
-          <VideoConference />
+          <VideoConference/>
         </LiveKitRoom>
       </div>
 
@@ -337,31 +320,6 @@ export default function StudyRoomEntry() {
           </div>
         </div>
       )}
-
-      {/* ① onDisconnected 시 보여줄 확인 모달 */}
-        {showExitModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg w-80">
-              <h2 className="text-lg font-semibold mb-4">
-                정말 나가시겠습니까?
-              </h2>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={cancelExit}
-                  className="px-3 py-1 bg-gray-200 rounded"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={confirmExit}
-                  className="px-3 py-1 bg-blue-600 text-white rounded"
-                >
-                  확인
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
     </div>
   );
 }
