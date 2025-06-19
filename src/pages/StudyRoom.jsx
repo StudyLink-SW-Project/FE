@@ -373,7 +373,7 @@ export default function StudyRoom() {
       />
       {/* 저장 완료 모달 */}
       {showSavedModal && (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
+        <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 z-999">
           <div className={`${isDark ? 'bg-[#282A36] text-white' : 'bg-white text-black'} rounded-lg p-6 w-85`}>
             <h2 className="text-xl font-semibold mb-4">저장 완료!</h2>
             <p className="mb-6">오늘 공부 시간 {savedMinutes}분이 저장되었습니다.</p>
