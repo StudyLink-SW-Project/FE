@@ -13,9 +13,8 @@ import { StudyOverview } from "../components/StudyOverview";
 import HelpModal from "../components/modals/HelpModal";
 
 export default function StudyRoom() {
+  const { state, pathname } = useLocation();
   const navigate = useNavigate();
-
-  const { state } = useLocation();
 
   const initMinutes    = state?.savedMinutes ?? 0;
   const initShowModal  = state?.showSavedModal ?? false;
@@ -145,6 +144,10 @@ export default function StudyRoom() {
   const handleCloseSavedModal = () => {
     setShowSavedModal(false);
     // 필요하면 history.replaceState 로 location.state 초기화
+    navigate(pathname, {
+      replace: true,
+      state: null
+    });
   };
 
   return (
