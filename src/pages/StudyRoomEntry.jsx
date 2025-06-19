@@ -160,7 +160,10 @@ export default function StudyRoomEntry() {
           <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center text-white text-4xl mt-4">
             {!showTimerSection ? (
               <button
-                onClick={() => setShowTimerSection(true)}
+                onClick={() => {
+                  setShowTimerSection(true);
+                  setIsRunning(true);
+                }}
                 className="px-4 py-2 text-lg bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
               >
                 스터디 시간 기록하기
