@@ -1,6 +1,6 @@
 // src/pages/StudyRoom.jsx - 고정된 레이아웃으로 수정
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import StudyRoomCard from "../components/cards/StudyRoomCard";
 import CreateRoomModal from "../components/modals/CreateRoomModal";
@@ -14,6 +14,15 @@ import HelpModal from "../components/modals/HelpModal";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
+
+  const { state } = useLocation();
+
+  const initMinutes    = state?.savedMinutes ?? 0;
+  const initShowModal  = state?.showSavedModal ?? false;
+
+  const [showSavedModal, setShowSavedModal] = useState(initShowModal);
+  const [savedMinutes,   setSavedMinutes]   = useState(initMinutes);
+
   const { isDark } = useTheme();
 
   const [todayTime] = useState(50);
@@ -126,6 +135,18 @@ export default function StudyRoom() {
   useEffect(() => { localStorage.setItem('goalMinutes', goalMinutes); }, [goalMinutes]);
   useEffect(() => { localStorage.setItem('resolution', resolution); }, [resolution]);
 
+  // 처음 마운트될 때만, 플래그가 true 였다면 모달 띄우기
+  useEffect(() => {
+    if (initShowModal) {
+      setShowSavedModal(true);
+    }
+  }, [initShowModal]);
+
+  const handleCloseSavedModal = () => {
+    setShowSavedModal(false);
+    // 필요하면 history.replaceState 로 location.state 초기화
+  };
+
   return (
     <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
@@ -148,6 +169,13 @@ export default function StudyRoom() {
                 title="목록 새로고침"
               >
                 <RotateCw className="w-5 h-5" />
+              </button>
+              <button
+                onClick={setShowHelpModal}
+                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                title="목록 새로고침"
+              >
+                <CircleHelp className="w-5 h-5" />
               </button>
             </div>
 
@@ -339,6 +367,25 @@ export default function StudyRoom() {
         isOpen={showHelpModal}
         onClose={() => setShowHelpModal(false)}
       />
+      {/* 저장 완료 모달 */}
+      {showSavedModal && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
+          <div className="bg-white text-black rounded-lg p-6 w-80">
+            <h2 className="text-xl font-semibold mb-4">저장 완료!</h2>
+            <p className="mb-6">오늘 {savedMinutes}분이 저장되었습니다.</p>
+            
+            {/* 버튼을 오른쪽 끝에 정렬하는 래퍼 */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleCloseSavedModal}
+                className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
