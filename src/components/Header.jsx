@@ -229,7 +229,7 @@ export default function Header() {
               </Link>
               <button 
                 onClick={closeMobileMenu}
-                className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-100 text-gray-900'}`}
               >
                 <X size={24} />
               </button>
@@ -240,21 +240,21 @@ export default function Header() {
               <Link 
                 to="/" 
                 onClick={closeMobileMenu}
-                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50' : 'hover:text-gray-600 border-gray-200'}`}
+                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50 text-white' : 'hover:text-gray-600 border-gray-200 text-gray-900'}`}
               >
                 홈
               </Link>
               <Link 
                 to="/study-room" 
                 onClick={closeMobileMenu}
-                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50' : 'hover:text-gray-600 border-gray-200'}`}
+                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50 text-white' : 'hover:text-gray-600 border-gray-200 text-gray-900'}`}
               >
                 스터디 룸
               </Link>
               <Link 
                 to="/questions" 
                 onClick={closeMobileMenu}
-                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50' : 'hover:text-gray-600 border-gray-200'}`}
+                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50 text-white' : 'hover:text-gray-600 border-gray-200 text-gray-900'}`}
               >
                 질문 게시판
               </Link>
@@ -271,7 +271,7 @@ export default function Header() {
                       className={`w-12 h-12 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                     />
                     <div>
-                      <p className="text-lg font-medium">{user.userName}님</p>
+                      <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.userName}님</p>
                       <button 
                         onClick={handleOpenProfile}
                         className={`mt-1 text-sm hover:underline ${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
@@ -283,7 +283,7 @@ export default function Header() {
                   
                   <button
                     onClick={handleLogoutClick}
-                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-red-600 rounded-lg hover:bg-red-700 transition-colors text-white"
                   >
                     <LogOut size={18} />
                     <span>로그아웃</span>
@@ -301,7 +301,7 @@ export default function Header() {
                   <Link
                     to="/signup"
                     onClick={closeMobileMenu}
-                    className={`text-center py-3 rounded-lg font-medium text-base tracking-wide transition-colors border ${isDark ? 'border-white hover:bg-white/10' : 'border-gray-900 hover:bg-gray-900/10'}`}
+                    className={`text-center py-3 rounded-lg font-medium text-base tracking-wide transition-colors border ${isDark ? 'border-white hover:bg-white/10 text-white' : 'border-gray-900 hover:bg-gray-900/10 text-gray-900'}`}
                   >
                     회원가입
                   </Link>
