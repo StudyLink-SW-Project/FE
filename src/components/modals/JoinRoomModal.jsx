@@ -142,7 +142,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
           <button
             type="submit"
             disabled={isEntering || (room.isLocked && !password.trim())}
-            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg cursor-pointer text-sm sm:text-base"
+            className="w-full py-2 sm:py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg cursor-pointer text-sm sm:text-base"
           >
             {isEntering ? "입장 중..." : "입장"}
           </button>

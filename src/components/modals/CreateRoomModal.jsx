@@ -243,7 +243,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             <div className="hidden md:block pt-6 mt-13">
               <button
                 type="submit"
-                className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
+                className="w-full py-3 sm:py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
               >
                 생성 후 입장하기
               </button>
