@@ -76,7 +76,7 @@ const fetchRooms = useCallback(async () => {
         participants: r.participantsCounts,
         maxParticipants: r.maxParticipants || 4,
         title: r.roomName,
-        roomDescription: r.roomDescription || "", 
+        roomDescription: r.roomDescription || "1", 
         imageNumber: r.roomImage,         
         imageSrc:    getImagePath(r.roomImage),  
         isLocked: !!(r.password && r.password.trim()),

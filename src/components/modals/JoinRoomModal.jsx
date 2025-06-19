@@ -94,18 +94,19 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         <h2 className="text-lg sm:text-xl font-semibold mb-2 pr-10">{room.title}</h2>
         <div className="flex items-center mb-4 text-sm">
           <Users className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
-          <span className="text-sm sm:text-base">{room.participants}/{room.maxParticipants}</span>
+          <span className="text-sm sm:text-base">{room.participants}/{room.maxParticipants} </span>
+          {/* 설명 */}
+          <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{room.roomDescription}</p>
         </div>
 
+        
+        
         {/* 이미지 */}
         <img
           src={room.imageSrc}
           alt={room.title}
           className="w-full h-60 sm:h-70 object-cover rounded-xl mb-4 border border-gray-200"
         />
-
-        {/* 설명 */}
-        <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{room.subtitle}</p>
 
         <form onSubmit={handleEnter}>
           {/* 비밀번호 입력 (잠긴 방만) */}
