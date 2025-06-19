@@ -8,6 +8,7 @@ import '@livekit/components-styles';
 import './StudyRoomCustom.css';
 import { PauseCircle, PlayCircle, RefreshCw } from "lucide-react";
 import * as Tooltip from '@radix-ui/react-tooltip';
+import GoalSettingsModal from "../components/modals/GoalSettingsModal";
 
 // LiveKit 서버 URL
 const LIVEKIT_URL = "wss://api.studylink.store:443";
@@ -18,7 +19,6 @@ export default function StudyRoomEntry() {
   const { state }   = useLocation();
   const token       = state?.token;
   const roomName    = state?.roomName;
-  const roomDescription = state?.roomDescription;
   const password    = state?.password;
   const img         = state?.img;
 
@@ -36,6 +36,10 @@ export default function StudyRoomEntry() {
 
   // 목표 달성 모달
   const [showGoalModal, setShowGoalModal] = useState(false);
+  // 목표 설정 모달
+  const [showGoalSettingsModal, setShowGoalSettingsModal] = useState(false);
+  // 계속 진행 선택 여부
+  const [skipGoalModal, setSkipGoalModal] = useState(false);
 
   // 초기화 옵션 모달
   const [showModal,   setShowModal]   = useState(false);
@@ -87,17 +91,17 @@ export default function StudyRoomEntry() {
     return () => clearInterval(interval);
   }, [isRunning]);
 
-  // 목표 달성 체크
-  const goalSeconds = goalHours * 3600 + goalMinutes * 60;
+  // 오늘 누적 + 현재 세션 (분)
+  const displayedTodayMinutes = todayMinutes + Math.floor(elapsedSeconds / 60);
+  const goalThresholdMinutes = goalHours * 60 + goalMinutes;
+
+  // 목표 달성 체크 (오늘 공부 시간 기준)
   useEffect(() => {
-    if (goalSeconds !== 0 && elapsedSeconds >= goalSeconds) {
+    if (!skipGoalModal && goalThresholdMinutes > 0 && displayedTodayMinutes >= goalThresholdMinutes) {
       setIsRunning(false);
       setShowGoalModal(true);
     }
-  }, [elapsedSeconds, goalSeconds]);
-
-  // 오늘 누적 + 현재 세션
-  const displayedTodayMinutes = todayMinutes + Math.floor(elapsedSeconds / 60);
+  }, [displayedTodayMinutes, goalThresholdMinutes, skipGoalModal]);
 
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
@@ -123,7 +127,7 @@ export default function StudyRoomEntry() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roomName, roomDescription: roomDescription || "" , password, roomImage: img }),
+          body: JSON.stringify({ roomName, password, roomImage: img }),
         }
       );
       if (!res.ok) throw new Error("방 설정 저장 실패");
@@ -144,9 +148,24 @@ export default function StudyRoomEntry() {
     setIsRunning(true);
   };
 
-  const handleCloseGoalModal = () => {
-    setShowGoalModal(false);
-    setElapsedSeconds(0);
+  // 목표 달성 모달 옵션 처리
+  const handleGoalOption = (option) => {
+    if (option === 'newGoal') {
+      setShowGoalModal(false);
+      setShowGoalSettingsModal(true);
+    } else if (option === 'continue') {
+      setSkipGoalModal(true);
+      setShowGoalModal(false);
+      setIsRunning(true);
+    }
+  };
+
+  // 목표 설정 저장 후
+  const handleSaveGoal = (h, m) => {
+    setGoalHours(h);
+    setGoalMinutes(m);
+    setSkipGoalModal(false);
+    setShowGoalSettingsModal(false);
   };
 
   return (
@@ -269,13 +288,29 @@ export default function StudyRoomEntry() {
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-white text-black rounded-lg p-6 w-80">
             <h2 className="text-xl font-semibold mb-4">축하합니다!</h2>
-            <p className="mb-6">목표 공부 시간에 도달했습니다.</p>
-            <button onClick={handleCloseGoalModal} className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
-              확인
-            </button>
+            <p className="mb-6">오늘 공부 목표를 달성했습니다.</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => handleGoalOption('continue')}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded cursor-pointer"
+              >계속 진행하기</button>
+              <button
+                onClick={() => handleGoalOption('newGoal')}
+                className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
+              >목표 재설정</button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* 목표 설정 모달 컴포넌트 */}
+      <GoalSettingsModal
+        isOpen={showGoalSettingsModal}
+        goalHours={goalHours}
+        goalMinutes={goalMinutes}
+        onClose={() => setShowGoalSettingsModal(false)}
+        onSave={handleSaveGoal}
+      />
 
       {/* 타이머 초기화 모달 */}
       {showModal && (
