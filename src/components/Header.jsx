@@ -307,7 +307,7 @@ export default function Header() {
 
       {/* 로그아웃 확인 모달 */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 backdrop-opacity-70 backdrop-brightness-20 z-[9999] flex items-center justify-center p-4">
           <div className={`p-6 rounded-lg shadow-lg text-center w-full max-w-sm ${isDark ? 'bg-[#1D1F2C]' : 'bg-white'}`}>
             <p className={`text-lg font-semibold mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
               로그아웃 하시겠습니까?
