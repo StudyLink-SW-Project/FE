@@ -164,9 +164,9 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
   return (
     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
       {/* 첫 번째 행: 오늘/목표 공부시간 & 총 공부시간 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 mb-2">
         {/* 오늘/목표 카드 */}
-        <div className={`col-span-1 lg:col-span-2 rounded-lg p-4
+        <div className={`col-span-2 lg:col-span-2 rounded-lg p-4
           ${isDark? "bg-[#3B3E4B] text-white" : "bg-white text-black"}`}>
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">오늘 / 목표 공부 시간</span>
@@ -192,7 +192,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 총 공부시간 카드 */}
         <div className={`col-span-1 rounded-lg p-4
           ${isDark? "bg-[#3B3E4B] text-white" : "bg-white text-black"}`}>
-          <span className="font-medium block mb-2">총 공부 시간</span>
+          <span className="font-sm block mb-2">총 공부 시간</span>
           <div className="font-bold text-lg">
             {Math.floor(totalMinutes/60)}시간 {totalMinutes%60}분
           </div>
