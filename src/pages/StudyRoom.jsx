@@ -20,7 +20,7 @@ export default function StudyRoom() {
   const initShowModal  = state?.showSavedModal ?? false;
 
   const [showSavedModal, setShowSavedModal] = useState(initShowModal);
-  const [savedMinutes,   setSavedMinutes]   = useState(initMinutes);
+  const [savedMinutes]   = useState(initMinutes);
 
   const { isDark } = useTheme();
 
@@ -169,14 +169,14 @@ export default function StudyRoom() {
               </h1>
               <button
                 onClick={fetchRooms}
-                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer"
                 title="목록 새로고침"
               >
                 <RotateCw className="w-5 h-5" />
               </button>
               <button
                 onClick={setShowHelpModal}
-                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer"
                 title="목록 새로고침"
               >
                 <CircleHelp className="w-5 h-5" />
@@ -189,7 +189,7 @@ export default function StudyRoom() {
                 <div className="flex items-center gap-3 w-full sm:max-w-sm">
                   <PlusCircle
                     className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
-                      isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                      isDark ? 'text-blue-400 hover:text-blue-500' : 'text-blue-500 hover:text-blue-600'
                     }`}
                     onClick={() => setShowCreateModal(true)}
                   />
@@ -239,14 +239,14 @@ export default function StudyRoom() {
               </h1>
               <button
                 onClick={fetchRooms}
-                className="p-2 mt-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition cursor-pointer"
+                className="p-2 mt-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition cursor-pointer"
                 title="목록 새로고침"
               >
                 <RotateCw className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowHelpModal(true)}
-                className="p-2 mt-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition cursor-pointer"
+                className="p-2 mt-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition cursor-pointer"
                 title="목록 새로고침"
               >
                 <CircleHelp className="w-5 h-5" />
@@ -271,7 +271,7 @@ export default function StudyRoom() {
                 <div className="flex items-center gap-3 w-full">
                   <PlusCircle
                     className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer flex-shrink-0 transition-colors ${
-                      isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'
+                      isDark ? 'text-blue-400 hover:text-blue-500' : 'text-blue-500 hover:text-blue-600'
                     }`}
                     onClick={() => setShowCreateModal(true)}
                   />
@@ -382,7 +382,7 @@ export default function StudyRoom() {
             <div className="flex justify-end">
               <button
                 onClick={handleCloseSavedModal}
-                className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
+                className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer"
               >
                 확인
               </button>
