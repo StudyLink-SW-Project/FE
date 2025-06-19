@@ -238,13 +238,6 @@ export default function Header() {
             {/* 모바일 네비게이션 */}
             <nav className="flex flex-col mt-6 space-y-2 flex-grow">
               <Link 
-                to="/" 
-                onClick={closeMobileMenu}
-                className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50 text-white' : 'hover:text-gray-600 border-gray-200 text-gray-900'}`}
-              >
-                홈
-              </Link>
-              <Link 
                 to="/study-room" 
                 onClick={closeMobileMenu}
                 className={`font-medium text-lg px-4 py-3 transition-all duration-200 border-b ${isDark ? 'hover:text-gray-300 border-[#616680]/50 text-white' : 'hover:text-gray-600 border-gray-200 text-gray-900'}`}
