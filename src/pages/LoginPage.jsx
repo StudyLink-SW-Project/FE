@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, fetchInfoThunk } from "../store/authThunks";
 import { toast } from "react-toastify";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
@@ -16,6 +17,8 @@ export default function LoginPage() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
 
+  const { isDark } = useTheme();
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -47,7 +50,11 @@ export default function LoginPage() {
             <ArrowLeft className="cursor-pointer w-5 h-5 sm:w-6 sm:h-6 text-gray-600 hover:text-gray-800" />
           </button>
           <Link to="/">
-            <img src="/logo_black.png" alt="logo" className="w-20 sm:w-24" />
+            <img
+              src={isDark ? '/logo_white.png' : '/logo_black.png'}
+              alt="logo"
+              className="w-20 sm:w-24"
+            />
           </Link>
         </div>
 
