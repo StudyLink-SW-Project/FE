@@ -196,9 +196,12 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           {nearest ? (
             <div className="flex items-center space-x-2">
               <span className="font-bold">D-{Math.ceil(nearest.diff)}</span>
-              <span className="break-all">
-                {nearest.name.length>6 
-                  ? nearest.name.slice(0,6)+"..." 
+              <span 
+                className="break-all"
+                title={nearest.name}
+              >
+                {nearest.name.length>13 
+                  ? nearest.name.slice(0,13)+"..." 
                   : nearest.name}
               </span>
             </div>
@@ -224,6 +227,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <span className={displayResolution 
             ? "" 
             : "text-gray-500"}
+            title={resolution}
           >
             {displayResolution || "각오를 다짐해보세요!"}
           </span>

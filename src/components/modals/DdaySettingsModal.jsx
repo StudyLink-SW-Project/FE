@@ -153,6 +153,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
             className="flex-1 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={name}
             onChange={e => setName(e.target.value)}
+            maxLength={17}
           />
           <input
             type="date"
