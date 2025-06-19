@@ -136,9 +136,29 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     fetchResolution();
   }, [API, onResolutionChange]);
 
-  // 각오 표시용 (최대 15자)
+
+  // 화면 크기에 따라 모바일 여부 판단
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // 각오 표시용 (모바일: 최대 8자, 그 외: 최대 15자)
+  const maxLen = isMobile ? 8 : 15;
   const displayResolution = resolution
-    ? (resolution.length > 15 ? resolution.slice(0,15) + "..." : resolution)
+    ? (resolution.length > maxLen
+        ? resolution.slice(0, maxLen) + "..."
+        : resolution)
+    : "";
+
+  // D-day 이름 표시용 (모바일: 최대 6자, 그 외: 최대 13자)
+  const maxDdayLen = isMobile ? 6 : 13;
+  const displayDdayName = nearest
+    ? (nearest.name.length > maxDdayLen
+        ? nearest.name.slice(0, maxDdayLen) + "..."
+        : nearest.name)
     : "";
 
   return (
@@ -196,13 +216,11 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           {nearest ? (
             <div className="flex items-center space-x-2">
               <span className="font-bold">D-{Math.ceil(nearest.diff)}</span>
-              <span 
+              <span
                 className="break-all"
-                title={nearest.name}
+                title={nearest.name}  // 전체 이름 툴팁
               >
-                {nearest.name.length>13 
-                  ? nearest.name.slice(0,13)+"..." 
-                  : nearest.name}
+                {displayDdayName}
               </span>
             </div>
           ) : (
