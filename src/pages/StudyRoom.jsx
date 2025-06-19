@@ -95,9 +95,9 @@ const fetchRooms = useCallback(async () => {
   }, [fetchRooms]);
 
   // 모달에서 "입장" 눌렀을 때
-  const handleEnter = (roomId, token, password, img, goalSeconds) => {
+  const handleEnter = (roomId, token, password, roomDescription, img, goalSeconds) => {
     // token, participantName 은 필요하시면 state로 넘기세요
-    navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId, password, img, goalSeconds} });
+    navigate(`/study-room/${roomId}`, { state: { token, roomName: roomId, password, roomDescription, img, goalSeconds} });
   };
 
   const filtered = rooms.filter((r) => r.title.includes(search));
