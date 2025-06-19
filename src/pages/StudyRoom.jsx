@@ -59,35 +59,35 @@ export default function StudyRoom() {
   };
 
   // 1) 방 목록 조회 로직을 별도 함수로 분리
-  const fetchRooms = useCallback(async () => {
-    try {
-      const resp = await fetch(`${API}room/rooms`);
-      if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
-      const data = await resp.json();
-      console.log("room/rooms 응답:", data);
+const fetchRooms = useCallback(async () => {
+  try {
+    const resp = await fetch(`${API}room/rooms`);
+    if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
+    const data = await resp.json();
+    console.log("room/rooms 응답:", data);
 
-      const roomsArray = data.rooms || data.result?.rooms;
-      if (!Array.isArray(roomsArray)) {
-        throw new Error("rooms 배열을 찾을 수 없습니다");
-      }
-
-      setRooms(
-        roomsArray.map((r) => ({
-          participants: r.participantsCounts,
-          maxParticipants: r.maxParticipants || 4,
-          title: r.roomName,
-          subtitle: "",
-          imageNumber: r.roomImage,                   // 원본 숫자도 보존
-          imageSrc:    getImagePath(r.roomImage),    // 화면에 사용할 경로
-          isLocked: !!(r.password && r.password.trim()),
-          password: r.password || "",
-        }))
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message);
+    const roomsArray = data.rooms || data.result?.rooms;
+    if (!Array.isArray(roomsArray)) {
+      throw new Error("rooms 배열을 찾을 수 없습니다");
     }
-  }, [API]);
+
+    setRooms(
+      roomsArray.map((r) => ({
+        participants: r.participantsCounts,
+        maxParticipants: r.maxParticipants || 4,
+        title: r.roomName,
+        subtitle: r.roomDescription || "", 
+        imageNumber: r.roomImage,         
+        imageSrc:    getImagePath(r.roomImage),  
+        isLocked: !!(r.password && r.password.trim()),
+        password: r.password || "",
+      }))
+    );
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message);
+  }
+}, [API]);
 
   // 2) 마운트 시 자동 호출
   useEffect(() => {
