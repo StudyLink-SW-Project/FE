@@ -374,9 +374,9 @@ export default function StudyRoom() {
       {/* 저장 완료 모달 */}
       {showSavedModal && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20">
-          <div className={`${isDark ? 'bg-[#282A36] text-white' : 'bg-white text-black'} rounded-lg p-6 w-80`}>
+          <div className={`${isDark ? 'bg-[#282A36] text-white' : 'bg-white text-black'} rounded-lg p-6 w-85`}>
             <h2 className="text-xl font-semibold mb-4">저장 완료!</h2>
-            <p className="mb-6">오늘 {savedMinutes}분이 저장되었습니다.</p>
+            <p className="mb-6">오늘 공부 시간 {savedMinutes}분이 저장되었습니다.</p>
             
             {/* 버튼을 오른쪽 끝에 정렬하는 래퍼 */}
             <div className="flex justify-end">
