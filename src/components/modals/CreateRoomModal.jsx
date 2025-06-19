@@ -209,7 +209,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
             </div>
 
             {/* 버튼 (모바일) */}
-            <div className="pt-4 sm:pt-6 md:hidden">
+            <div className="pt-0 sm:pt-6 md:hidden">
               <button
                 type="submit"
                 className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-lg cursor-pointer font-medium text-sm sm:text-base"
@@ -228,7 +228,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                   key={idx}
                   src={url}
                   alt={`배경 이미지 ${idx + 1}`}
-                  className={`cursor-pointer rounded-xl border-2 transition-all duration-200 w-full h-24 object-cover hover:scale-105 ${bgFile === idx ? 'border-blue-500 ring-2 ring-blue-500/50 shadow-lg' : `border-transparent ${isDark ? 'hover:border-gray-400' : 'hover:border-gray-300'} hover:shadow-md`}`}
+                  className={`cursor-pointer rounded-xl border-2 transition-all duration-200 w-full h-24 sm:h-24 lg:h-24 object-cover hover:scale-105 ${bgFile === idx ? 'border-blue-500 ring-2 ring-blue-500/50 shadow-lg' : `border-transparent ${isDark ? 'hover:border-gray-400' : 'hover:border-gray-300'} hover:shadow-md`}`}
                   onClick={() => handleBackgroundSelect(idx)}
                 />
               ))}
