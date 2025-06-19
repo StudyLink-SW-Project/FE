@@ -192,7 +192,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 총 공부시간 카드 */}
         <div className={`col-span-1 rounded-lg p-4
           ${isDark? "bg-[#3B3E4B] text-white" : "bg-white text-black"}`}>
-          <span className="font-sm block mb-2">총 공부 시간</span>
+          <span className="text-sm lg:text-base block mb-2">총 공부 시간</span>
           <div className="font-bold text-lg">
             {Math.floor(totalMinutes/60)}시간 {totalMinutes%60}분
           </div>
