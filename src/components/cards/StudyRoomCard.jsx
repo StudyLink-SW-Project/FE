@@ -12,8 +12,8 @@ export default function StudyRoomCard({
   const { isDark } = useTheme();
 
   return (
-    <div className="w-full">
-      <div className={`relative z-0 w-full border rounded-lg overflow-hidden transition-colors duration-200 ${isDark ? 'bg-[#1D1F2C] border-[#616680] hover:border-[#8B8FA3]' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
+    <div className={`w-full ${isDark ? 'bg-[#3B3E4B] border border-[#3B3E4B]' : 'bg-white border border-white' } rounded-lg`}>
+      <div className={`relative z-0 w-full border rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none overflow-hidden transition-colors duration-200 ${isDark ? 'bg-[#1D1F2C] border-[#616680] hover:border-[#8B8FA3]' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
         {/* 방 이미지 */}
         <img
           src={imageSrc}
@@ -37,8 +37,8 @@ export default function StudyRoomCard({
       
       {/* 카드 텍스트 */}
       <div className="p-2 sm:p-3">
-        <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
-        <p className={`text-xs sm:text-sm mt-1 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} title={roomDescription}>{roomDescription}</p>
+        <h3 className={`${isDark ? 'text-white' : 'text-gray-800'}`}>{title}</h3>
+        <p className={`text-xs sm:text-xs mt-1 line-clamp-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} title={roomDescription}>{roomDescription}</p>
       </div>
     </div>
   );
