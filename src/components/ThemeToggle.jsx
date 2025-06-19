@@ -9,7 +9,7 @@ export default function ThemeToggle({ className = "" }) {
   return (
     <button
       onClick={toggleTheme}
-      className={`p-2 rounded-lg transition-all duration-200 ${className}`}
+      className={`p-2 rounded-lg transition-all duration-200 cursor-pointer ${className}`}
       title={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
     >
       {isDark ? (

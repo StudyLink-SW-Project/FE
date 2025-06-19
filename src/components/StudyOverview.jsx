@@ -136,22 +136,42 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
     fetchResolution();
   }, [API, onResolutionChange]);
 
-  // 각오 표시용 (최대 15자)
+
+  // 화면 크기에 따라 모바일 여부 판단
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // 각오 표시용 (모바일: 최대 8자, 그 외: 최대 15자)
+  const maxLen = isMobile ? 8 : 15;
   const displayResolution = resolution
-    ? (resolution.length > 15 ? resolution.slice(0,15) + "..." : resolution)
+    ? (resolution.length > maxLen
+        ? resolution.slice(0, maxLen) + "..."
+        : resolution)
+    : "";
+
+  // D-day 이름 표시용 (모바일: 최대 6자, 그 외: 최대 13자)
+  const maxDdayLen = isMobile ? 6 : 13;
+  const displayDdayName = nearest
+    ? (nearest.name.length > maxDdayLen
+        ? nearest.name.slice(0, maxDdayLen) + "..."
+        : nearest.name)
     : "";
 
   return (
     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
       {/* 첫 번째 행: 오늘/목표 공부시간 & 총 공부시간 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 mb-2">
         {/* 오늘/목표 카드 */}
-        <div className={`col-span-1 lg:col-span-2 rounded-lg p-4
+        <div className={`col-span-2 lg:col-span-2 rounded-lg p-4
           ${isDark? "bg-[#3B3E4B] text-white" : "bg-white text-black"}`}>
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">오늘 / 목표 공부 시간</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setGoalModalOpen(true)}
             >
               목표 설정
@@ -172,7 +192,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
         {/* 총 공부시간 카드 */}
         <div className={`col-span-1 rounded-lg p-4
           ${isDark? "bg-[#3B3E4B] text-white" : "bg-white text-black"}`}>
-          <span className="font-medium block mb-2">총 공부 시간</span>
+          <span className="text-sm lg:text-base block mb-2">총 공부 시간</span>
           <div className="font-bold text-lg">
             {Math.floor(totalMinutes/60)}시간 {totalMinutes%60}분
           </div>
@@ -187,7 +207,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">D-Day</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setDdayModalOpen(true)}
             >
               설정
@@ -196,13 +216,11 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           {nearest ? (
             <div className="flex items-center space-x-2">
               <span className="font-bold">D-{Math.ceil(nearest.diff)}</span>
-              <span 
+              <span
                 className="break-all"
-                title={nearest.name}
+                title={nearest.name}  // 전체 이름 툴팁
               >
-                {nearest.name.length>13 
-                  ? nearest.name.slice(0,13)+"..." 
-                  : nearest.name}
+                {displayDdayName}
               </span>
             </div>
           ) : (
@@ -218,7 +236,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">나의 각오</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setResolutionModalOpen(true)}
             >
               설정

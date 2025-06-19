@@ -165,7 +165,7 @@ export default function StudyRoomEntry() {
                   setShowTimerSection(true);
                   setIsRunning(true);
                 }}
-                className="px-4 py-2 text-lg bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
+                className="px-4 py-2 text-lg bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer"
               >
                 스터디 시간 기록하기
               </button>

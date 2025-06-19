@@ -122,7 +122,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 z-50">
+    <div className="fixed inset-0 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 z-999">
       <div className={`${isDark ? 'bg-gray-800 text-white border-[#616680]' : 'bg-white text-black border-gray-200'} rounded-lg p-6 w-full max-w-lg`}>
         <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>D-Day 설정</h3>
 
@@ -161,7 +161,7 @@ export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, on
             ${isDark
               ? '[&::-webkit-calendar-picker-indicator]:invert'
               : '[&::-webkit-calendar-picker-indicator]:invert-0'
-            } [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"`}
+            } [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
             value={date}
             min={todayStr}
             onChange={e => setDate(e.target.value)}

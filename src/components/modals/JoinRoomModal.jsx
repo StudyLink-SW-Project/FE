@@ -81,7 +81,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
+    <div className="fixed inset-0 z-999 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
       <div className={`rounded-2xl w-full max-w-sm mx-4 p-4 sm:p-6 relative shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
         {/* 닫기 */}
         <button 

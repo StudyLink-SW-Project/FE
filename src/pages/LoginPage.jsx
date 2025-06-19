@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, fetchInfoThunk } from "../store/authThunks";
 import { toast } from "react-toastify";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
@@ -16,6 +17,8 @@ export default function LoginPage() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";  // 원래 경로 또는 "/" 디폴트
 
+  const { isDark } = useTheme();
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -47,7 +50,11 @@ export default function LoginPage() {
             <ArrowLeft className="cursor-pointer w-5 h-5 sm:w-6 sm:h-6 text-gray-600 hover:text-gray-800" />
           </button>
           <Link to="/">
-            <img src="/logo_black.png" alt="logo" className="w-20 sm:w-24" />
+            <img
+              src={isDark ? '/logo_white.png' : '/logo_black.png'}
+              alt="logo"
+              className="w-20 sm:w-24"
+            />
           </Link>
         </div>
 
@@ -103,7 +110,6 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-end text-xs text-gray-500 mb-8 sm:mb-15">
-              <span>비밀번호를 잊으셨나요?</span>
             </div>
 
             <button
@@ -132,7 +138,13 @@ export default function LoginPage() {
     </div>
 
       {/* 오른쪽: 일러스트 (데스크탑만 표시) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex-col items-center justify-center">
+      <div className={`
+        ${isDark 
+          ? 'bg-gradient-to-br from-[#000217] via-[#4F4EB2] to-purple-200 text-white' 
+          : 'bg-gradient-to-br  via-indigo-100 from-blue-500 to-purple-100 text-gray-700'
+        }
+        hidden lg:flex lg:w-1/2 flex-col items-center justify-center
+      `}>
         <img src="/Saly.png" alt="illustration" className="w-[60%] max-w-sm" />
         <h2 className="text-4xl mt-8 font-semibold text-center px-4">Study Link에 로그인하세요</h2>
         <p className="text-base mt-2 text-center px-4">쉽고 빠르게, 스터디를 연결해보세요</p>
