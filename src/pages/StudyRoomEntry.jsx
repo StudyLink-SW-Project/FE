@@ -173,9 +173,11 @@ export default function StudyRoomEntry() {
     <div className="h-screen bg-[#0f172a]">
       {/* 헤더 */}
       <div className="hidden sm:flex w-full items-center h-16 relative">
-        <div className="flex items-center space-x-4 mt-[14px] ml-4">
+        <div className="flex items-center space-x-3 mt-[14px] ml-4">
           <img src="/logo_white.png" alt="Study Link Logo" className="h-20" />
           <h1 className="text-white text-4xl">{roomName}</h1>
+          <h1 className="text-gray-400 text-2xl mt-[3px]">|</h1>
+          <h1 className="text-gray-400 text-xl mt-[8px] -ml-1">{roomDescription}</h1>
         </div>
         <Tooltip.Provider>
           <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center text-white text-4xl mt-4">

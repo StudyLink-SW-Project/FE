@@ -69,6 +69,7 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         String(room.title),
         token,
         password,
+        String(room.roomDescription),
         room.imageNumber,
         totalGoalSeconds,
       );
@@ -92,14 +93,14 @@ export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
         </button>
 
         <h2 className="text-lg sm:text-xl font-semibold mb-2 pr-10">{room.title}</h2>
+
+        {/* 설명 */}
+        <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{room.roomDescription}</p>
+
         <div className="flex items-center mb-4 text-sm">
           <Users className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
           <span className="text-sm sm:text-base">{room.participants}/{room.maxParticipants} </span>
-          {/* 설명 */}
-          <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{room.roomDescription}</p>
         </div>
-
-        
         
         {/* 이미지 */}
         <img

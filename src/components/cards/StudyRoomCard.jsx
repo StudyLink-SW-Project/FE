@@ -6,7 +6,7 @@ export default function StudyRoomCard({
   maxParticipants,
   imageSrc,
   title,
-  subtitle,
+  roomDescription,
   isLocked = false,
 }) {
   const { isDark } = useTheme();
@@ -38,7 +38,7 @@ export default function StudyRoomCard({
       {/* 카드 텍스트 */}
       <div className="p-2 sm:p-3">
         <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
-        <p className={`text-xs sm:text-sm mt-1 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} title={subtitle}>{subtitle}</p>
+        <p className={`text-xs sm:text-sm mt-1 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} title={roomDescription}>{roomDescription}</p>
       </div>
     </div>
   );
