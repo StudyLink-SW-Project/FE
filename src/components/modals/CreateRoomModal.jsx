@@ -110,7 +110,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
+    <div className="fixed inset-0 z-999 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
       <div className={`rounded-2xl w-full max-w-3xl mx-4 p-6 sm:p-8 relative shadow-2xl border  min-h-[470px] ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
         <button
           onClick={onClose}
