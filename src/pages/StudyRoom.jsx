@@ -20,7 +20,7 @@ export default function StudyRoom() {
   const initShowModal  = state?.showSavedModal ?? false;
 
   const [showSavedModal, setShowSavedModal] = useState(initShowModal);
-  const [savedMinutes,   setSavedMinutes]   = useState(initMinutes);
+  const [savedMinutes]   = useState(initMinutes);
 
   const { isDark } = useTheme();
 

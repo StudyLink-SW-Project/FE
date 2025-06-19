@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
 export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onClose, onSave }) {
-  if (!isOpen) return null;
 
   const { isDark } = useTheme();
 
@@ -16,6 +15,8 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
     setHours(goalHours);
     setMinutes(goalMinutes);
   }, [goalHours, goalMinutes]);
+  
+  if (!isOpen) return null;
 
   const handleSave = async () => {
     const totalMinutes = hours * 60 + minutes;
