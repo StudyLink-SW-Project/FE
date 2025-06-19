@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export default function HelpModal({ isOpen, onClose }) {
   const [page, setPage] = useState(0);
+  const { isDark } = useTheme();
   const pages = [
     {
       key: 0,
@@ -30,7 +32,7 @@ export default function HelpModal({ isOpen, onClose }) {
     },
   ];
 
-  const prevPage = () => setPage((prev) => (prev === 0 ? pages.length - 1 : prev - 1));
+    const prevPage = () => setPage((prev) => (prev === 0 ? pages.length - 1 : prev - 1));
   const nextPage = () => setPage((prev) => (prev === pages.length - 1 ? 0 : prev + 1));
 
   if (!isOpen) return null;
@@ -41,55 +43,76 @@ export default function HelpModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 backdrop-opacity-70 backdrop-brightness-20 flex items-center justify-center z-50">
-      <div className="relative bg-white w-2/4 h-2/4 rounded-lg shadow-lg flex overflow-hidden">
-        {/* Left Arrow: 투명 배경, hover 시 흰 배경 */}
+      <div
+        className={`
+          relative w-2/4 h-2/4 rounded-lg shadow-lg flex overflow-hidden
+          ${isDark ? 'bg-[#282A36] text-white' : 'bg-white text-black'}
+        `}
+      >
+        {/* Left Arrow */}
         <button
           onClick={prevPage}
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-transparent rounded-full transition-colors duration-200 hover:bg-gray-100 hover:bg-opacity-50 z-10 cursor-pointer"
+          className={`
+            absolute left-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-200 z-10 cursor-pointer
+            ${isDark 
+              ? 'bg-transparent hover:bg-gray-700 hover:bg-opacity-50' 
+              : 'bg-transparent hover:bg-gray-100 hover:bg-opacity-50'}
+          `}
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={24} className={isDark ? 'text-white' : 'text-black'} />
         </button>
 
-        {/* Content: Left Images & Right Text */}
+        {/* Content */}
         <div className="flex-1 flex h-full">
-          <div className="w-1/2 flex bg-gray-100 p-2">
+          {/* 이미지 패널 */}
+          <div className={`
+            w-1/2 p-2 flex flex-col
+            ${isDark ? 'bg-gray-700' : 'bg-gray-100'}
+          `}>
             {imgCount > 0 ? (
-              <div className="w-full flex flex-col">
-                {imgSrcs.map((src, idx) => (
-                  <div key={idx} className="w-full" style={{ height: imgHeight }}>
-                    <img
-                      src={src}
-                      alt={`${title} 이미지 ${idx + 1}`}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                ))}
-              </div>
+              imgSrcs.map((src, idx) => (
+                <div key={idx} className="w-full" style={{ height: imgHeight }}>
+                  <img
+                    src={src}
+                    alt={`${title} 이미지 ${idx + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ))
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
+              <div className="flex-1 flex items-center justify-center text-gray-400">
                 이미지가 없습니다.
               </div>
             )}
           </div>
 
+          {/* 텍스트 패널 */}
           <div className="w-1/2 p-6 overflow-auto">
             <h2 className="text-xl font-semibold mb-4 whitespace-pre-wrap">{title}</h2>
             <p className="text-base leading-relaxed whitespace-pre-wrap">{description}</p>
           </div>
         </div>
 
-        {/* Right Arrow: 투명 배경, hover 시 흰 배경 */}
+        {/* Right Arrow */}
         <button
           onClick={nextPage}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-transparent rounded-full transition-colors duration-200 hover:bg-gray-100 hover:bg-opacity-50 z-10 cursor-pointer"
+          className={`
+            absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-200 z-10 cursor-pointer
+            ${isDark 
+              ? 'bg-transparent hover:bg-gray-700 hover:bg-opacity-50' 
+              : 'bg-transparent hover:bg-gray-100 hover:bg-opacity-50'}
+          `}
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={24} className={isDark ? 'text-white' : 'text-black'} />
         </button>
 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+          className={`
+            absolute top-2 right-4 text-xl transition-colors duration-200 cursor-pointer
+            ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}
+          `}
         >
           ✕
         </button>

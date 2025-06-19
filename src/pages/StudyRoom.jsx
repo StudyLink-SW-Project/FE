@@ -77,7 +77,8 @@ export default function StudyRoom() {
           maxParticipants: r.maxParticipants || 4,
           title: r.roomName,
           subtitle: "",
-          imageSrc: getImagePath(r.roomImage),
+          imageNumber: r.roomImage,                   // 원본 숫자도 보존
+          imageSrc:    getImagePath(r.roomImage),    // 화면에 사용할 경로
           isLocked: !!(r.password && r.password.trim()),
           password: r.password || "",
         }))
