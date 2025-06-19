@@ -20,7 +20,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   const { isDark } = useTheme(); 
 
   const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
+  const [roomDescription, setDescription] = useState("");
   const [maxUsers, setMaxUsers] = useState(16);
   const [bgFile, setBgFile] = useState(0); 
   const [error, setError] = useState("");
@@ -76,7 +76,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
     
       onCreate({ 
         roomName, 
-        description, 
+        roomDescription, 
         password: finalPassword, 
         maxUsers, 
         bgFile, // 인덱스 (0,1,2,3)
@@ -87,7 +87,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       const totalGoalSeconds = Number(goalHours) * 3600 + Number(goalMinutes) * 60 + Number(goalSeconds) * 1;
 
       // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
-      onEnter(String(roomName), token, finalPassword, bgFile + 1, totalGoalSeconds); // bgFile+1로 1~4 번호 전달
+      onEnter(String(roomName), String(roomDescription), token, finalPassword, bgFile + 1, totalGoalSeconds); // bgFile+1로 1~4 번호 전달
       
       // 2) 서버에 방 설정 정보 저장 (방 소개글 포함)
       await fetch(`${API}room/set`, {
@@ -95,7 +95,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roomName: String(roomName),
-          roomDescription: String(description), // ✅ 방 소개글 추가
+          roomDescription: String(roomDescription),
           password: finalPassword,
           roomImage: String(bgFile + 1)
         }),
@@ -151,7 +151,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
                 <input
                   type="text"
                   placeholder="방 소개 문구를 작성하세요.."
-                  value={description}
+                  value={roomDescription}
                   onChange={e => setDescription(e.target.value)}
                   className={`flex-1 bg-transparent outline-none text-sm sm:text-base ${isDark ? 'text-white placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
                 />

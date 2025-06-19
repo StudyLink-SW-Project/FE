@@ -18,6 +18,7 @@ export default function StudyRoomEntry() {
   const { state }   = useLocation();
   const token       = state?.token;
   const roomName    = state?.roomName;
+  const roomDescription = state?.roomDescription;
   const password    = state?.password;
   const img         = state?.img;
 
@@ -122,7 +123,7 @@ export default function StudyRoomEntry() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roomName, password, roomImage: img }),
+          body: JSON.stringify({ roomName, roomDescription: roomDescription || "" , password, roomImage: img }),
         }
       );
       if (!res.ok) throw new Error("방 설정 저장 실패");
