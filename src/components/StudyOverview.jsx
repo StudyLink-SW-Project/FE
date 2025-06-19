@@ -171,7 +171,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">오늘 / 목표 공부 시간</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setGoalModalOpen(true)}
             >
               목표 설정
@@ -207,7 +207,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">D-Day</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setDdayModalOpen(true)}
             >
               설정
@@ -236,7 +236,7 @@ export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) 
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">나의 각오</span>
             <button 
-              className="text-xs text-blue-400 hover:underline"
+              className="text-xs text-blue-400 hover:underline cursor-pointer"
               onClick={() => setResolutionModalOpen(true)}
             >
               설정

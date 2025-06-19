@@ -208,9 +208,9 @@ export default function Questions() {
           <h1 className="text-4xl font-bold flex items-center -mt-5">
             질문 게시판
           </h1>
-          <div className="flex items-center w-56 space-x-3 -mr-1">
+          <div className="flex items-center w-80 space-x-3 -mt-[4px]">
             <PlusCircle
-              className={`w-16 h-16 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+              className={`w-10 h-10 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowModal(true)}
             />
             <input

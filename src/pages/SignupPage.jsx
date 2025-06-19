@@ -152,7 +152,13 @@ export default function SignupPage() {
       </div>
 
       {/* 오른쪽: 일러스트 (데스크탑만 표시) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[linear-gradient(to_bottom,#1D1F2C,#000E76,#7A8AF4)] text-white flex-col items-center justify-center">
+      <div className={`
+        ${isDark 
+          ? 'bg-gradient-to-br from-[#000217] via-[#4F4EB2] to-purple-200 text-white' 
+          : 'bg-gradient-to-br  via-indigo-100 from-blue-500 to-purple-100 text-gray-700'
+        }
+        hidden lg:flex lg:w-1/2 flex-col items-center justify-center
+      `}>
         <img src="/Saly.png" alt="illustration" className="w-[60%] max-w-sm" />
         <h2 className="text-4xl mt-8 font-semibold text-center px-4">Study Link에 가입하세요</h2>
         <p className="text-base mt-2 text-center px-4">지금 바로 스터디를 시작해보세요</p>
