@@ -74,8 +74,7 @@ export default function StudyRoomEntry() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer 키 값"  // 실제 키로 교체
-    },
+      "Authorization": "Bearer ${process.env.REACT_APP_GPT_API_KEY"},
     body: JSON.stringify(body)
   });
 
