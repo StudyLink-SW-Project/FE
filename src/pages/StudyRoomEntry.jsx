@@ -74,7 +74,8 @@ export default function StudyRoomEntry() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer ${process.env.REACT_APP_GPT_API_KEY"},
+      "Authorization": `Bearer ${import.meta.env.VITE_APP_GPT_API_KEY}` 
+    },
     body: JSON.stringify(body)
   });
 
