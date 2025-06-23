@@ -143,12 +143,12 @@ export default function Header() {
                 <img
                   src={avatar}
                   alt="User"
-                  className={`cursor-pointer w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
+                  className={`cursor-pointer sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                 />
               </button>
 
               {/* 데스크탑: 환영 메시지와 로그아웃 아이콘 */}
-              <div className="hidden lg:flex flex-col mt-3">
+              <div className="hidden lg:flex flex-col mt-2">
                 <div className="flex items-center gap-3">
                   <span className="text-base font-medium tracking-wide">
                     <span className="font-light text-xl">{user.userName}님</span>
