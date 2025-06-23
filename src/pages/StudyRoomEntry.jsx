@@ -50,6 +50,59 @@ export default function StudyRoomEntry() {
   // 서버 전송 대기 중인 분 단위 누적
   const [queuedMinutes, setQueuedMinutes] = useState(0);
 
+  // GPT chat
+  const [chatMessages, setChatMessages] = useState([
+  { role: "assistant", content: "안녕하세요! 무엇을 도와드릴까요?" }]);
+  const [chatInput, setChatInput] = useState("");
+  const [isGptTyping, setIsGptTyping] = useState(false);
+
+  async function sendMessageToGpt(messages) {
+  const apiMessages = messages.map(msg => ({
+    role: msg.role,
+    content: msg.content
+  }));
+
+  const body = {
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "당신은 친절한 공부 도우미입니다." },
+      ...apiMessages
+    ]
+  };
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer 키 값"  // 실제 키로 교체
+    },
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content;
+}
+
+  const handleChatSend = async () => {
+  if (!chatInput.trim()) return;
+
+  // 사용자 메시지 추가
+  const newMessages = [...chatMessages, { role: "user", content: chatInput }];
+  setChatMessages(newMessages);
+  setChatInput("");
+  setIsGptTyping(true);
+
+  try {
+    const gptReply = await sendMessageToGpt(newMessages);
+    setChatMessages(msgs => [...msgs, { role: "assistant", content: gptReply }]);
+  } catch (err) {
+    console.error(err);
+    setChatMessages(msgs => [...msgs, { role: "assistant", content: "오류가 발생했습니다." }]);
+  } finally {
+    setIsGptTyping(false);
+  }
+};
+
   // 서버에서 목표시간·오늘시간 불러오기
   useEffect(() => {
     async function fetchStudyInfo() {
@@ -400,26 +453,43 @@ export default function StudyRoomEntry() {
             </button>
           </div>
           
-          {/* 채팅 메시지 영역 */}
-          <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
-            <div className="space-y-2">
-              
-            </div>
-          </div>
+{/* 채팅 메시지 영역 */}
+<div className="flex-1 p-3 overflow-y-auto bg-gray-50">
+  <div className="space-y-2">
+    {chatMessages.map((msg, idx) => (
+      <div key={idx} className={msg.role === "user" ? "text-right" : "text-left"}>
+        <span className={msg.role === "user" ? "bg-blue-100" : "bg-gray-200"} style={{ borderRadius: 8, padding: 6, display: "inline-block" }}>
+          {msg.content}
+        </span>
+      </div>
+    ))}
+    {isGptTyping && (
+      <div className="text-left text-gray-400">GPT가 답변 중...</div>
+    )}
+  </div>
+</div>
           
-          {/* 메시지 입력 영역 */}
-          <div className="p-3 border-t border-gray-200">
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="메시지를 입력하세요..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm">
-                전송
-              </button>
-            </div>
-          </div>
+{/* 메시지 입력 영역 */}
+<div className="p-3 border-t border-gray-200">
+  <div className="flex space-x-2">
+    <input
+      type="text"
+      placeholder="메시지를 입력하세요..."
+      className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      value={chatInput}
+      onChange={e => setChatInput(e.target.value)}
+      onKeyDown={e => { if (e.key === "Enter") handleChatSend(); }}
+      disabled={isGptTyping}
+    />
+    <button
+      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm"
+      onClick={handleChatSend}
+      disabled={isGptTyping}
+    >
+      전송
+    </button>
+  </div>
+</div>
         </div>
       )}
     </div>
