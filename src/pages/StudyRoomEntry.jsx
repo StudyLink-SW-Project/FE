@@ -182,14 +182,18 @@ export default function StudyRoomEntry() {
         </div>
 
           {/* 채팅 토글 버튼 추가 */}
-  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-    <button
-      onClick={() => setShowChat(!showChat)}
-      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition cursor-pointer"
-    >
-      {showChat ? '채팅 닫기' : '채팅 열기'}
-    </button>
-  </div>
+        <div className="absolute right-4 mt-6 mr-6">
+          <button
+            onClick={() => setShowChat(!showChat)}
+            className="p-0 bg-transparent cursor-pointer transition"
+          >
+            <img
+              src="/gpt.png"
+              alt="채팅 토글"
+              className="w-12 h-12"
+            />
+          </button>
+        </div>
 
         <Tooltip.Provider>
           <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center text-white text-4xl mt-4">
@@ -383,46 +387,41 @@ export default function StudyRoomEntry() {
       )}
 
       {/* 채팅창 */}
-{showChat && (
-  <div className="fixed bottom-4 right-4 w-80 h-96 bg-white rounded-lg shadow-lg border border-gray-300 flex flex-col z-50">
-    {/* 채팅 헤더 */}
-    <div className="bg-blue-600 text-white p-3 rounded-t-lg flex justify-between items-center">
-      <h3 className="font-semibold">스터디룸 채팅</h3>
-      <button
-        onClick={() => setShowChat(false)}
-        className="text-white hover:text-gray-200 text-xl cursor-pointer"
-      >
-        ×
-      </button>
-    </div>
-    
-    {/* 채팅 메시지 영역 */}
-    <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
-      <div className="space-y-2">
-        <div className="bg-blue-100 p-2 rounded text-sm">
-          <span className="font-semibold text-blue-600">사용자1:</span> 안녕하세요!
+      {showChat && (
+        <div className="fixed top-20 right-4 w-80 h-96 bg-white rounded-lg shadow-lg border border-gray-300 flex flex-col z-50">
+          {/* 채팅 헤더 */}
+          <div className="bg-[#212121] text-white p-3 rounded-t-lg flex justify-between items-center">
+            <h3 className="font-semibold">Chat GPT</h3>
+            <button
+              onClick={() => setShowChat(false)}
+              className="text-white hover:text-gray-200 text-xl cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
+          
+          {/* 채팅 메시지 영역 */}
+          <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
+            <div className="space-y-2">
+              
+            </div>
+          </div>
+          
+          {/* 메시지 입력 영역 */}
+          <div className="p-3 border-t border-gray-200">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="메시지를 입력하세요..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm">
+                전송
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="bg-gray-100 p-2 rounded text-sm">
-          <span className="font-semibold text-gray-600">사용자2:</span> 같이 공부해요!
-        </div>
-      </div>
-    </div>
-    
-    {/* 메시지 입력 영역 */}
-    <div className="p-3 border-t border-gray-200">
-      <div className="flex space-x-2">
-        <input
-          type="text"
-          placeholder="메시지를 입력하세요..."
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm">
-          전송
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
     
   );
