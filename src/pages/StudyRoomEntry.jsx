@@ -441,7 +441,7 @@ export default function StudyRoomEntry() {
 
       {/* 채팅창 */}
       {showChat && (
-        <div className="fixed top-20 right-4 w-80 h-96 bg-white rounded-lg shadow-lg border border-gray-300 flex flex-col z-50">
+        <div className="fixed top-20 right-4 w-80 h-96 bg-white text-black rounded-lg shadow-lg border border-gray-300 flex flex-col z-50">
           {/* 채팅 헤더 */}
           <div className="bg-[#212121] text-white p-3 rounded-t-lg flex justify-between items-center">
             <h3 className="font-semibold">Chat GPT</h3>
@@ -453,43 +453,60 @@ export default function StudyRoomEntry() {
             </button>
           </div>
           
-{/* 채팅 메시지 영역 */}
-<div className="flex-1 p-3 overflow-y-auto bg-gray-50">
-  <div className="space-y-2">
-    {chatMessages.map((msg, idx) => (
-      <div key={idx} className={msg.role === "user" ? "text-right" : "text-left"}>
-        <span className={msg.role === "user" ? "bg-blue-100" : "bg-gray-200"} style={{ borderRadius: 8, padding: 6, display: "inline-block" }}>
-          {msg.content}
-        </span>
-      </div>
-    ))}
-    {isGptTyping && (
-      <div className="text-left text-gray-400">GPT가 답변 중...</div>
-    )}
-  </div>
-</div>
-          
-{/* 메시지 입력 영역 */}
-<div className="p-3 border-t border-gray-200">
-  <div className="flex space-x-2">
-    <input
-      type="text"
-      placeholder="메시지를 입력하세요..."
-      className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      value={chatInput}
-      onChange={e => setChatInput(e.target.value)}
-      onKeyDown={e => { if (e.key === "Enter") handleChatSend(); }}
-      disabled={isGptTyping}
-    />
-    <button
-      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm"
-      onClick={handleChatSend}
-      disabled={isGptTyping}
-    >
-      전송
-    </button>
-  </div>
-</div>
+          {/* 채팅 메시지 영역 */}
+          <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
+            <div className="space-y-2">
+              {chatMessages.map((msg, idx) => {
+                // 역할에 따라 border-radius 설정 (Top-Left, Top-Right, Bottom-Right, Bottom-Left)
+                const radius = msg.role === "user"
+                  ? "8px 8px 0 8px"    // 사용자(오른쪽): 오른쪽 아래(radius 3번째 값) 0
+                  : "8px 8px 8px 0";   // GPT(왼쪽): 왼쪽 아래(radius 4번째 값) 0
+
+                return (
+                  <div
+                    key={idx}
+                    className={msg.role === "user" ? "text-right" : "text-left"}
+                  >
+                    <span
+                      style={{
+                        backgroundColor: msg.role === "user" ? "#ebf8ff" : "#e5e7eb",
+                        borderRadius: radius,
+                        padding: 6,
+                        display: "inline-block",
+                      }}
+                    >
+                      {msg.content}
+                    </span>
+                  </div>
+                );
+              })}
+              {isGptTyping && (
+                <div className="text-left text-gray-400">GPT가 답변 중...</div>
+              )}
+            </div>
+          </div>
+                    
+          {/* 메시지 입력 영역 */}
+          <div className="p-3 border-t border-gray-200">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="메시지를 입력하세요..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") handleChatSend(); }}
+                disabled={isGptTyping}
+              />
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition cursor-pointer text-sm"
+                onClick={handleChatSend}
+                disabled={isGptTyping}
+              >
+                전송
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
