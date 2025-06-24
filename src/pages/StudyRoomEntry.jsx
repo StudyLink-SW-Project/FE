@@ -142,7 +142,7 @@ export default function StudyRoomEntry() {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setElapsedSeconds(prev => prev + 60);
+        setElapsedSeconds(prev => prev + 60);   // 테스트 용으로 시간이 1분씩 추가, 60을 1로 바꾸면 정상 작동
       }, 1000);
     }
     return () => clearInterval(interval);
