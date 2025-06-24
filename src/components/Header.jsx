@@ -143,7 +143,7 @@ export default function Header() {
                 <img
                   src={avatar}
                   alt="User"
-                  className={`cursor-pointer sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
+                  className={`cursor-pointer w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                 />
               </button>
 
