@@ -15,6 +15,9 @@ const LIVEKIT_URL = "wss://api.studylink.store:443";
 // 백엔드 방 설정 저장 API 베이스
 const API = import.meta.env.VITE_APP_SERVER;
 
+// 모바일 여부 감지
+const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+
 export default function StudyRoomEntry() {
   const { state }   = useLocation();
   const token       = state?.token;
@@ -23,8 +26,11 @@ export default function StudyRoomEntry() {
   const password    = state?.password;
   const img         = state?.img;
   
-
   const navigate    = useNavigate();
+
+  // 모바일에서는 접속 즉시 타이머 섹션 표시 및 자동 시작
+  const [showTimerSection, setShowTimerSection] = useState(isMobile);
+  const [isRunning, setIsRunning]               = useState(isMobile);
 
   // — 서버에서 가져올 목표/오늘 공부시간
   const [goalHours,   setGoalHours]   = useState(0);
@@ -33,14 +39,10 @@ export default function StudyRoomEntry() {
   const [showChat, setShowChat] = useState(false);
   // 타이머 상태
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [isRunning,       setIsRunning]     = useState(false);
-  const [showTimerSection, setShowTimerSection] = useState(false);
 
   // 목표 달성 모달
   const [showGoalModal, setShowGoalModal] = useState(false);
-  // 목표 설정 모달
   const [showGoalSettingsModal, setShowGoalSettingsModal] = useState(false);
-  // 계속 진행 선택 여부
   const [skipGoalModal, setSkipGoalModal] = useState(false);
 
   // 초기화 옵션 모달
@@ -174,7 +176,7 @@ export default function StudyRoomEntry() {
     return <Navigate to="/study-room" replace />;
   }
 
-  // 방 설정 저장
+  // 방 설정 저장 및 모바일 자동 시작
   const handleConnected = async () => {
     try {
       const res = await fetch(
@@ -186,6 +188,11 @@ export default function StudyRoomEntry() {
         }
       );
       if (!res.ok) throw new Error("방 설정 저장 실패");
+      // 모바일에서는 연결 즉시 타이머 표시 및 시작
+      if (isMobile) {
+        setShowTimerSection(true);
+        setIsRunning(true);
+      }
     } catch (err) {
       console.error(err);
     }
