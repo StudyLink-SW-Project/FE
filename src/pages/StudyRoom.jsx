@@ -1,4 +1,4 @@
-// src/pages/StudyRoom.jsx - 고정된 레이아웃으로 수정
+// src/pages/StudyRoom.jsx - 페이지네이션 잘림 문제 해결
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -152,10 +152,11 @@ const fetchRooms = useCallback(async () => {
   };
 
   return (
-    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
+    <div className={`min-h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
       
-      <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 overflow-auto">
+      {/* 메인 컨텐츠 영역 - 스크롤 가능 */}
+      <div className="flex-1 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
         
         {/* 헤더 영역 - 고정된 높이 */}
         <div className="mb-4 sm:mb-6">
@@ -175,9 +176,9 @@ const fetchRooms = useCallback(async () => {
                 <RotateCw className="w-5 h-5" />
               </button>
               <button
-                onClick={setShowHelpModal}
+                onClick={() => setShowHelpModal(true)}
                 className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer"
-                title="목록 새로고침"
+                title="도움말"
               >
                 <CircleHelp className="w-5 h-5" />
               </button>
@@ -247,7 +248,7 @@ const fetchRooms = useCallback(async () => {
               <button
                 onClick={() => setShowHelpModal(true)}
                 className="p-2 mt-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition cursor-pointer"
-                title="목록 새로고침"
+                title="도움말"
               >
                 <CircleHelp className="w-5 h-5" />
               </button>
@@ -300,8 +301,8 @@ const fetchRooms = useCallback(async () => {
           </div>
         </div>
 
-        {/* 컨텐츠 영역 */}
-        <div className="container mx-auto px-2 sm:px-4 lg:px-6">
+        {/* 컨텐츠 영역 - 여백 추가 */}
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 pb-8 sm:pb-12 md:pb-16">
           {/* 방이 없을 때 표시할 메시지 */}
           {currentRooms.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-20 md:py-10">
@@ -324,8 +325,8 @@ const fetchRooms = useCallback(async () => {
             </div>
           ) : (
             <>
-              {/* 카드 그리드 */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-items-center">
+              {/* 카드 그리드 - 아래 여백 추가 */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-items-center mb-8 sm:mb-12">
                 {currentRooms.map((room) => (
                   <div
                     key={room.title}
@@ -340,12 +341,14 @@ const fetchRooms = useCallback(async () => {
                 ))}
               </div>
 
-              {/* 페이지네이션 */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
+              {/* 페이지네이션 - 추가 여백 */}
+              <div className="mb-4 sm:mb-8">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
             </>
           )}
         </div>
