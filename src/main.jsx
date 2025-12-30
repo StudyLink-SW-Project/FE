@@ -1,20 +1,22 @@
-// src/main.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+import '@livekit/components-styles';
 
 import { BrowserRouter } from "react-router-dom";
-// Redux 관련 import
 import { Provider } from "react-redux";
-import store from "./store";    // src/store/index.js 에서 export 한 스토어
+import store from "./store";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ThemeProvider> 
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );

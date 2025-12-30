@@ -1,0 +1,468 @@
+/* src/pages/StudyRoomCustom.css */
+
+/* 전체 테마 커스터마이징 */
+[data-lk-theme="default"] {
+  /* 메인 색상 팔레트 */
+  --lk-bg: #0f172a;
+  --lk-bg2: #1e293b;
+  --lk-bg3: #334155;
+  --lk-fg: #f8fafc;
+  --lk-accent-bg: #3b82f6;
+  --lk-accent-fg: #ffffff;
+  
+  /* 폰트 및 간격 */
+  --lk-font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --lk-border-radius: 16px;
+  --lk-grid-gap: 1rem;
+  --lk-control-bar-height: 90px;
+}
+
+/* LiveKit 컴포넌트 오버라이드 */
+.lk-button {
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+/* 1) 그룹 첫 번째 버튼(TrackToggle): 우측 둥글기와 테두리 없애기 */
+.lk-button-group > button.lk-button:first-of-type {
+  /* 모서리 직각 처리 */
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  /* 오른쪽 테두리 제거 */
+  border-right: none !important;
+}
+
+/* 2) 그룹 두 번째 버튼(MediaDeviceMenu 내부 .lk-button) */
+.lk-button-group > .lk-button-group-menu .lk-button {
+  /* 테두리 전체 다시 그리기 */
+  border: 1px solid var(--lk-border-color) !important;
+  /* 왼쪽 테두리만 제거 */
+  border-left: none !important;
+  /* 왼쪽 모서리 직각 처리 */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+
+  border-top-right-radius: var(--lk-border-radius) !important;
+  border-bottom-right-radius: var(--lk-border-radius) !important;
+}
+
+
+/* 카메라 버튼 (TrackToggle source="camera") 가운데 정렬 */
+button.lk-button[data-lk-source="camera" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;        /* 원래 텍스트 숨기기 */
+
+  /* 버튼 패딩 및 너비 유지 */
+  padding: 0.75rem 1rem !important;
+  min-width: 3.5rem !important;
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+
+/* “카메라” 텍스트 */
+button.lk-button[data-lk-source="camera" i]::after {
+  content: "카메라" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+/* ── 마이크 버튼 (TrackToggle source="microphone") 가운데 정렬 ── */
+button.lk-button[data-lk-source="microphone" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;
+
+  padding: 0.75rem 1rem !important;
+  min-width: 3.5rem !important;
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* “마이크” 텍스트 */
+button.lk-button[data-lk-source="microphone" i]::after {
+  content: "마이크" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+
+/* 화면 공유 버튼 (TrackToggle source="screen_share") 가운데 정렬 */
+button.lk-button[data-lk-source="screen_share" i] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;         /* 아이콘과 텍스트 사이 간격 */
+  font-size: 0 !important;          /* 원래 텍스트 숨김 */
+
+  padding: 0.75rem 1rem !important; /* 버튼 패딩 */
+  min-width: 4.5rem !important;     /* "화면 공유하기" 텍스트가 잘리지 않도록 */
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* “화면 공유하기” 텍스트 */
+button.lk-button[data-lk-source="screen_share" i]::after {
+  content: "화면 공유" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+}
+
+
+/* 채팅 텍스트 변경 및 글씨 크기 변경 */
+button.lk-chat-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;        /* 아이콘과 텍스트 사이 간격 */
+  font-size: 0 !important;        /* 기본 텍스트 숨기기 */
+
+  padding: 0.75rem 1rem !important;/* 버튼 패딩 */
+  min-width: 4rem !important;      /* 아이콘 + "채팅" 텍스트 공간 확보 */
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid var(--lk-border-color) !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+}
+
+/* ——— “채팅” 텍스트만 ——— */
+button.lk-chat-toggle::after {
+  content: "채팅" !important;
+  display: inline-block !important;
+  /* 배경·테두리·패딩 전부 제거 */
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+
+  /* 위치도 버튼 흐름에 맞게 static */
+  position: static !important;
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  white-space: nowrap !important;
+  margin: 0 !important;            /* gap으로 이미 간격 조절 */
+}
+
+/* ——— 파란 뱃지 숫자만 ——— */
+button.lk-chat-toggle::before {
+  content: attr(data-lk-unread-msgs) !important;
+  position: absolute !important;
+  top: -0.2rem !important;
+  right: -0.2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1.25rem !important;
+  height: 1.25rem !important;
+  padding: 0 0.25rem !important;
+  background-color: var(--lk-accent-bg) !important;
+  color: var(--lk-accent-fg) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  border-radius: 9999px !important;
+  white-space: nowrap !important;
+}
+
+/* 언리드가 0일 때 뱃지 숨기기 */
+button.lk-chat-toggle[data-lk-unread-msgs="0"]::before {
+  display: none !important;
+}
+
+/* ─── StudyRoomCustom.css 파일 맨 아래에 추가 혹은 교체 ─── */
+
+/* 나가기 */
+button.lk-disconnect-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  font-size: 0 !important;
+
+  padding: 0.75rem 1rem !important;
+  min-width: 4rem !important;
+  background-color: var(--lk-control-bg) !important;
+  border: 1px solid #ef4444 !important;
+  border-radius: var(--lk-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+button.lk-disconnect-button::after {
+  content: "나가기" !important;
+  display: inline-block !important;
+  font-size: 1rem !important;      /* 텍스트가 보이도록 폰트 크기 재설정 */
+  color: #ef4444 !important;       /* 빨간색 텍스트 */
+  white-space: nowrap !important;
+}
+  
+/* ── 카메라 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="camera" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important; /* 호버 시 배경색 변경 */
+}
+
+/* ── 마이크 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="microphone" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* ── 화면 공유 버튼 호버 효과 ── */
+button.lk-button[data-lk-source="screen_share" i]:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* ── 채팅 버튼 호버 효과 ── */
+button.lk-chat-toggle:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+
+/* 나가기 버튼 호버 시 아이콘도 하얗게 변경 */
+button.lk-disconnect-button:hover::before {
+  /* 흰색 LogOut 아이콘 SVG 데이터 URI */
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1sb2ctb3V0LWljb24gbHVjaWRlLWxvZy1vdXQiPjxwYXRoIGQ9Im0xNiAxNyA1LTUtNS01Ii8+PHBhdGggZD0iTTIxIDEySDkiLz48cGF0aCBkPSJNOSAyMUg1YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDQiLz48L3N2Zz4=");
+}
+/* ── 나가기 버튼 호버 효과 ── */
+button.lk-disconnect-button:hover {
+  background-color: var(--lk-control-hover-bg) !important;
+}
+/* 나가기 버튼 호버 시 텍스트를 하얀색으로 변경 */
+button.lk-disconnect-button:hover::after {
+  color: #fff !important;
+}
+
+/* 카메라 */
+/* 비활성(꺼짐): “카메라 켜기” */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="false"]::after {
+  content: "카메라 켜기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “카메라 끄기” */
+button.lk-button[data-lk-source="camera" i][data-lk-enabled="true"]::after {
+  content: "카메라 끄기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* ── 마이크 버튼 ── */
+/* 비활성(꺼짐): “마이크 켜기” */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="false"]::after {
+  content: "마이크 켜기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “마이크 끄기” */
+button.lk-button[data-lk-source="microphone" i][data-lk-enabled="true"]::after {
+  content: "마이크 끄기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* ── 화면 공유 버튼 ── */
+/* 비활성(꺼짐): “화면 공유하기” */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="false"]::after {
+  content: "화면 공유하기" !important;
+  color: var(--lk-fg) !important;
+}
+
+/* 활성(켜짐): “화면 공유 중지” */
+button.lk-button[data-lk-source="screen_share" i][data-lk-enabled="true"]::after {
+  content: "화면 공유 중지" !important;
+  color: var(--lk-fg) !important;
+}
+
+.lk-chat{
+  margin-top: 15px;
+  border-radius: var(--lk-border-radius) !important;
+}
+
+.lk-chat-form{
+  height: 5.6rem !important;
+}
+
+/* 원본 텍스트 숨기기 */
+.lk-chat .lk-chat-header {
+  font-size: 0;              /* 헤더 내부 글자 크기를 0으로 */
+  position: relative;        /* ::after 위치 기준 */
+}
+
+/* 원하는 문구를 ::after 로 추가 */
+.lk-chat .lk-chat-header::after {
+  content: "채팅";      /* 원하는 문구로 교체 */
+  font-size: 1.5rem;           /* 보통 크기로 재설정 */
+  color: var(--lk-fg);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 1) 원래 placeholder 감추기 */
+.lk-chat-form-input::placeholder {
+  color: transparent !important;
+}
+
+/* 버튼 내부 텍스트 숨기기 */
+.lk-chat-form-button {
+  font-size: 0 !important;
+  position: relative;
+}
+
+/* 원하는 문구를 ::after 로 삽입 */
+.lk-chat-form-button::after {
+  content: "전송";          /* 원하는 버튼 텍스트 */
+  font-size: 1rem !important;
+  color: var(--lk-fg) !important;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+button.lk-close-button {
+  /* 기존 텍스트 숨기기 */
+  text-indent: -9999px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+
+  /* 아이콘 중앙 배치 */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* 크기 조절 (예시값) */
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  min-height: auto !important;
+
+  border: none !important;
+
+  line-height: 0 !important;
+}
+button.lk-close-button > svg {
+  /* 2) SVG를 block으로 바꿔서 baseline 정렬 효과 제거 */
+  display: block !important;
+}
+
+/* ── 남이 보낸 메시지(왼쪽) 버블 좌측 하단 */  
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-message-body {
+  border-bottom-left-radius: 0 !important;
+  background-color: var(--lk-bg3) !important;
+}
+
+/* ── 내가 보낸 메시지(오른쪽) 버블 우측 하단 */  
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-message-body {
+  border-bottom-right-radius: 0 !important;
+  background-color: var(--lk-accent-bg);
+}
+
+/* ── 채팅 리스트 항목을 flex 컨테이너로 강제 ── */
+.lk-chat-messages .lk-chat-entry {
+  display: flex !important;
+}
+
+/* ── 남이 보낸 메시지(리모트)는 오른쪽 정렬 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] {
+  justify-content: flex-start !important;
+}
+
+/* ── 내가 보낸 메시지(로컬)는 왼쪽 정렬 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] {
+  justify-content: flex-end !important;
+}
+
+/* ── 말풍선(.lk-message-body)도 왼쪽/오른쪽 여백 조정 ── */
+/* 내가 보낸 메시지 */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-message-body {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+/* 남이 보낸 메시지 */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-message-body {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* 0) 기존에 삽입해둔 .lk-meta-data 절대포지션 해제 */
+.lk-chat-entry .lk-meta-data {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 1) 메타데이터 flex 컨테이너 + full-width 확보 */
+.lk-chat-messages .lk-chat-entry .lk-meta-data {
+  display: flex !important;
+  width: 100% !important;            /* 양 끝 정렬을 위해 필요 */
+  align-items: center !important;
+}
+
+/* ── 남이 보낸 메시지(remote): 왼쪽 정렬, 이름→시간 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-meta-data {
+  justify-content: flex-start !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-participant-name {
+  order: 1 !important;
+  margin-right: 0.5rem !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="remote"] .lk-timestamp {
+  order: 2 !important;
+  margin-left: 0 !important;
+}
+
+/* ── 내가 보낸 메시지(local): 오른쪽 정렬, 시간→이름 ── */
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-meta-data {
+  justify-content: flex-end !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-timestamp {
+  order: 1 !important;
+  margin-right: 0.5rem !important;
+}
+.lk-chat-messages .lk-chat-entry[data-lk-message-origin="local"] .lk-participant-name {
+  order: 2 !important;
+  margin-left: 0 !important;
+}
+
+@media only screen and (max-width: 600px) {
+  /* 1) 버튼 텍스트용 ::after만 숨기기 */
+  button.lk-button[data-lk-source]::after,
+  button.lk-chat-toggle::after,
+  button.lk-disconnect-button::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* 2) 버튼 크기만 축소 (font-size 건드리지 않음) */
+  button.lk-button[data-lk-source],
+  button.lk-chat-toggle,
+  button.lk-disconnect-button {
+    padding: 0.5rem !important;
+    min-width: auto !important;
+  }
+}

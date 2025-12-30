@@ -1,95 +1,59 @@
 // src/components/UserMenu.jsx
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logoutThunk } from '../store/authThunks';
-import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { User as UserIcon, FileText, LogOut } from 'lucide-react';
-import userIcon from '../assets/user_icon.png';
+import userIcon from '../assets/default.png';
 
-export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
-  const dispatch = useDispatch();
+export default function UserMenu({ onClose, onOpenProfile }) {
+  const navigate = useNavigate();
   const user = useSelector(state => state.auth.user);
 
   // 아바타 상태: 로컬Storage 우선, 없으면 user.avatarUrl, 없으면 기본 아이콘
-  const [avatar, setAvatar] = useState(
-    localStorage.getItem('avatar') ||
-    user?.avatarUrl ||
-    userIcon
-  );
-
-  // 사진 변경 핸들러
-  const handleAvatarChange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      setAvatar(dataUrl);
-      localStorage.setItem('avatar', dataUrl);
-      onAvatarChange?.(dataUrl);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await dispatch(logoutThunk()).unwrap();
-      onClose();
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('로그아웃에 실패했습니다:', error);
-      }
-      toast.error('로그아웃에 실패했습니다. 다시 시도해주세요.');
-    }
-  };
+  const avatar = userIcon;
 
   const handleProfileClick = () => {
     onOpenProfile();
     onClose();
   };
 
+  // ★ 내 질문 페이지로 이동하는 핸들러 추가
+  const handleMyQuestionsClick = () => {
+    navigate('/my-questions');
+    onClose();
+  };
+
   return (
-    <div className="absolute -right-10 w-56 max-h-[calc(100vh-4rem)] overflow-auto bg-gray-200 text-black rounded shadow-md z-50">
-      <div className="p-3 border-b border-stone-100">
+    <div className="absolute -right-16 sm:-right-21 w-56 sm:w-64 max-h-[calc(100vh-4rem)] overflow-auto bg-gray-200 text-black rounded-lg shadow-lg z-50">
+      <div className="p-3 sm:p-4 border-b border-stone-100">
         <div className="flex items-center">
           {/* 클릭 가능한 아바타로 감싸기 */}
-          <label className="relative mr-3 cursor-pointer">
+          <label className="relative mr-3">
             <img
               src={avatar}
               alt="User"
-              className="cursor-pointer w-16 h-16 rounded-full border-2 border-gray-500 bg-gray-400"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="absolute inset-0 opacity-0 cursor-pointer"
+              className="min-w-12 max-w-12 w-12 h-12 sm:min-w-16 sm:max-w-16 sm:w-16 sm:h-16 rounded-full border-2 border-gray-500 bg-gray-400"
             />
           </label>
-          <div>
-            <p className="text-xl font-semibold">{user?.userName}</p>
-            <p className="text-sm text-gray-500">{user?.email}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-lg sm:text-xl font-semibold truncate">{user?.userName}</p>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{user?.email}</p>
           </div>
         </div>
       </div>
       <ul className="text-sm">
         <li
-          className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2"
+          className="px-3 sm:px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2 sm:gap-3"
           onClick={handleProfileClick}
         >
-          <UserIcon className="w-5 h-5 text-gray-600" />
-          내 프로필
+          <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+          <span className="text-sm sm:text-base">내 프로필</span>
         </li>
-        <li className="px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2">
-          <FileText className="w-5 h-5 text-gray-600" />
-          내 질문
-        </li>
-        <li
-          className="px-4 py-3 hover:bg-red-100 transition-colors duration-200 cursor-pointer flex items-center gap-2 text-red-600"
-          onClick={handleLogout}
+        <li 
+          className="px-3 sm:px-4 py-3 border-b border-stone-100 hover:bg-gray-400 transition-colors duration-200 cursor-pointer flex items-center gap-2 sm:gap-3"
+          onClick={handleMyQuestionsClick}
         >
-          <LogOut className="w-5 h-5" />
-          로그아웃
+          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+          <span className="text-sm sm:text-base">내 질문</span>
         </li>
       </ul>
     </div>

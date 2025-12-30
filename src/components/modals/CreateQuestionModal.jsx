@@ -1,11 +1,14 @@
 // src/components/CreateQuestionModal.jsx
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { X } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const user = useSelector(state => state.auth.user);
+  const { isDark } = useTheme();
 
   // 모달이 열릴 때 초기화
   useEffect(() => {
@@ -29,58 +32,51 @@ export default function CreateQuestionModal({ isOpen, onClose, onCreate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-[#1D1F2C] rounded-xl w-1/2 max-w-2xl p-10 text-white relative flex flex-col">
-        <button
+    <div className="fixed inset-0 z-999 flex items-center justify-center backdrop-opacity-70 backdrop-brightness-20 p-4">
+      <div className={`rounded-2xl w-full max-w-4xl max-h-[90vh] p-6 sm:p-8 md:p-10 relative flex flex-col shadow-2xl border ${isDark ? 'bg-[#1D1F2C] text-white shadow-black/50 border-gray-600' : 'bg-white text-gray-900 shadow-gray-900/20 border-[#E0E0E0]'}`}>
+          <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
+          className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
         >
-          ✕
+          <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-semibold mb-4">질문 작성</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 pr-12">질문 작성</h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-auto space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">제목</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="질문 제목을 입력하세요"
-              className="w-full bg-[#2A2D3F] border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-gray-600 outline-none"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">내용</label>
-            <textarea
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              placeholder="질문의 요약 또는 내용을 입력하세요"
-              className="w-full bg-[#2A2D3F] border border-gray-600 rounded px-3 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-gray-600 outline-none"
-              rows={20}
-              required
-            />
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex flex-col space-y-4 sm:space-y-6 flex-1 overflow-auto">
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>제목</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="질문 제목을 입력하세요"
+                className={`w-full border rounded-xl px-4 py-3 outline-none transition-all duration-200 text-sm sm:text-base ${isDark ? 'bg-[#2A2D3F] border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500' : 'bg-gray-50 border-[#E0E0E0] text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white'}`}
+                required
+              />
+            </div>
+            
+            <div className="flex-1 flex flex-col">
+              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>내용</label>
+              <textarea
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+                placeholder="질문의 요약 또는 내용을 입력하세요"
+                className={`flex-1 min-h-[200px] sm:min-h-[300px] w-full border rounded-xl px-4 py-3 outline-none resize-none transition-all duration-200 text-sm sm:text-base ${isDark ? 'bg-[#2A2D3F] border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500' : 'bg-gray-50 border-[#E0E0E0] text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white'}`}
+                required
+              />
+            </div>
           </div>
 
-          <button
-            type="submit"
-            className="
-              cursor-pointer
-              block
-              w-1/3
-              mx-auto
-              bg-gray-700 text-white
-              py-2
-              rounded
-              hover:bg-gray-600
-              transition
-              mt-3
-            "
-          >
-            질문 등록
-          </button>
+          <div className={`flex justify-center pt-4 sm:pt-6 border-t mt-4 sm:mt-6 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+            <button
+              type="submit"
+              className="cursor-pointer w-full sm:w-auto px-8 sm:px-12 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg text-sm sm:text-base"
+            >
+              질문 등록
+            </button>
+          </div>
         </form>
       </div>
     </div>

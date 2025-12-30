@@ -41,7 +41,7 @@ export const fetchInfoThunk = createAsyncThunk(
   async (_, { dispatch, rejectWithValue }) => {
     try {
       const resp = await fetch(`${API_BASE_URL}user/info`, {
-        method: 'POST',
+        method: 'GET',
         credentials: 'include',
       });
       const data = await resp.json();

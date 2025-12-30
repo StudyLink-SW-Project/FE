@@ -1,26 +1,38 @@
-// src/pages/Questions.jsx
+// src/pages/Questions.jsx - 반응형 개선
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import QuestionCard from "../components/cards/QuestionCard";
 import CreateQuestionModal from "../components/modals/CreateQuestionModal";
 import Pagination from "../components/Pagination";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-import { API_BASE_URL } from "../config/api";
+import { useSelector } from "react-redux";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Questions() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const { isDark } = useTheme(); 
+
+  // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
+  const API = import.meta.env.VITE_APP_SERVER;
 
   // 페이징 및 질문 목록 상태
   const [questions, setQuestions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // 1부터 시작
   const [totalPages, setTotalPages] = useState(1);
 
+  // ★ 삭제 모달 상태 추가
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [questionToDelete, setQuestionToDelete] = useState(null);
+
+  // 현재 로그인한 사용자 정보
+  const user = useSelector(state => state.auth.user);
+
   // 페이지 조회 함수
   async function loadPage(page) {
     try {
-      const resp = await fetch(`${API_BASE_URL}post/list?page=${page}`, {
+      const resp = await fetch(`${API}post/list?page=${page}`, {
         credentials: "include",
       });
       const json = await resp.json();
@@ -44,9 +56,7 @@ export default function Questions() {
       );
       setTotalPages(tp);
     } catch (err) {
-      if (import.meta.env.DEV) {
-        console.error(err);
-      }
+      console.error(err);
       toast.error(err.message);
     }
   }
@@ -59,7 +69,7 @@ export default function Questions() {
   // 새 질문 생성
   const handleCreateQuestion = async (newQ) => {
     try {
-      const resp = await fetch(`${API_BASE_URL}post/write`, {
+      const resp = await fetch(`${API}post/write`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -83,55 +93,124 @@ export default function Questions() {
         setCurrentPage(1);
       }
     } catch (err) {
-      if (import.meta.env.DEV) {
-        console.error(err);
-      }
+      console.error(err);
       toast.error(err.message);
     }
   };
 
-   // (2) 게시글 좋아요 토글 핸들러
-   const handleQuestionLike = async (postId) => {
-     try {
-       const resp = await fetch(`${API_BASE_URL}post/${postId}/like`, {
-         method: "POST",
-         credentials: "include",
-       });
-       const json = await resp.json();
-       if (!json.isSuccess) {
-         throw new Error(json.message || "좋아요 토글에 실패했습니다.");
-       }
-       const { liked, likeCount } = json.result;
-       // 해당 항목만 업데이트
-       setQuestions(prev =>
-         prev.map(q =>
-           q.id === postId ? { ...q, likes: likeCount, liked } : q
-         )
-       );
-     } catch (err) {
-       if (import.meta.env.DEV) {
-         console.error(err);
-       }
-       toast.error(err.message);
-     }
-   };
+  // (2) 게시글 좋아요 토글 핸들러
+  const handleQuestionLike = async (postId) => {
+    try {
+      const resp = await fetch(`${API}post/${postId}/like`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) {
+        throw new Error(json.message || "좋아요 토글에 실패했습니다.");
+      }
+      const { liked, likeCount } = json.result;
+      // 해당 항목만 업데이트
+      setQuestions(prev =>
+        prev.map(q =>
+          q.id === postId ? { ...q, likes: likeCount, liked } : q
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  // ★ 게시글 삭제 핸들러 추가
+  const handleDeleteQuestion = async (postId) => {
+    try {
+      const resp = await fetch(`${API}post/${postId}/delete`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const json = await resp.json();
+      if (!json.isSuccess) {
+        throw new Error(json.message || "게시글 삭제에 실패했습니다.");
+      }
+      toast.success("게시글이 삭제되었습니다.");
+      // 현재 페이지 새로고침
+      loadPage(currentPage - 1);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+  // ★ 삭제 확인 모달 열기
+  const openDeleteModal = (question) => {
+    setQuestionToDelete(question);
+    setShowDeleteModal(true);
+  };
+
+  // ★ 삭제 확인 모달 닫기
+  const closeDeleteModal = () => {
+    setQuestionToDelete(null);
+    setShowDeleteModal(false);
+  };
+
+  // ★ 삭제 실행
+  const confirmDeleteQuestion = async () => {
+    if (questionToDelete) {
+      await handleDeleteQuestion(questionToDelete.id);
+      closeDeleteModal();
+    }
+  };
+
+  // ★ 작성자 확인 함수
+  const isQuestionAuthor = (questionAuthor) => {
+    return user && user.userName === questionAuthor;
+  };
+
   // 검색 필터링 (클라이언트 사이드)
   const filtered = questions.filter((q) =>
     q.title.includes(search)
   );
 
   return (
-    <div className="min-h-screen bg-[#282A36] text-white">
+    <div className={`h-screen flex flex-col ${isDark ? 'bg-[#282A36] text-white' : 'bg-[#EFF1FE] text-gray-900'}`}>
       <Header />
 
-      <div className="p-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-7 gap-4">
-          <h1 className="text-4xl font-bold flex items-center">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto mt-5">
+        
+        {/* 헤더 영역 - 반응형 분기 */}
+        
+        {/* 모바일/태블릿: 세로 배치 */}
+        <div className="block lg:hidden">
+          <div className="flex flex-col gap-4 mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold">질문 게시판</h1>
+            <div className="flex items-center gap-3 w-full">
+              <PlusCircle
+                className={`w-8 h-8 sm:w-10 sm:h-10 cursor-pointer flex-shrink-0 ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
+                onClick={() => setShowModal(true)}
+              />
+              <input
+                type="text"
+                placeholder="검색"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className={`flex-1 sm:max-w-xs pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* PC: 기존 가로 배치 유지 */}
+        <div className="hidden lg:flex justify-between items-start mb-7 gap-4">
+          <h1 className="text-4xl font-bold flex items-center -mt-5">
             질문 게시판
           </h1>
-          <div className="flex items-center w-full md:w-64 space-x-3 mt-2.5">
+          <div className="flex items-center w-80 space-x-3 -mt-[4px]">
             <PlusCircle
-              className="w-10 h-10 mt-1 text-purple-400 hover:text-purple-600 cursor-pointer"
+              className={`w-10 h-10 cursor-pointer ${isDark ? 'text-blue-400 hover:text-blue-600' : 'text-blue-500 hover:text-blue-700'}`}
               onClick={() => setShowModal(true)}
             />
             <input
@@ -142,14 +221,31 @@ export default function Questions() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="flex-1 pl-4 py-2 rounded-full bg-white text-black text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`flex-1 pl-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-white text-black placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'}`}
             />
           </div>
         </div>
 
+        {/* 질문 목록 */}
         <div className="space-y-2">
           {filtered.map((q) => (
-            <QuestionCard key={q.id} {...q} onToggleLike={() => handleQuestionLike(q.id)}/>
+            <div key={q.id} className="relative">
+              <QuestionCard {...q} onToggleLike={() => handleQuestionLike(q.id)}/>
+              {/* ★ 삭제 버튼 (작성자만 보임, 항상 표시) */}
+              {isQuestionAuthor(q.author) && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); // QuestionCard의 Link 이벤트 방지
+                    e.stopPropagation();
+                    openDeleteModal(q);
+                  }}
+                  className={`absolute top-4 right-4 p-2 rounded-lg transition-all ${isDark ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10' : 'text-red-500 hover:text-red-400 hover:bg-red-50'}`}
+                  title="게시글 삭제"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           ))}
         </div>
 
@@ -165,6 +261,34 @@ export default function Questions() {
         onClose={() => setShowModal(false)}
         onCreate={handleCreateQuestion}
       />
+
+      {/* ★ 게시글 삭제 확인 모달 */}
+      {showDeleteModal && questionToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs p-4">
+          <div className={`rounded-xl p-6 max-w-md w-full mx-4 ${isDark ? 'bg-[#1D1F2C]' : 'bg-white'}`}>
+            <div className="text-center">
+              <Trash2 className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} />
+              <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>게시글 삭제</h3>
+              <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>해당 게시글을 삭제하시겠습니까?</p>
+              <p className={`text-sm mb-6 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>삭제된 게시글과 모든 댓글은 복구할 수 없습니다.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={confirmDeleteQuestion}
+                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded transition cursor-pointer"
+                >
+                  삭제
+                </button>
+                <button
+                  onClick={closeDeleteModal}
+                  className={`flex-1 py-2 rounded transition cursor-pointer ${isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'}`}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,36 +8,44 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
   server: {
     port: 5173,
     proxy: {
       '/user': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
       '/api': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/room': {  // ← 이 부분 추가
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
       '/oauth2': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
       '/login/oauth2': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
       '/post': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
       '/comment': {
-        target: 'http://localhost:6080/',
+        target: 'https://api.studylink.store/',
         changeOrigin: true,
         secure: false,
       },
