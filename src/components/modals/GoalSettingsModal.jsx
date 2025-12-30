@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { API_BASE_URL } from "../../config/api";
 
 export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onClose, onSave }) {
 
@@ -9,7 +10,7 @@ export default function GoalSettingsModal({ isOpen, goalHours, goalMinutes, onCl
   const [minutes, setMinutes] = useState(goalMinutes);
   const [isSaving, setIsSaving] = useState(false);
 
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   useEffect(() => {
     setHours(goalHours);

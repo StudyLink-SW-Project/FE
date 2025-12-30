@@ -8,14 +8,15 @@ import { PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useTheme } from "../contexts/ThemeContext";
+import { API_BASE_URL } from "../config/api";
 
 export default function Questions() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const { isDark } = useTheme(); 
+  const { isDark } = useTheme();
 
-  // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
-  const API = import.meta.env.VITE_APP_SERVER;
+  // API 베이스 URL
+  const API = API_BASE_URL;
 
   // 페이징 및 질문 목록 상태
   const [questions, setQuestions] = useState([]);

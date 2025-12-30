@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Header from "../components/Header";
 import { useTheme } from "../contexts/ThemeContext";
+import { API_BASE_URL } from "../config/api";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
@@ -23,7 +24,7 @@ export default function QuestionDetail() {
   } = state;
 
   const [postDetail, setPostDetail] = useState(null);
-  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");

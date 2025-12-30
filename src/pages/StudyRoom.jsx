@@ -8,9 +8,10 @@ import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle, RotateCw, Users, CircleHelp } from "lucide-react";
 import { toast } from "react-toastify";
-import { useTheme } from "../contexts/ThemeContext"; 
+import { useTheme } from "../contexts/ThemeContext";
 import { StudyOverview } from "../components/StudyOverview";
 import HelpModal from "../components/modals/HelpModal";
+import { API_BASE_URL } from "../config/api";
 
 export default function StudyRoom() {
   const { state, pathname } = useLocation();
@@ -43,9 +44,9 @@ export default function StudyRoom() {
   const [rooms, setRooms] = useState([]);
 
   const [showHelpModal, setShowHelpModal] = useState(false);
-  
+
   // API 기본 URL
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   // ✅ 이미지 번호를 실제 경로로 매핑하는 함수
   const getImagePath = (imageNumber) => {

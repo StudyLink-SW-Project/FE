@@ -1,10 +1,11 @@
 // src/components/modals/ResolutionSettingsModal.jsx
 import { useState, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { API_BASE_URL } from "../../config/api";
 
 export default function ResolutionSettingsModal({ isOpen, resolution, onSave, onClose }) {
   const [text, setText] = useState(resolution);
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   const { isDark } = useTheme();
 

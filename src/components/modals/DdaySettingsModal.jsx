@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { Edit2, Trash2 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { API_BASE_URL } from "../../config/api";
 
 export default function DdaySettingsModal({ isOpen, onClose, dDays, setDDays, onUpdated }) {
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   const { isDark } = useTheme();
 

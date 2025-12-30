@@ -15,37 +15,37 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/user': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
       '/api': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
-      '/room': {  // ← 이 부분 추가
-        target: 'https://api.studylink.store/',
+      '/room': {
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
       '/oauth2': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
       '/login/oauth2': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
       '/post': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },
       '/comment': {
-        target: 'https://api.studylink.store/',
+        target: 'http://localhost:6080',
         changeOrigin: true,
         secure: false,
       },

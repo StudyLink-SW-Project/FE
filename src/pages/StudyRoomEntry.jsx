@@ -1,7 +1,7 @@
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { 
-  LiveKitRoom, 
+import {
+  LiveKitRoom,
   VideoConference
 } from "@livekit/components-react";
 import '@livekit/components-styles';
@@ -9,11 +9,10 @@ import './StudyRoomCustom.css';
 import { PauseCircle, PlayCircle, RefreshCw } from "lucide-react";
 import * as Tooltip from '@radix-ui/react-tooltip';
 import GoalSettingsModal from "../components/modals/GoalSettingsModal";
+import { LIVEKIT_URL, API_BASE_URL } from "../config/api";
 
-// LiveKit 서버 URL
-const LIVEKIT_URL = "wss://api.studylink.store:443";
 // 백엔드 방 설정 저장 API 베이스
-const API = import.meta.env.VITE_APP_SERVER;
+const API = API_BASE_URL;
 
 // 모바일 여부 감지
 const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);

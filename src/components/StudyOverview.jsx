@@ -3,9 +3,10 @@ import GoalSettingsModal from "./modals/GoalSettingsModal";
 import DdaySettingsModal from "./modals/DdaySettingsModal";
 import ResolutionSettingsModal from "./modals/ResolutionSettingsModal";
 import { useTheme } from "../contexts/ThemeContext";
+import { API_BASE_URL } from "../config/api";
 
 export function StudyOverview({ resolution, onResolutionChange, onGoalChange }) {
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
   const { isDark } = useTheme();
   
   // — 서버에서 가져올 공부시간/목표시간 상태 (분 단위)

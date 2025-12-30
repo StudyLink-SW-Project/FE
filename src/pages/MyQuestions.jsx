@@ -7,13 +7,14 @@ import { FileText, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useTheme } from "../contexts/ThemeContext";
+import { API_BASE_URL } from "../config/api";
 
 export default function MyQuestions() {
   const [search, setSearch] = useState("");
   const { isDark } = useTheme();
-  
+
   // API 베이스 URL
-  const API = import.meta.env.VITE_APP_SERVER;
+  const API = API_BASE_URL;
 
   // 페이징 및 질문 목록 상태
   const [questions, setQuestions] = useState([]);
