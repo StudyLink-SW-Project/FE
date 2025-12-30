@@ -1,15 +1,14 @@
 // src/store/authThunks.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { loginSuccess, logout as logoutAction } from './authSlice';
-
-const API = import.meta.env.DEV ? '/' : import.meta.env.VITE_APP_SERVER;
+import { API_BASE_URL } from '../config/api';
 
 // 로그인
 export const loginThunk = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API}user/login`, {
+      const resp = await fetch(`${API_BASE_URL}user/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -41,7 +40,7 @@ export const fetchInfoThunk = createAsyncThunk(
   'auth/fetchInfo',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API}user/info`, {
+      const resp = await fetch(`${API_BASE_URL}user/info`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -69,7 +68,7 @@ export const logoutThunk = createAsyncThunk(
   'auth/logout',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      await fetch(`${API}user/logout`, {
+      await fetch(`${API_BASE_URL}user/logout`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -92,7 +91,7 @@ export const signupThunk = createAsyncThunk(
   'auth/signup',
   async ({ email, name, password }, { rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API}user/signup`, {
+      const resp = await fetch(`${API_BASE_URL}user/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name, password }),

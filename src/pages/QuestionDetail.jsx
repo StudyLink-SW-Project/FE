@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { API_BASE_URL } from "../config/api";
 
 export default function QuestionDetail() {
   const { state } = useLocation();
@@ -21,7 +22,6 @@ export default function QuestionDetail() {
   } = state;
 
   const [postDetail, setPostDetail] = useState(null);
-  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -44,7 +44,7 @@ export default function QuestionDetail() {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch(`${API}post/${id}`, { credentials: "include" });
+        const resp = await fetch(`${API_BASE_URL}post/${id}`, { credentials: "include" });
         const json = await resp.json();
         if (!json.isSuccess) throw new Error(json.message || "상세 조회에 실패했습니다.");
 
@@ -70,15 +70,17 @@ export default function QuestionDetail() {
           detail.comments.filter((c) => c.liked).map((c) => c.id)
         );
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) {
+          console.error(err);
+        }
         toast.error(err.message);
       }
     })();
-  }, [API, id]);
+  }, [id]);
 
   const handleQuestionLike = async () => {
     try {
-      const resp = await fetch(`${API}post/${id}/like`, {
+      const resp = await fetch(`${API_BASE_URL}post/${id}/like`, {
         method: "POST",
         credentials: "include",
       });
@@ -88,7 +90,9 @@ export default function QuestionDetail() {
       setQLiked(json.result.liked);
       setQLikes(json.result.likeCount);
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   };
@@ -114,7 +118,9 @@ export default function QuestionDetail() {
           : prev.filter((i) => i !== commentId)
       );
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   };
@@ -138,7 +144,9 @@ export default function QuestionDetail() {
       setNewComment("");
       await reloadComments();
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   };
@@ -162,13 +170,15 @@ export default function QuestionDetail() {
       setReplyText("");
       await reloadComments();
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   };
 
   const reloadComments = async () => {
-    const resp = await fetch(`${API}post/${id}`, { credentials: "include" });
+    const resp = await fetch(`${API_BASE_URL}post/${id}`, { credentials: "include" });
     const json = await resp.json();
     if (!json.isSuccess) throw new Error(json.message);
     const detail = json.result;

@@ -39,7 +39,9 @@ export default function Header() {
       await dispatch(logoutThunk()).unwrap();
       setMenuOpen(false);
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
     }
   };
 

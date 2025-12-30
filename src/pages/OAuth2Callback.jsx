@@ -18,7 +18,9 @@ export default function OAuth2Callback() {
         // 성공 시 홈으로 이동
         navigate('/', { replace: true });
       } catch (error) {
-        console.error('OAuth2 로그인 후 사용자 정보 조회 실패:', error);
+        if (import.meta.env.DEV) {
+          console.error('OAuth2 로그인 후 사용자 정보 조회 실패:', error);
+        }
         // 실패 시 로그인 페이지로
         navigate('/login', { replace: true });
       }

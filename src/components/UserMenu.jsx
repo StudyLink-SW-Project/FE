@@ -36,7 +36,9 @@ export default function UserMenu({ onClose, onOpenProfile, onAvatarChange }) {
       await dispatch(logoutThunk()).unwrap();
       onClose();
     } catch (error) {
-      console.error('로그아웃에 실패했습니다:', error);
+      if (import.meta.env.DEV) {
+        console.error('로그아웃에 실패했습니다:', error);
+      }
       toast.error('로그아웃에 실패했습니다. 다시 시도해주세요.');
     }
   };

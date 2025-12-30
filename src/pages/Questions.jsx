@@ -6,13 +6,11 @@ import CreateQuestionModal from "../components/modals/CreateQuestionModal";
 import Pagination from "../components/Pagination";
 import { PlusCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../config/api";
 
 export default function Questions() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  // API 베이스 URL (DEV: 현재 도메인, PROD: 환경변수)
-  const API = import.meta.env.DEV ? "/" : import.meta.env.VITE_APP_SERVER;
 
   // 페이징 및 질문 목록 상태
   const [questions, setQuestions] = useState([]);
@@ -22,7 +20,7 @@ export default function Questions() {
   // 페이지 조회 함수
   async function loadPage(page) {
     try {
-      const resp = await fetch(`${API}post/list?page=${page}`, {
+      const resp = await fetch(`${API_BASE_URL}post/list?page=${page}`, {
         credentials: "include",
       });
       const json = await resp.json();
@@ -46,7 +44,9 @@ export default function Questions() {
       );
       setTotalPages(tp);
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   }
@@ -59,7 +59,7 @@ export default function Questions() {
   // 새 질문 생성
   const handleCreateQuestion = async (newQ) => {
     try {
-      const resp = await fetch(`${API}post/write`, {
+      const resp = await fetch(`${API_BASE_URL}post/write`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -83,7 +83,9 @@ export default function Questions() {
         setCurrentPage(1);
       }
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        console.error(err);
+      }
       toast.error(err.message);
     }
   };
@@ -91,7 +93,7 @@ export default function Questions() {
    // (2) 게시글 좋아요 토글 핸들러
    const handleQuestionLike = async (postId) => {
      try {
-       const resp = await fetch(`${API}post/${postId}/like`, {
+       const resp = await fetch(`${API_BASE_URL}post/${postId}/like`, {
          method: "POST",
          credentials: "include",
        });
@@ -107,7 +109,9 @@ export default function Questions() {
          )
        );
      } catch (err) {
-       console.error(err);
+       if (import.meta.env.DEV) {
+         console.error(err);
+       }
        toast.error(err.message);
      }
    };

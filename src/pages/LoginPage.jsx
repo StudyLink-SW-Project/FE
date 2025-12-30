@@ -25,7 +25,9 @@ export default function LoginPage() {
       // 로그인 성공 시, 원래 가려던 경로로 이동
       navigate(from, { replace: true });
     } catch (err) {
-      console.error("로그인 오류:", err);
+      if (import.meta.env.DEV) {
+        console.error("로그인 오류:", err);
+      }
       toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
     }
   };
@@ -95,9 +97,6 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-between text-xs text-gray-500 mb-15">
-              {/* <label className="flex items-center gap-1">
-                <input type="checkbox" /> 유지하기
-              </label> */}
               <span>비밀번호를 잊으셨나요?</span>
             </div>
 

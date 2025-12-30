@@ -2,9 +2,7 @@
 import { useState, useEffect } from "react";
 import { Users, Lock, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
-
-  // 토큰 발급 서버
-  let APP_SERVER = "https://api.studylink.store/";
+import { APP_SERVER } from "../../config/api";
 
 export default function JoinRoomModal({ room, isOpen, onClose, onEnter }) {
   // 리덕스에서 유저 정보 가져오기

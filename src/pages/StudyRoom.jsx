@@ -8,6 +8,7 @@ import Pagination from "../components/Pagination";
 import JoinRoomModal from "../components/modals/JoinRoomModal";
 import { PlusCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../config/api";
 
 export default function StudyRoom() {
   const navigate = useNavigate();
@@ -25,24 +26,20 @@ export default function StudyRoom() {
 
   // 서버에서 가져온 방 목록
   const [rooms, setRooms] = useState([]);
-
-  // API 기본 URL
-  const API = import.meta.env.DEV
-    ? "/"
-    : import.meta.env.VITE_APP_SERVER;
   // 마운트 시 방 목록 조회
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch(`${API}room/rooms`);
+        const resp = await fetch(`${API_BASE_URL}room/rooms`);
         if (!resp.ok) throw new Error(`목록 조회 실패 (${resp.status})`);
         const data = await resp.json();
-        console.log("room/rooms 응답:", data);
-        const roomsArray = data.rooms || data.result?.rooms; 
-      if (!Array.isArray(roomsArray)) {
-        throw new Error("rooms 배열을 찾을 수 없습니다");
-      }
-      const roomsDto = data.result?.rooms ?? [];
+        if (import.meta.env.DEV) {
+          console.log("room/rooms 응답:", data);
+        }
+        const roomsDto = data.result?.rooms ?? [];
+        if (!Array.isArray(roomsDto)) {
+          throw new Error("rooms 배열을 찾을 수 없습니다");
+        }
       setRooms(
         roomsDto.map((r) => ({
             id: r.sid,
@@ -55,11 +52,13 @@ export default function StudyRoom() {
           }))
         );
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) {
+          console.error(err);
+        }
         toast.error(err.message);
       }
     })();
-  }, [API]);
+  }, []);
 
   // 모달에서 “입장” 눌렀을 때
   const handleEnter = (roomId, token) => {

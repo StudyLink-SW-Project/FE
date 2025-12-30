@@ -4,6 +4,7 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signupThunk } from "../store/authThunks";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const [showPwd, setShowPwd] = useState(false);
@@ -19,14 +20,17 @@ export default function SignupPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      // 비밀번호 불일치 처리
+      toast.error("비밀번호가 일치하지 않습니다.");
       return;
     }
     try {
       await dispatch(signupThunk({ email, name, password })).unwrap();
       navigate("/login", { state: { message: "회원가입이 완료되었습니다. 로그인해주세요." } });
     } catch (err) {
-      console.error("회원가입 오류:", err);
+      if (import.meta.env.DEV) {
+        console.error("회원가입 오류:", err);
+      }
+      toast.error("회원가입에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
