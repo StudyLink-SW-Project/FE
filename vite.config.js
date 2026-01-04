@@ -49,6 +49,16 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '^/study/': {
+        target: 'http://localhost:6080',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/day': {
+        target: 'http://localhost:6080',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   }
 })
