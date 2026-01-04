@@ -332,6 +332,14 @@ export default function StudyRoomEntry() {
           audio={true}
           video={true}
           onConnected={handleConnected}
+          onError={(err) => {
+            // VideoConference 내부 에러 무시 (알려진 버그)
+            if (err.message?.includes('Element not part of the array')) {
+              console.warn('Ignoring known LiveKit layout bug:', err.message);
+            } else {
+              console.error("LiveKit 오류:", err);
+            }
+          }}
           onDisconnected={async () => {
             try {
               const pending     = Math.floor(elapsedSeconds / 60);
@@ -355,7 +363,6 @@ export default function StudyRoomEntry() {
               });
             }
           }}
-          onError={err => console.error("LiveKit 오류:", err)}
         >
           <VideoConference />
         </LiveKitRoom>

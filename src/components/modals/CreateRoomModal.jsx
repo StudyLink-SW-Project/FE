@@ -11,14 +11,13 @@ const AVAILABLE_BACKGROUNDS = [
   "/bg/bg-4.jpg",  
 ];
 
-export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) {
+export default function CreateRoomModal({ isOpen, onClose, onEnter }) {
   const user = useSelector(state => state.auth.user);
   const participantName = user?.userName || "Guest";
-  const { isDark } = useTheme(); 
+  const { isDark } = useTheme();
 
   const [roomName, setRoomName] = useState("");
   const [roomDescription, setDescription] = useState("");
-  const [maxUsers, setMaxUsers] = useState(16);
   const [bgFile, setBgFile] = useState(0); 
   const [error, setError] = useState("");
 
@@ -37,9 +36,8 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
       setRoomName("");
       setDescription("");
       setPassword("");
-      setUsePassword(false); 
-      setMaxUsers(16);
-      setBgFile(0); 
+      setUsePassword(false);
+      setBgFile(0);
       setError("");
       setGoalHours(1);
       setGoalMinutes(0);
@@ -56,36 +54,47 @@ export default function CreateRoomModal({ isOpen, onClose, onCreate, onEnter }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       const finalPassword = usePassword ? password.trim() : "";
-      
+
       // 1) 토큰 발급
       const res = await fetch(`${APP_SERVER}api/v1/video/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomName: String(roomName), participantName }),
       });
-      
+
       if (!res.ok) throw new Error("토큰 서버 오류");
-      
+
       const { token } = await res.json();
-    
-      onCreate({ 
-        roomName, 
-        roomDescription, 
-        password: finalPassword, 
-        maxUsers, 
-        bgFile, // 인덱스 (0,1,2,3)
-        bgImagePath: AVAILABLE_BACKGROUNDS[bgFile], // 실제 이미지 경로
-        isLocked: finalPassword !== "" 
-      });
-      
+
       const totalGoalSeconds = Number(goalHours) * 3600 + Number(goalMinutes) * 60 + Number(goalSeconds) * 1;
 
-      // ✅ onEnter 호출 - 백엔드 번호(1~4)와 실제 이미지 경로 전달
-      onEnter(String(roomName), token, finalPassword, String(roomDescription), bgFile + 1, totalGoalSeconds); // bgFile+1로 1~4 번호 전달
-      // 2) 서버에 방 설정 정보 저장 (방 소개글 포함)
+      // 2) 방 입장
+      onEnter(String(roomName), token, finalPassword, String(roomDescription), bgFile + 1, totalGoalSeconds);
+
+      // 3) 방 상세 정보 저장 (백그라운드)
+      setTimeout(async () => {
+        for (let i = 0; i < 5; i++) {
+          try {
+            const setRes = await fetch(`${APP_SERVER}room/set`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                roomName: String(roomName),
+                roomDescription: String(roomDescription),
+                password: finalPassword,
+                roomImage: String(bgFile + 1)
+              })
+            });
+            if (setRes.ok) break;
+          } catch (err) {
+            if (i === 4) console.error("Failed to save room details:", err);
+          }
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }, 1000);
 
       onClose();
 

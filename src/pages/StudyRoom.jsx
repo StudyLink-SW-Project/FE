@@ -107,24 +107,6 @@ const fetchRooms = useCallback(async () => {
   const startIdx = (currentPage - 1) * roomsPerPage;
   const currentRooms = filtered.slice(startIdx, startIdx + roomsPerPage);
 
-  // 새 방 생성 핸들러 - CreateRoomModal에서 전달받은 데이터로 방 생성
-  const handleCreate = (newRoom) => {
-    setRooms((prev) => [
-      ...prev,
-      {
-        id: prev.length,
-        participants: 1,
-        maxParticipants: newRoom.maxUsers || 4,
-        title: newRoom.roomName,
-        roomDescription: newRoom.description,
-        imageSrc: newRoom.bgImagePath, 
-        isLocked: newRoom.isLocked,
-        password: newRoom.password || "", 
-      },
-    ]);
-    setShowCreateModal(false);
-  };
-
   // 목표 시간 변경 핸들러
   const handleGoalChange = (h, m) => {   
     setGoalHours(h);
@@ -359,7 +341,6 @@ const fetchRooms = useCallback(async () => {
       <CreateRoomModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        onCreate={handleCreate}
         onEnter={handleEnter}
       />
 
