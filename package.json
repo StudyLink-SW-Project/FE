@@ -20,6 +20,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "^2.8.1",
     "@tailwindcss/vite": "^4.1.4",
+    "axios": "^1.13.2",
     "livekit-client": "^2.11.4",
     "lucide-react": "^0.501.0",
     "react": "^19.0.0",

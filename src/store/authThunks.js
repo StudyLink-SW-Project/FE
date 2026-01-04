@@ -1,20 +1,16 @@
 // src/store/authThunks.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { loginSuccess, logout as logoutAction } from './authSlice';
-import { API_BASE_URL } from '../config/api';
+import axiosInstance from '../utils/axiosInstance';
 
 // 로그인
 export const loginThunk = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API_BASE_URL}user/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await resp.json();
+      const resp = await axiosInstance.post('user/login', { email, password });
+      const data = resp.data;
+
       if (!data.isSuccess) {
         // 서버가 알려준 메시지를 에러로 반환
         return rejectWithValue(data.message);
@@ -30,7 +26,7 @@ export const loginThunk = createAsyncThunk(
 
       return user;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
@@ -40,12 +36,10 @@ export const fetchInfoThunk = createAsyncThunk(
   'auth/fetchInfo',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API_BASE_URL}user/info`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
+      const resp = await axiosInstance.get('user/info');
+      const data = resp.data;
+
+      if (!data.isSuccess) {
         throw new Error(data.message || '사용자 정보 조회 실패');
       }
       const user = data.result;
@@ -58,7 +52,7 @@ export const fetchInfoThunk = createAsyncThunk(
 
       return user;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
@@ -68,10 +62,7 @@ export const logoutThunk = createAsyncThunk(
   'auth/logout',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      await fetch(`${API_BASE_URL}user/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await axiosInstance.post('user/logout');
 
       // 1) 리덕스 스토어에서 제거
       dispatch(logoutAction());
@@ -81,7 +72,7 @@ export const logoutThunk = createAsyncThunk(
 
       return;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
@@ -91,18 +82,15 @@ export const signupThunk = createAsyncThunk(
   'auth/signup',
   async ({ email, name, password }, { rejectWithValue }) => {
     try {
-      const resp = await fetch(`${API_BASE_URL}user/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, password }),
-      });
-      const data = await resp.json();
-      if (!data.result?.isSuccess) {
+      const resp = await axiosInstance.post('user/signup', { email, name, password });
+      const data = resp.data;
+
+      if (!data.isSuccess) {
         throw new Error(data.message);
       }
       return;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );

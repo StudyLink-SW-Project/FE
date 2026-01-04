@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginThunk, fetchInfoThunk } from "../store/authThunks";
+import { loginThunk } from "../store/authThunks";
 import { toast } from "react-toastify";
 import { useTheme } from "../contexts/ThemeContext";
 
@@ -22,8 +22,8 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      // loginThunk가 이미 사용자 정보를 저장하므로 fetchInfoThunk는 불필요
       await dispatch(loginThunk({ email, password })).unwrap();
-      await dispatch(fetchInfoThunk()).unwrap();
       // 로그인 성공 시, 원래 가려던 경로로 이동
       navigate(from, { replace: true });
     } catch (err) {
