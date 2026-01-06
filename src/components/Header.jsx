@@ -21,6 +21,11 @@ export default function Header() {
   const isAuthenticated = !!user;
   const { isDark } = useTheme();
 
+  // 디버깅: user 객체 구조 확인
+  if (import.meta.env.DEV && user) {
+    console.log('User object:', user);
+  }
+
   // avatar 상태 관리
   const initialAvatar = localStorage.getItem('avatar') || user?.avatarUrl || userIcon;
   const [avatar, setAvatar] = useState(initialAvatar);
@@ -153,7 +158,7 @@ export default function Header() {
               <div className="hidden lg:flex flex-col mt-2">
                 <div className="flex items-center gap-3">
                   <span className="text-base font-medium tracking-wide">
-                    <span className="font-light text-xl">{user.userName}님</span>
+                    <span className="font-light text-xl">{user.userName || user.name || user.email}님</span>
                   </span>
                   <div>
                     <button
@@ -266,7 +271,7 @@ export default function Header() {
                       className={`w-12 h-12 rounded-full border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                     />
                     <div>
-                      <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.userName}님</p>
+                      <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.userName || user.name || user.email}님</p>
                       <button 
                         onClick={handleOpenProfile}
                         className={`mt-1 text-sm hover:underline ${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
