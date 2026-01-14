@@ -30,3 +30,4 @@ dist-ssr
 .env.production
 .env.testopenvidu-local-deployment/
 livekit.yaml
+openvidu-local-deployment/
