@@ -2,6 +2,10 @@
   command   = "npm run build"
   publish   = "dist"
 
+[build.environment]
+  VITE_APP_SERVER = "https://api.studylink.store/"
+  VITE_LIVEKIT_URL = "wss://studylink-4yf381df.livekit.cloud"
+
 [[redirects]]
   from = "/*"
   to   = "/index.html"
