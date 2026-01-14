@@ -10,4 +10,4 @@ export const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 // 개발/프로덕션 환경에 따른 API 엔드포인트
 export const API_BASE_URL = import.meta.env.DEV
   ? "/"
-  : import.meta.env.VITE_APP_SERVER;
+  : import.meta.env.VITE_APP_SERVER || "https://api.studylink.store/";
