@@ -28,17 +28,6 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-// 쿠키에서 refreshToken 가져오기
-const getRefreshTokenFromCookie = () => {
-  const cookies = document.cookie.split(';');
-  for (let cookie of cookies) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === 'refreshToken') {
-      return value;
-    }
-  }
-  return null;
-};
 
 // Response Interceptor: 401 에러 시 자동 토큰 갱신
 axiosInstance.interceptors.response.use(
@@ -69,36 +58,16 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = getRefreshTokenFromCookie();
-
-      if (!refreshToken) {
-        // refreshToken이 없으면 로그인 페이지로
-        isRefreshing = false;
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        return Promise.reject(error);
-      }
-
       try {
-        // 토큰 갱신 API 호출
+        // 토큰 갱신 API 호출 (refreshToken은 HttpOnly 쿠키로 자동 전송됨)
         const response = await axios.get(
           `${API_BASE_URL}api/v1/reissue/access-token`,
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
 
         if (response.data?.isSuccess) {
-          const newAccessToken = response.data.result?.accessToken;
-
-          // 새로운 accessToken을 쿠키에 저장 (백엔드가 자동으로 할 수도 있음)
-          // 필요시 document.cookie로 설정
-
           isRefreshing = false;
-          processQueue(null, newAccessToken);
+          processQueue(null);
 
           // 원래 요청 재시도
           return axiosInstance(originalRequest);

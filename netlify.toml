@@ -6,6 +6,16 @@
   VITE_APP_SERVER = "https://api.studylink.store/"
   VITE_LIVEKIT_URL = "wss://studylink-4yf381df.livekit.cloud"
 
+[context.production]
+  [context.production.environment]
+    VITE_APP_SERVER = "https://api.studylink.store/"
+    VITE_LIVEKIT_URL = "wss://studylink-4yf381df.livekit.cloud"
+
+[context.deploy-preview]
+  [context.deploy-preview.environment]
+    VITE_APP_SERVER = "https://api.studylink.store/"
+    VITE_LIVEKIT_URL = "wss://studylink-4yf381df.livekit.cloud"
+
 [[redirects]]
   from = "/*"
   to   = "/index.html"
